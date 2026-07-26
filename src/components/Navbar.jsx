@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Sliders, Volume2, VolumeX, Sparkles, Heart, Compass, Truck, Search } from 'lucide-react';
+import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { useAnimation } from '@/context/AnimationContext';
 
 export default function Navbar({ onOpenAdmin }) {
   const { cart, wishlist, setIsCartOpen, setIsTrackOrderOpen, setIsQuizOpen } = useCart();
@@ -29,63 +28,63 @@ export default function Navbar({ onOpenAdmin }) {
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled
-          ? 'py-3 bg-[#070709]/95 border-b border-valaroix-gold/25 shadow-2xl backdrop-blur-md'
+          ? 'py-3.5 bg-[#070709]/95 border-b border-valaroix-gold/25 shadow-2xl backdrop-blur-md'
           : 'py-6 bg-gradient-to-b from-black/90 via-black/50 to-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
-        {/* Brand Logo & Emblem */}
-        <Link href="/" className="flex items-center gap-3.5 group">
-          <div className="w-11 h-11 rounded-full border border-valaroix-gold/60 p-0.5 bg-valaroix-dark group-hover:border-valaroix-gold group-hover:scale-105 transition-all duration-300 shadow-[0_0_18px_rgba(212,175,55,0.3)] overflow-hidden">
-            <img
-              src="/logo.jpg"
-              alt="VALAROIX Logo"
-              className="w-full h-full object-cover rounded-full"
-            />
-          </div>
-          <div>
-            <span className="font-serif text-2xl font-bold tracking-[0.2em] text-gold-gradient block">
-              VALAROIX
-            </span>
-            <span className="block text-[9px] tracking-[0.35em] text-valaroix-gold/80 uppercase font-medium">
-              Haute Parfumerie
-            </span>
-          </div>
-        </Link>
+        {/* Left Side: Brand Logo & Emblem with distinct right margin */}
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-3.5 group shrink-0">
+            <div className="w-11 h-11 rounded-full border border-valaroix-gold/60 p-0.5 bg-valaroix-dark group-hover:border-valaroix-gold group-hover:scale-105 transition-all duration-300 shadow-[0_0_18px_rgba(212,175,55,0.3)] overflow-hidden">
+              <img
+                src="/logo.jpg"
+                alt="VALAROIX Logo"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <div>
+              <span className="font-serif text-2xl font-bold tracking-[0.2em] text-gold-gradient block leading-tight">
+                VALAROIX
+              </span>
+              <span className="block text-[9px] tracking-[0.35em] text-valaroix-gold/80 uppercase font-medium mt-0.5">
+                Haute Parfumerie
+              </span>
+            </div>
+          </Link>
 
-        {/* Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-xs tracking-widest uppercase font-medium text-gray-300">
-          <a href="#hero" className="hover:text-valaroix-gold transition-colors">
-            3D Showcase
-          </a>
-          <a href="#shop" className="hover:text-valaroix-gold transition-colors">
-            Boutique Store
-          </a>
-          <a href="#notes" className="hover:text-valaroix-gold transition-colors">
-            Fragrance Notes
-          </a>
-          <a href="#customizer" className="hover:text-valaroix-gold transition-colors">
-            Bespoke Atelier
-          </a>
-          
-          {/* Interactive Scent Quiz Trigger Link */}
-          <button
-            onClick={() => setIsQuizOpen(true)}
-            className="flex items-center gap-1.5 text-valaroix-gold hover:underline font-bold"
-          >
-            <Compass className="w-3.5 h-3.5" /> Scent Profiler
-          </button>
-        </nav>
+          {/* Navigation Links with Spacious Gap */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs tracking-[0.18em] uppercase font-medium text-gray-300 pl-6 border-l border-valaroix-gold/20">
+            <a href="#hero" className="hover:text-valaroix-gold transition-colors py-1">
+              3D Showcase
+            </a>
+            <a href="#shop" className="hover:text-valaroix-gold transition-colors py-1">
+              Boutique Store
+            </a>
+            <a href="#notes" className="hover:text-valaroix-gold transition-colors py-1">
+              Fragrance Notes
+            </a>
+            <a href="#customizer" className="hover:text-valaroix-gold transition-colors py-1">
+              Bespoke Atelier
+            </a>
+            <button
+              onClick={() => setIsQuizOpen(true)}
+              className="flex items-center gap-1.5 text-valaroix-gold hover:underline font-bold py-1"
+            >
+              <Compass className="w-3.5 h-3.5" /> Scent Profiler
+            </button>
+          </nav>
+        </div>
 
         {/* Right Action Icons & Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           
           {/* Track Courier Link */}
           <button
             onClick={() => setIsTrackOrderOpen(true)}
             title="Track Courier Order"
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-panel border-valaroix-gold/30 text-xs text-gray-300 hover:text-valaroix-gold hover:border-valaroix-gold transition-all"
+            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full glass-panel border-valaroix-gold/30 text-xs text-gray-300 hover:text-valaroix-gold hover:border-valaroix-gold transition-all"
           >
             <Truck className="w-3.5 h-3.5 text-valaroix-gold" />
             <span>Track Order</span>
