@@ -1,72 +1,67 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Sparkles, Star, Check, Box } from 'lucide-react';
+import { ShoppingBag, Sparkles, Star, ArrowRight, Clock, ShieldCheck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
 export const products = [
   {
-    id: 'valaroix-elixir-noir',
-    name: 'Valaroix Elixir Noir',
-    subtitle: 'Extrait de Parfum • Flagship Royal Edition',
-    price: 285,
-    rating: 5.0,
-    reviewsCount: 142,
-    color: '#d4af37',
-    tag: 'Bestseller',
-    description: 'Our signature masterpiece. Infused with 24k gold leaf particles, Kashmiri Saffron, and 40-year aged Cambodian Oud.',
-    topNotes: 'Saffron, Bergamot, Pink Pepper',
-    baseNotes: 'Ambergris, Cambodian Oud, Vanilla'
+    id: 'sauvage',
+    name: 'Valaroix Sauvage Imperial',
+    subtitle: 'Inspired by Sauvage • Royal Spicy Fresh',
+    price10h: 185,
+    price24h: 245,
+    price: 185,
+    rating: 4.98,
+    reviewsCount: 312,
+    color: '#d4af37', // Gold
+    tag: 'Bestseller #1',
+    description: 'An iconic raw freshness meets warm amber resins. Radiant Calabrian Bergamot laced with Sichuan Pepper and rare Ambroxan fixing.',
+    topNotes: 'Calabrian Bergamot, Sichuan Pepper, Pink Grapefruit',
+    heartNotes: 'Lavender, Star Anise, Nutmeg, Patchouli',
+    baseNotes: 'Ambroxan, Aged Cedarwood, Vanilla Absolute',
+    accentGrad: 'from-amber-500/20 to-yellow-600/10'
   },
   {
-    id: 'valaroix-aureum-oud',
-    name: 'Valaroix Aureum Oud',
-    subtitle: 'Extrait de Parfum • Imperial Reserve',
-    price: 340,
-    rating: 4.9,
-    reviewsCount: 98,
-    color: '#e67e22',
-    tag: 'Rare Batch',
-    description: 'Distilled from ultra-rare Koh Kong Agarwood trees with wild acacia honey and dark smoked frankincense.',
-    topNotes: 'Smoked Honey, Cardamom',
-    baseNotes: 'Pure Wild Oud, Benzoin, Leather'
-  },
-  {
-    id: 'valaroix-rose-imperial',
-    name: 'Valaroix Rose Imperial',
-    subtitle: 'Extrait de Parfum • Grasse Harvest',
-    price: 295,
+    id: 'cedrat-boise',
+    name: 'Valaroix Cedrat Boise',
+    subtitle: 'Inspired by Cedrat Boise • Woody Citrus & Leather',
+    price10h: 195,
+    price24h: 265,
+    price: 195,
     rating: 4.95,
-    reviewsCount: 116,
-    color: '#e0a96d',
-    tag: 'Limited 500 Bottles',
-    description: 'Hand-picked Damask Rose petals from Grasse harvested at 5:00 AM, layered over warm amber velvet.',
-    topNotes: 'Damask Rose, Raspberry',
-    baseNotes: 'Bulgarian Rose, White Musk, Patchouli'
+    reviewsCount: 248,
+    color: '#e67e22', // Amber Orange
+    tag: 'Collector Reserve',
+    description: 'A vibrant blend of Sicilian Citrus, Blackcurrant, and Cold-pressed Spices resting on a luxurious bed of White Leather and Sandalwood.',
+    topNotes: 'Sicilian Lemon, Blackcurrant, Bergamot, Spicy Notes',
+    heartNotes: 'Fruity Accords, Water Jasmine, Patchouli Leaf',
+    baseNotes: 'White Leather, Cedarwood, Oakmoss, Vanilla, Amber',
+    accentGrad: 'from-orange-500/20 to-amber-700/10'
   },
   {
-    id: 'valaroix-santal-royal',
-    name: 'Valaroix Santal Royal',
-    subtitle: 'Extrait de Parfum • Sacred Wood',
-    price: 270,
-    rating: 4.88,
-    reviewsCount: 84,
-    color: '#10b981',
-    tag: 'Editor Choice',
-    description: 'Creamy Mysore Sandalwood balanced with bourbon vanilla bean and golden cedarwood.',
-    topNotes: 'Violet Leaf, Cardamom',
-    baseNotes: 'Mysore Sandalwood, Bourbon Vanilla, Amber'
+    id: 'ysl-y',
+    name: 'Valaroix YSL Y Elixir',
+    subtitle: 'Inspired by YSL Y • Modern Aromatic Amberwood',
+    price10h: 210,
+    price24h: 285,
+    price: 210,
+    rating: 4.97,
+    reviewsCount: 194,
+    color: '#06b6d4', // Royal Cyan/Sapphire
+    tag: 'New Release',
+    description: 'A bold, deep aromatic scent combining crisp White Ginger, Diva Lavender, and rich Amberwood for an unforgettable signature aura.',
+    topNotes: 'White Ginger, Crisp Apple, Bergamot',
+    heartNotes: 'Diva Lavender, Geranium Absolute, Clary Sage',
+    baseNotes: 'Amberwood, Olibanum Incense, Tonka Bean',
+    accentGrad: 'from-cyan-500/20 to-blue-700/10'
   }
 ];
 
 export default function ProductCatalog() {
   const { addToCart } = useCart();
-  const [selectedSizes, setSelectedSizes] = useState({});
-
-  const handleSizeSelect = (productId, size) => {
-    setSelectedSizes((prev) => ({ ...prev, [productId]: size }));
-  };
 
   return (
     <section id="catalog" className="py-24 relative overflow-hidden bg-black/95">
@@ -74,127 +69,121 @@ export default function ProductCatalog() {
         
         {/* Section Header */}
         <div className="text-center space-y-4 max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel-gold text-valaroix-gold text-xs uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5" /> Private Vault Collection
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel-gold text-valaroix-gold text-xs uppercase tracking-widest font-bold">
+            <Sparkles className="w-4 h-4" /> Three Flagship Masterpiece Fragrances
           </div>
           <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
-            Flagship <span className="text-gold-gradient">Valaroix Parfums</span>
+            Valaroix <span className="text-gold-gradient">Signature Editions</span>
           </h2>
           <p className="text-gray-400 font-light text-sm sm:text-base">
-            Each bottle comes housed in an obsidian velvet presentation box accompanied by a certificate of authenticity signed by our Master Perfumer.
+            Click on any fragrance to open its dedicated page with 10 Hours+ vs 24 Hours+ Lasting options and 50ml / 100ml bottle sizes.
           </p>
         </div>
 
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product) => {
-            const currentSize = selectedSizes[product.id] || '100ml';
-            let calculatedPrice = product.price;
-            if (currentSize === '50ml') calculatedPrice = Math.round(product.price * 0.65);
-            if (currentSize === '250ml Extrait') calculatedPrice = Math.round(product.price * 1.8);
+        {/* 3 Product Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {products.map((product) => (
+            <motion.div
+              key={product.id}
+              whileHover={{ y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="glass-panel p-7 rounded-3xl border-valaroix-gold/25 hover:border-valaroix-gold flex flex-col justify-between group shadow-2xl relative"
+            >
+              {/* Tag Badge */}
+              <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-valaroix-gold/20 border border-valaroix-gold/40 text-[10px] uppercase font-bold tracking-wider text-valaroix-gold">
+                {product.tag}
+              </div>
 
-            return (
-              <motion.div
-                key={product.id}
-                whileHover={{ y: -8 }}
-                transition={{ duration: 0.3 }}
-                className="glass-panel p-6 rounded-3xl border-valaroix-gold/25 hover:border-valaroix-gold flex flex-col justify-between group shadow-xl relative"
-              >
-                {/* Tag Badge */}
-                <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-valaroix-gold/20 border border-valaroix-gold/40 text-[10px] uppercase font-bold tracking-wider text-valaroix-gold">
-                  {product.tag}
-                </div>
-
-                <div>
-                  {/* Bottle Visual Stage Placeholder with Color Tint Glow */}
-                  <div className="w-full h-56 rounded-2xl bg-gradient-to-b from-valaroix-dark to-black/80 flex items-center justify-center relative overflow-hidden mb-6 border border-valaroix-gold/20 group-hover:border-valaroix-gold/50 transition-all duration-300">
+              <div>
+                {/* Product Bottle Clickable Stage */}
+                <Link href={`/product/${product.id}`} className="block group cursor-pointer">
+                  <div className="w-full h-64 rounded-2xl bg-gradient-to-b from-valaroix-dark to-black flex items-center justify-center relative overflow-hidden mb-6 border border-valaroix-gold/20 group-hover:border-valaroix-gold transition-all duration-300">
                     <div
-                      className="absolute inset-0 opacity-20 blur-2xl transition-opacity duration-500 group-hover:opacity-40"
-                      style={{ backgroundColor: product.color }}
+                      className={`absolute inset-0 bg-gradient-to-tr ${product.accentGrad} opacity-30 group-hover:opacity-60 transition-opacity duration-500 blur-xl`}
                     />
                     
                     {/* Bottle Icon Graphic */}
-                    <div className="relative z-10 flex flex-col items-center gap-2 text-center">
+                    <div className="relative z-10 flex flex-col items-center gap-2 text-center group-hover:scale-105 transition-transform duration-300">
                       <div
-                        className="w-20 h-32 rounded-xl border-2 flex flex-col items-center justify-between p-2 shadow-2xl backdrop-blur-md"
+                        className="w-24 h-36 rounded-xl border-2 flex flex-col items-center justify-between p-2.5 shadow-2xl bg-black/60 backdrop-blur-md"
                         style={{ borderColor: product.color }}
                       >
-                        <div className="w-6 h-5 rounded-sm bg-valaroix-gold/80 border border-valaroix-gold" />
-                        <span className="font-serif text-[10px] tracking-widest text-valaroix-gold font-bold uppercase">
+                        <div className="w-8 h-6 rounded-sm bg-valaroix-gold/90 border border-valaroix-gold shadow-md" />
+                        <span className="font-serif text-[10px] tracking-[0.2em] text-valaroix-gold font-bold uppercase">
                           VALAROIX
                         </span>
                         <div
-                          className="w-12 h-14 rounded-md opacity-80"
+                          className="w-14 h-16 rounded-md opacity-85 shadow-inner"
                           style={{ backgroundColor: product.color }}
                         />
                       </div>
+                      
+                      <span className="text-[10px] uppercase font-mono text-valaroix-gold tracking-widest bg-black/80 px-3 py-1 rounded-full border border-valaroix-gold/30 mt-2">
+                        Click For Options & Page ➔
+                      </span>
                     </div>
                   </div>
 
-                  {/* Product Title & Subtitle */}
+                  {/* Title & Subtitle */}
                   <div className="space-y-1 mb-3">
-                    <h3 className="font-serif text-xl font-bold text-white group-hover:text-valaroix-gold transition-colors">
+                    <h3 className="font-serif text-2xl font-bold text-white group-hover:text-valaroix-gold transition-colors">
                       {product.name}
                     </h3>
-                    <p className="text-xs text-valaroix-gold/80 font-light">
+                    <p className="text-xs text-valaroix-gold/90 font-medium">
                       {product.subtitle}
                     </p>
                   </div>
+                </Link>
 
-                  {/* Ratings */}
-                  <div className="flex items-center gap-2 mb-4 text-xs text-gray-400">
-                    <div className="flex items-center text-valaroix-gold">
-                      <Star className="w-3.5 h-3.5 fill-current" />
-                      <span className="ml-1 font-bold">{product.rating}</span>
-                    </div>
-                    <span>({product.reviewsCount} VIP reviews)</span>
+                {/* Ratings */}
+                <div className="flex items-center gap-2 mb-4 text-xs text-gray-400">
+                  <div className="flex items-center text-valaroix-gold font-bold">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    <span className="ml-1">{product.rating}</span>
                   </div>
+                  <span>({product.reviewsCount} VIP Reviews)</span>
+                </div>
 
-                  {/* Description */}
-                  <p className="text-gray-400 text-xs font-light leading-relaxed mb-6 line-clamp-3">
-                    {product.description}
-                  </p>
+                {/* Description */}
+                <p className="text-gray-400 text-xs font-light leading-relaxed mb-6 line-clamp-3">
+                  {product.description}
+                </p>
 
-                  {/* Size Selector */}
-                  <div className="space-y-1.5 mb-6">
-                    <span className="block text-[10px] text-gray-400 uppercase tracking-widest">Select Bottle Volume:</span>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {['50ml', '100ml', '250ml Extrait'].map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeSelect(product.id, size)}
-                          className={`py-1.5 text-[10px] font-semibold rounded-lg border transition-all ${
-                            currentSize === size
-                              ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold'
-                              : 'bg-valaroix-dark/80 text-gray-300 border-valaroix-gold/30 hover:border-valaroix-gold'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
+                {/* Feature Highlights: Lasting Options Badge */}
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center gap-2 text-xs text-gray-300">
+                    <Clock className="w-4 h-4 text-valaroix-gold" />
+                    <span className="font-semibold text-gray-200">Available Lasting Editions:</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="p-2 rounded-xl bg-valaroix-dark border border-valaroix-gold/20 text-center text-gray-300 font-medium">
+                      ⚡ 10 Hours+ Lasting
+                    </div>
+                    <div className="p-2 rounded-xl bg-valaroix-gold/15 border border-valaroix-gold text-center text-valaroix-gold font-bold">
+                      🔥 24 Hours+ Lasting
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Price & Add to Cart Button */}
-                <div className="pt-4 border-t border-valaroix-gold/20 flex items-center justify-between">
-                  <div>
-                    <span className="block text-[10px] text-gray-400 uppercase">Price</span>
-                    <span className="font-serif text-2xl font-bold text-gold-gradient">
-                      ${calculatedPrice}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => addToCart(product, currentSize)}
-                    className="btn-gold px-4 py-2.5 rounded-full flex items-center gap-2 text-xs uppercase tracking-wider font-semibold"
-                  >
-                    <ShoppingBag className="w-4 h-4" /> Add To Bag
-                  </button>
+              {/* Card Footer: Price & Link to Product Page */}
+              <div className="pt-4 border-t border-valaroix-gold/20 flex items-center justify-between">
+                <div>
+                  <span className="block text-[10px] text-gray-400 uppercase">Starting From</span>
+                  <span className="font-serif text-2xl font-bold text-gold-gradient">
+                    ${product.price}
+                  </span>
                 </div>
-              </motion.div>
-            );
-          })}
+
+                <Link
+                  href={`/product/${product.id}`}
+                  className="btn-gold px-5 py-3 rounded-full flex items-center gap-2 text-xs uppercase tracking-wider font-bold shadow-lg"
+                >
+                  View Options <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
       </div>

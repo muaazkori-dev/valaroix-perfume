@@ -1,30 +1,30 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Search, SlidersHorizontal, Heart, ShoppingBag, Eye, Star, Sparkles, Filter } from 'lucide-react';
+import { Search, Heart, ShoppingBag, Eye, Star, Sparkles, Clock, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { products } from './ProductCatalog';
 
 export default function ShopCatalogPage() {
-  const { addToCart, setSelectedProductModal, wishlist, toggleWishlist } = useCart();
+  const { addToCart, wishlist, toggleWishlist } = useCart();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('bestseller');
 
-  const categories = ['All', 'Oud & Woods', 'Rose & Floral', 'Amber & Spice', 'Sandalwood & Vanilla'];
+  const categories = ['All', 'Spicy Fresh (Sauvage)', 'Woody Citrus (Cedrat)', 'Aromatic Amber (YSL Y)'];
 
-  // Filter products by search & category
+  // Filter products
   const filteredProducts = products.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.topNotes.toLowerCase().includes(searchQuery.toLowerCase());
     
-    if (selectedCategory === 'Oud & Woods') return matchesSearch && (p.name.includes('Oud') || p.topNotes.includes('Oud'));
-    if (selectedCategory === 'Rose & Floral') return matchesSearch && (p.name.includes('Rose') || p.topNotes.includes('Rose'));
-    if (selectedCategory === 'Amber & Spice') return matchesSearch && (p.name.includes('Elixir') || p.topNotes.includes('Saffron'));
-    if (selectedCategory === 'Sandalwood & Vanilla') return matchesSearch && (p.name.includes('Santal') || p.topNotes.includes('Sandalwood'));
+    if (selectedCategory === 'Spicy Fresh (Sauvage)') return matchesSearch && p.id === 'sauvage';
+    if (selectedCategory === 'Woody Citrus (Cedrat)') return matchesSearch && p.id === 'cedrat-boise';
+    if (selectedCategory === 'Aromatic Amber (YSL Y)') return matchesSearch && p.id === 'ysl-y';
     
     return matchesSearch;
   });
@@ -34,7 +34,7 @@ export default function ShopCatalogPage() {
     if (sortBy === 'price-low') return a.price - b.price;
     if (sortBy === 'price-high') return b.price - a.price;
     if (sortBy === 'rating') return b.rating - a.rating;
-    return 0; // default bestseller
+    return 0;
   });
 
   return (
@@ -43,12 +43,15 @@ export default function ShopCatalogPage() {
         
         {/* Section Header */}
         <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel-gold text-valaroix-gold text-xs uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel-gold text-valaroix-gold text-xs uppercase tracking-widest font-bold">
             <Sparkles className="w-3.5 h-3.5" /> Full Boutique Catalog
           </div>
           <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
             Explore All <span className="text-gold-gradient">Valaroix Parfums</span>
           </h2>
+          <p className="text-gray-400 font-light text-xs sm:text-sm">
+            Select any fragrance to choose your 50ml or 100ml size and 10 Hours+ vs 24 Hours+ Lasting Edition.
+          </p>
         </div>
 
         {/* Filter Controls Bar */}
@@ -60,7 +63,7 @@ export default function ShopCatalogPage() {
               <Search className="w-4 h-4 text-valaroix-gold absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search by scent notes (e.g. Saffron, Oud, Rose, Sandalwood)..."
+                placeholder="Search fragrances by notes (Sauvage, Bergamot, Cedrat Boise, YSL Y)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-black border border-valaroix-gold/30 rounded-2xl pl-11 pr-4 py-3 text-xs text-gray-200 focus:outline-none focus:border-valaroix-gold font-sans"
@@ -92,7 +95,7 @@ export default function ShopCatalogPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
                   selectedCategory === cat
-                    ? 'btn-gold shadow-md'
+                    ? 'btn-gold shadow-md font-bold'
                     : 'bg-black/60 text-gray-400 border border-valaroix-gold/20 hover:text-valaroix-gold'
                 }`}
               >
@@ -103,7 +106,7 @@ export default function ShopCatalogPage() {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {sortedProducts.map((product) => {
             const isWishlisted = wishlist.some((w) => w.id === product.id);
 
@@ -129,40 +132,34 @@ export default function ShopCatalogPage() {
                 </div>
 
                 <div>
-                  {/* Bottle Visual Canvas Card */}
-                  <div
-                    onClick={() => setSelectedProductModal(product)}
-                    className="w-full h-56 rounded-2xl bg-gradient-to-b from-black to-valaroix-dark flex items-center justify-center relative overflow-hidden mb-6 border border-valaroix-gold/20 group-hover:border-valaroix-gold/50 cursor-pointer"
-                  >
-                    <div
-                      className="w-20 h-32 rounded-xl border-2 flex flex-col items-center justify-between p-2 shadow-2xl"
-                      style={{ borderColor: product.color }}
-                    >
-                      <div className="w-6 h-5 rounded-sm bg-valaroix-gold/80" />
-                      <span className="font-serif text-[10px] tracking-widest text-valaroix-gold font-bold">
-                        VALAROIX
-                      </span>
-                      <div className="w-12 h-14 rounded-md opacity-80" style={{ backgroundColor: product.color }} />
+                  {/* Bottle Visual Stage Clickable Link */}
+                  <Link href={`/product/${product.id}`} className="block group cursor-pointer">
+                    <div className="w-full h-56 rounded-2xl bg-gradient-to-b from-black to-valaroix-dark flex items-center justify-center relative overflow-hidden mb-6 border border-valaroix-gold/20 group-hover:border-valaroix-gold/50">
+                      <div
+                        className="w-20 h-32 rounded-xl border-2 flex flex-col items-center justify-between p-2 shadow-2xl bg-black/60"
+                        style={{ borderColor: product.color }}
+                      >
+                        <div className="w-6 h-5 rounded-sm bg-valaroix-gold/80" />
+                        <span className="font-serif text-[10px] tracking-widest text-valaroix-gold font-bold">
+                          VALAROIX
+                        </span>
+                        <div className="w-12 h-14 rounded-md opacity-80" style={{ backgroundColor: product.color }} />
+                      </div>
+
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <span className="btn-gold px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-2xl">
+                          <Eye className="w-4 h-4" /> Open Product Page
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Quick Inspect Button Overlay */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="btn-gold px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-2xl">
-                        <Eye className="w-4 h-4" /> Quick Inspect 3D
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title & Notes */}
-                  <h3
-                    onClick={() => setSelectedProductModal(product)}
-                    className="font-serif text-xl font-bold text-white group-hover:text-valaroix-gold transition-colors cursor-pointer mb-1"
-                  >
-                    {product.name}
-                  </h3>
-                  <p className="text-xs text-valaroix-gold/80 font-light mb-3">
-                    {product.subtitle}
-                  </p>
+                    <h3 className="font-serif text-xl font-bold text-white group-hover:text-valaroix-gold transition-colors mb-1">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-valaroix-gold/90 font-medium mb-3">
+                      {product.subtitle}
+                    </p>
+                  </Link>
 
                   <div className="flex items-center gap-2 mb-4 text-xs text-gray-400">
                     <div className="flex items-center text-valaroix-gold font-bold">
@@ -171,23 +168,27 @@ export default function ShopCatalogPage() {
                     </div>
                     <span>({product.reviewsCount} reviews)</span>
                   </div>
+
+                  <p className="text-gray-400 text-xs font-light leading-relaxed mb-6 line-clamp-3">
+                    {product.description}
+                  </p>
                 </div>
 
-                {/* Price & Add to Cart */}
+                {/* Price & View Page Button */}
                 <div className="pt-4 border-t border-valaroix-gold/20 flex items-center justify-between">
                   <div>
-                    <span className="block text-[10px] text-gray-400 uppercase">Price</span>
+                    <span className="block text-[10px] text-gray-400 uppercase">From</span>
                     <span className="font-serif text-2xl font-bold text-gold-gradient">
                       ${product.price}
                     </span>
                   </div>
 
-                  <button
-                    onClick={() => addToCart(product, '100ml')}
-                    className="btn-gold px-4 py-2.5 rounded-full flex items-center gap-2 text-xs uppercase font-semibold"
+                  <Link
+                    href={`/product/${product.id}`}
+                    className="btn-gold px-5 py-2.5 rounded-full flex items-center gap-2 text-xs uppercase font-bold tracking-wider"
                   >
-                    <ShoppingBag className="w-4 h-4" /> Add To Bag
-                  </button>
+                    Options <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </motion.div>
             );
