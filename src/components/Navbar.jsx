@@ -2,13 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart, Globe } from 'lucide-react';
+import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { useCurrency } from '@/context/CurrencyContext';
 
 export default function Navbar({ onOpenAdmin }) {
   const { cart, wishlist, setIsCartOpen, setIsTrackOrderOpen, setIsQuizOpen } = useCart();
-  const { currency, changeCurrency } = useCurrency();
   const [scrolled, setScrolled] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
@@ -57,7 +55,7 @@ export default function Navbar({ onOpenAdmin }) {
           </Link>
 
           {/* Navigation Links with Spacious Gap */}
-          <nav className="hidden xl:flex items-center gap-7 text-xs tracking-[0.18em] uppercase font-medium text-gray-300 pl-6 border-l border-valaroix-gold/20">
+          <nav className="hidden xl:flex items-center gap-8 text-xs tracking-[0.18em] uppercase font-medium text-gray-300 pl-6 border-l border-valaroix-gold/20">
             <a href="#hero" className="hover:text-valaroix-gold transition-colors py-1">
               3D Showcase
             </a>
@@ -79,35 +77,9 @@ export default function Navbar({ onOpenAdmin }) {
           </nav>
         </div>
 
-        {/* Right Action Icons & Currency Switcher */}
+        {/* Right Action Icons & Buttons */}
         <div className="flex items-center gap-3 shrink-0">
           
-          {/* CURRENCY TOGGLE SWITCHER (USD $ / PKR Rs.) */}
-          <div className="flex items-center rounded-full glass-panel p-1 border-valaroix-gold/30 text-xs font-mono">
-            <button
-              onClick={() => changeCurrency('USD')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
-                currency === 'USD'
-                  ? 'bg-valaroix-gold text-valaroix-dark shadow-md'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-              title="International US Dollars ($)"
-            >
-              🇺🇸 USD ($)
-            </button>
-            <button
-              onClick={() => changeCurrency('PKR')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
-                currency === 'PKR'
-                  ? 'bg-valaroix-gold text-valaroix-dark shadow-md'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-              title="Pakistan Rupees (Rs.)"
-            >
-              🇵🇰 PKR (Rs.)
-            </button>
-          </div>
-
           {/* Track Courier Link */}
           <button
             onClick={() => setIsTrackOrderOpen(true)}

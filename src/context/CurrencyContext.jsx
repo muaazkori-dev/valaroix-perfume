@@ -4,83 +4,76 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CurrencyContext = createContext();
 
+// Exchange rate: 1 USD = 280 PKR
 const EXCHANGE_RATE_PKR = 280;
 
 export function CurrencyProvider({ children }) {
-  // Set default currency to PKR as requested
+  // Default to PKR for local dev/testing
   const [currency, setCurrency] = useState('PKR'); 
   const [exchangeRate, setExchangeRate] = useState(EXCHANGE_RATE_PKR);
 
-  // Auto-detect visitor location on mount
+  // Background Automatic IP Geo-Location Detector
   useEffect(() => {
     try {
-      const savedCurrency = localStorage.getItem('valaroix_currency');
-      if (savedCurrency) {
-        setCurrency(savedCurrency);
-        return;
-      }
-
-      // Check browser timezone
+      // 1. Check browser timezone first
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
       if (timezone.includes('Karachi') || timezone.includes('Islamabad') || timezone.includes('Pakistan')) {
         setCurrency('PKR');
-        localStorage.setItem('valaroix_currency', 'PKR');
-        return;
       }
 
-      // Fallback IP Geo-location API check
+      // 2. Fetch IP Geo-Location API
       fetch('https://ipapi.co/json/')
         .then((res) => res.json())
         .then((data) => {
-          if (data && data.country_code === 'PK') {
-            setCurrency('PKR');
-            localStorage.setItem('valaroix_currency', 'PKR');
-          } else if (data && data.country_code !== 'PK') {
-            setCurrency('USD');
-            localStorage.setItem('valaroix_currency', 'USD');
+          if (data && data.country_code) {
+            if (data.country_code === 'PK') {
+              setCurrency('PKR'); // Pakistan visitor -> PKR (Rs.)
+            } else {
+              setCurrency('USD'); // Foreign IP visitor -> USD ($)
+            }
           }
         })
         .catch(() => {
-          // Default to PKR
-          setCurrency('PKR');
+          // If IP API blocked, fallback check
+          if (navigator.language && !navigator.language.toLowerCase().includes('pk')) {
+            // Keep PKR default if inside PK
+          }
         });
     } catch (e) {
-      console.error('Currency auto-detection error', e);
+      console.error('IP Currency detection error:', e);
     }
   }, []);
 
-  const changeCurrency = (newCurrency) => {
-    setCurrency(newCurrency);
-    try {
-      localStorage.setItem('valaroix_currency', newCurrency);
-    } catch (e) {}
-  };
-
-  // Flexible Helper: accepts numeric USD OR explicit { pkr, usd } object
+  /**
+   * Automatic Converter & Formatter:
+   * Accepts PKR price (e.g. 2499) or price object { pkr: 2499, usd: 9 }
+   * Converts PKR to USD automatically for foreign visitors!
+   */
   const formatPrice = (priceVal) => {
+    let pkrAmount = 0;
+    let usdAmount = 0;
+
     if (typeof priceVal === 'object' && priceVal !== null) {
-      if (currency === 'PKR') {
-        const val = priceVal.pkr ?? Math.round((priceVal.usd || 0) * exchangeRate);
-        return `Rs. ${val.toLocaleString('en-PK')}`;
-      } else {
-        const val = priceVal.usd ?? Math.round((priceVal.pkr || 0) / exchangeRate);
-        return `$${val.toLocaleString('en-US')}`;
-      }
+      pkrAmount = priceVal.pkr || 0;
+      usdAmount = priceVal.usd || Math.max(1, Math.round(pkrAmount / exchangeRate));
+    } else {
+      pkrAmount = Number(priceVal) || 0;
+      usdAmount = Math.max(1, Math.round(pkrAmount / exchangeRate));
     }
 
-    const num = Number(priceVal) || 0;
     if (currency === 'PKR') {
-      const pkrAmount = Math.round(num * exchangeRate);
       return `Rs. ${pkrAmount.toLocaleString('en-PK')}`;
     }
-    return `$${num.toLocaleString('en-US')}`;
+
+    // Foreign IP -> USD ($)
+    return `$${usdAmount.toLocaleString('en-US')}`;
   };
 
   return (
     <CurrencyContext.Provider
       value={{
         currency,
-        changeCurrency,
+        setCurrency,
         formatPrice,
         exchangeRate,
         setExchangeRate
