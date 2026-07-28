@@ -7,7 +7,8 @@ const CurrencyContext = createContext();
 const EXCHANGE_RATE_PKR = 280;
 
 export function CurrencyProvider({ children }) {
-  const [currency, setCurrency] = useState('USD'); // 'USD' | 'PKR'
+  // Set default currency to PKR as requested
+  const [currency, setCurrency] = useState('PKR'); 
   const [exchangeRate, setExchangeRate] = useState(EXCHANGE_RATE_PKR);
 
   // Auto-detect visitor location on mount
@@ -19,27 +20,29 @@ export function CurrencyProvider({ children }) {
         return;
       }
 
+      // Check browser timezone
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
       if (timezone.includes('Karachi') || timezone.includes('Islamabad') || timezone.includes('Pakistan')) {
         setCurrency('PKR');
+        localStorage.setItem('valaroix_currency', 'PKR');
         return;
       }
 
+      // Fallback IP Geo-location API check
       fetch('https://ipapi.co/json/')
         .then((res) => res.json())
         .then((data) => {
           if (data && data.country_code === 'PK') {
             setCurrency('PKR');
             localStorage.setItem('valaroix_currency', 'PKR');
-          } else {
+          } else if (data && data.country_code !== 'PK') {
             setCurrency('USD');
             localStorage.setItem('valaroix_currency', 'USD');
           }
         })
         .catch(() => {
-          if (navigator.language && navigator.language.includes('pk')) {
-            setCurrency('PKR');
-          }
+          // Default to PKR
+          setCurrency('PKR');
         });
     } catch (e) {
       console.error('Currency auto-detection error', e);

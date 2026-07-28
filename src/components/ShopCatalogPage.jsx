@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Search, Heart, ShoppingBag, Eye, Star, Sparkles, Clock, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { products } from './ProductCatalog';
 
 export default function ShopCatalogPage() {
   const { addToCart, wishlist, toggleWishlist } = useCart();
+  const { formatPrice } = useCurrency();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -31,8 +33,8 @@ export default function ShopCatalogPage() {
 
   // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortBy === 'price-low') return a.price - b.price;
-    if (sortBy === 'price-high') return b.price - a.price;
+    if (sortBy === 'price-low') return (a.startingPrice?.pkr || a.price) - (b.startingPrice?.pkr || b.price);
+    if (sortBy === 'price-high') return (b.startingPrice?.pkr || b.price) - (a.startingPrice?.pkr || a.price);
     if (sortBy === 'rating') return b.rating - a.rating;
     return 0;
   });
@@ -179,7 +181,7 @@ export default function ShopCatalogPage() {
                   <div>
                     <span className="block text-[10px] text-gray-400 uppercase">From</span>
                     <span className="font-serif text-2xl font-bold text-gold-gradient">
-                      ${product.price}
+                      {formatPrice(product.startingPrice || product.price)}
                     </span>
                   </div>
 
