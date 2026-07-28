@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash2, Plus, Minus, ShoppingBag, Gift, ArrowRight, Sparkles, Tag } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, Gift, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export default function CartDrawer() {
   const {
@@ -21,6 +22,7 @@ export default function CartDrawer() {
     setIsCheckoutOpen
   } = useCart();
 
+  const { formatPrice } = useCurrency();
   const [inputCode, setInputCode] = useState('');
   const [promoMessage, setPromoMessage] = useState(null);
 
@@ -78,7 +80,7 @@ export default function CartDrawer() {
                   <Gift className="w-4 h-4" /> VIP Complimentary Gift
                 </span>
                 <span className="text-gray-300 font-mono">
-                  {subtotal >= freeGiftThreshold ? 'Unlocked!' : `$${freeGiftThreshold - subtotal} away`}
+                  {subtotal >= freeGiftThreshold ? 'Unlocked!' : `${formatPrice(freeGiftThreshold - subtotal)} away`}
                 </span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-valaroix-dark overflow-hidden border border-valaroix-gold/30">
@@ -143,7 +145,7 @@ export default function CartDrawer() {
                     {/* Price & Delete */}
                     <div className="text-right space-y-2">
                       <span className="font-serif text-base font-bold text-gold-gradient">
-                        ${item.price * item.quantity}
+                        {formatPrice(item.price * item.quantity)}
                       </span>
                       <button
                         onClick={() => removeFromCart(item.cartItemId)}
@@ -185,17 +187,17 @@ export default function CartDrawer() {
                 <div className="space-y-1.5 text-xs text-gray-400 border-t border-valaroix-gold/15 pt-3">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="text-gray-200 font-mono">${subtotal}</span>
+                    <span className="text-gray-200 font-mono">{formatPrice(subtotal)}</span>
                   </div>
                   {discount > 0 && (
                     <div className="flex justify-between text-valaroix-gold">
                       <span>VIP Promo Discount (15%)</span>
-                      <span className="font-mono">-${discountAmount}</span>
+                      <span className="font-mono">-{formatPrice(discountAmount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-valaroix-gold/20">
                     <span>Total Investment</span>
-                    <span className="font-serif text-xl text-gold-gradient">${total}</span>
+                    <span className="font-serif text-xl text-gold-gradient">{formatPrice(total)}</span>
                   </div>
                 </div>
 

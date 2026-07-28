@@ -13,12 +13,14 @@ import CheckoutModal from '@/components/CheckoutModal';
 import AdminStudioDrawer from '@/components/admin/AdminStudioDrawer';
 import ValaroixBottleCanvas from '@/components/3d/ValaroixBottleCanvas';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import { products } from '@/components/ProductCatalog';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { addToCart, setIsCheckoutOpen } = useCart();
+  const { formatPrice } = useCurrency();
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Find product by URL param ID, fallback to Sauvage
@@ -32,7 +34,7 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState('notes');
 
   // Dynamic Price calculation based on options
-  const calculatePrice = () => {
+  const calculatePriceInUSD = () => {
     let base = selectedEdition === '24h' ? product.price24h : product.price10h;
     if (selectedSize === '50ml') {
       base = Math.round(base * 0.7); // 30% lower for 50ml
@@ -43,13 +45,13 @@ export default function ProductDetailPage() {
     return base;
   };
 
-  const finalPrice = calculatePrice();
+  const finalPriceUSD = calculatePriceInUSD();
 
   const handleAddToCart = () => {
     const customizedProduct = {
       ...product,
       name: `${product.name} (${selectedEdition === '24h' ? '24 Hours+ Extrait' : '10 Hours+ EDP'})`,
-      price: finalPrice
+      price: finalPriceUSD
     };
     addToCart(customizedProduct, selectedSize, engraving);
   };
@@ -103,7 +105,7 @@ export default function ProductDetailPage() {
             <ValaroixBottleCanvas interactive={true} />
 
             <div className="absolute bottom-6 left-6 right-6 z-20 p-4 rounded-2xl glass-panel border-valaroix-gold/20 flex items-center justify-between text-xs">
-              <span className="text-gray-300 font-medium">Selected Bottle Color Finish:</span>
+              <span className="text-gray-300 font-medium">Selected Bottle Finish:</span>
               <span className="font-serif text-valaroix-gold font-bold">{product.name.split(' ')[1]} Metallic Edition</span>
             </div>
           </div>
@@ -142,17 +144,17 @@ export default function ProductDetailPage() {
               {product.description}
             </p>
 
-            {/* Dynamic Calculated Price */}
+            {/* Dynamic Calculated Price with Currency Formatting */}
             <div className="p-6 rounded-2xl glass-panel-gold border border-valaroix-gold flex items-center justify-between shadow-2xl">
               <div>
                 <span className="block text-xs text-gray-400 uppercase tracking-wider">Your Total Investment</span>
                 <span className="font-serif text-4xl font-bold text-gold-gradient">
-                  ${finalPrice}
+                  {formatPrice(finalPriceUSD)}
                 </span>
               </div>
 
               <div className="text-right text-xs text-valaroix-gold font-mono">
-                <span className="block">Complimentary Express Shipping</span>
+                <span className="block">Complimentary Express Courier</span>
                 <span className="text-gray-400">Includes 24k Gold Atomizer</span>
               </div>
             </div>
@@ -174,7 +176,7 @@ export default function ProductDetailPage() {
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-sm text-gray-100">10 Hours+ Lasting</span>
-                    <span className="font-mono text-xs text-valaroix-gold">${product.price10h}</span>
+                    <span className="font-mono text-xs text-valaroix-gold">{formatPrice(product.price10h)}</span>
                   </div>
                   <span className="block text-[11px] text-gray-400">Eau de Parfum Intense (20% Oil)</span>
                 </button>
@@ -189,7 +191,7 @@ export default function ProductDetailPage() {
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-sm">24 Hours+ Lasting 🔥</span>
-                    <span className="font-mono text-xs">${product.price24h}</span>
+                    <span className="font-mono text-xs">{formatPrice(product.price24h)}</span>
                   </div>
                   <span className={`block text-[11px] ${selectedEdition === '24h' ? 'text-valaroix-dark/80 font-medium' : 'text-gray-400'}`}>
                     Pure Extrait De Parfum (35% Oil)
@@ -233,7 +235,7 @@ export default function ProductDetailPage() {
             <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-xs uppercase tracking-widest text-valaroix-gold font-bold flex items-center gap-2">
-                  <PenTool className="w-4 h-4" /> 3. Custom Monogram Laser Engraving (+$25)
+                  <PenTool className="w-4 h-4" /> 3. Custom Monogram Laser Engraving (+{formatPrice(25)})
                 </label>
                 <span className="text-[10px] text-gray-400">Optional</span>
               </div>
@@ -253,7 +255,7 @@ export default function ProductDetailPage() {
                 onClick={handleAddToCart}
                 className="btn-gold py-4 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-widest shadow-2xl"
               >
-                <ShoppingBag className="w-4 h-4" /> Add To Bag (${finalPrice})
+                <ShoppingBag className="w-4 h-4" /> Add To Bag ({formatPrice(finalPriceUSD)})
               </button>
 
               <button

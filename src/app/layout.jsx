@@ -1,6 +1,7 @@
 import './globals.css';
 import { AnimationProvider } from '@/context/AnimationContext';
 import { CartProvider } from '@/context/CartContext';
+import { CurrencyProvider } from '@/context/CurrencyContext';
 
 export const metadata = {
   title: "VALAROIX — L'Elixir De Distinction | Haute Parfumerie",
@@ -21,11 +22,13 @@ export default function RootLayout({ children }) {
         <link rel="apple-touch-icon" href="/logo.jpg" />
       </head>
       <body className="bg-valaroix-dark text-gray-100 selection:bg-valaroix-gold selection:text-valaroix-dark">
-        <AnimationProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </AnimationProvider>
+        <CurrencyProvider>
+          <AnimationProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </AnimationProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

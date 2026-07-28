@@ -3,8 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Sparkles, Star, ArrowRight, Clock, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Sparkles, Star, ArrowRight, Clock } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export const products = [
   {
@@ -16,7 +17,7 @@ export const products = [
     price: 185,
     rating: 4.98,
     reviewsCount: 312,
-    color: '#d4af37', // Gold
+    color: '#d4af37',
     tag: 'Bestseller #1',
     description: 'An iconic raw freshness meets warm amber resins. Radiant Calabrian Bergamot laced with Sichuan Pepper and rare Ambroxan fixing.',
     topNotes: 'Calabrian Bergamot, Sichuan Pepper, Pink Grapefruit',
@@ -33,7 +34,7 @@ export const products = [
     price: 195,
     rating: 4.95,
     reviewsCount: 248,
-    color: '#e67e22', // Amber Orange
+    color: '#e67e22',
     tag: 'Collector Reserve',
     description: 'A vibrant blend of Sicilian Citrus, Blackcurrant, and Cold-pressed Spices resting on a luxurious bed of White Leather and Sandalwood.',
     topNotes: 'Sicilian Lemon, Blackcurrant, Bergamot, Spicy Notes',
@@ -50,7 +51,7 @@ export const products = [
     price: 210,
     rating: 4.97,
     reviewsCount: 194,
-    color: '#06b6d4', // Royal Cyan/Sapphire
+    color: '#06b6d4',
     tag: 'New Release',
     description: 'A bold, deep aromatic scent combining crisp White Ginger, Diva Lavender, and rich Amberwood for an unforgettable signature aura.',
     topNotes: 'White Ginger, Crisp Apple, Bergamot',
@@ -62,6 +63,7 @@ export const products = [
 
 export default function ProductCatalog() {
   const { addToCart } = useCart();
+  const { formatPrice } = useCurrency();
 
   return (
     <section id="catalog" className="py-24 relative overflow-hidden bg-black/95">
@@ -171,7 +173,7 @@ export default function ProductCatalog() {
                 <div>
                   <span className="block text-[10px] text-gray-400 uppercase">Starting From</span>
                   <span className="font-serif text-2xl font-bold text-gold-gradient">
-                    ${product.price}
+                    {formatPrice(product.price)}
                   </span>
                 </div>
 

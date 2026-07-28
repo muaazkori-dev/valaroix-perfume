@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart } from 'lucide-react';
+import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart, Globe } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export default function Navbar({ onOpenAdmin }) {
   const { cart, wishlist, setIsCartOpen, setIsTrackOrderOpen, setIsQuizOpen } = useCart();
+  const { currency, changeCurrency } = useCurrency();
   const [scrolled, setScrolled] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
@@ -35,7 +37,7 @@ export default function Navbar({ onOpenAdmin }) {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         
         {/* Left Side: Brand Logo & Emblem with distinct right margin */}
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-3.5 group shrink-0">
             <div className="w-11 h-11 rounded-full border border-valaroix-gold/60 p-0.5 bg-valaroix-dark group-hover:border-valaroix-gold group-hover:scale-105 transition-all duration-300 shadow-[0_0_18px_rgba(212,175,55,0.3)] overflow-hidden">
               <img
@@ -55,7 +57,7 @@ export default function Navbar({ onOpenAdmin }) {
           </Link>
 
           {/* Navigation Links with Spacious Gap */}
-          <nav className="hidden lg:flex items-center gap-8 text-xs tracking-[0.18em] uppercase font-medium text-gray-300 pl-6 border-l border-valaroix-gold/20">
+          <nav className="hidden xl:flex items-center gap-7 text-xs tracking-[0.18em] uppercase font-medium text-gray-300 pl-6 border-l border-valaroix-gold/20">
             <a href="#hero" className="hover:text-valaroix-gold transition-colors py-1">
               3D Showcase
             </a>
@@ -77,14 +79,40 @@ export default function Navbar({ onOpenAdmin }) {
           </nav>
         </div>
 
-        {/* Right Action Icons & Buttons */}
+        {/* Right Action Icons & Currency Switcher */}
         <div className="flex items-center gap-3 shrink-0">
           
+          {/* CURRENCY TOGGLE SWITCHER (USD $ / PKR Rs.) */}
+          <div className="flex items-center rounded-full glass-panel p-1 border-valaroix-gold/30 text-xs font-mono">
+            <button
+              onClick={() => changeCurrency('USD')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+                currency === 'USD'
+                  ? 'bg-valaroix-gold text-valaroix-dark shadow-md'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              title="International US Dollars ($)"
+            >
+              🇺🇸 USD ($)
+            </button>
+            <button
+              onClick={() => changeCurrency('PKR')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all ${
+                currency === 'PKR'
+                  ? 'bg-valaroix-gold text-valaroix-dark shadow-md'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              title="Pakistan Rupees (Rs.)"
+            >
+              🇵🇰 PKR (Rs.)
+            </button>
+          </div>
+
           {/* Track Courier Link */}
           <button
             onClick={() => setIsTrackOrderOpen(true)}
             title="Track Courier Order"
-            className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full glass-panel border-valaroix-gold/30 text-xs text-gray-300 hover:text-valaroix-gold hover:border-valaroix-gold transition-all"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-panel border-valaroix-gold/30 text-xs text-gray-300 hover:text-valaroix-gold hover:border-valaroix-gold transition-all"
           >
             <Truck className="w-3.5 h-3.5 text-valaroix-gold" />
             <span>Track Order</span>
