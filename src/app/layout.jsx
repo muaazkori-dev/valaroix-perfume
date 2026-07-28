@@ -14,6 +14,9 @@ export const metadata = {
   authors: [{ name: "VALAROIX Haute Parfumerie" }],
   creator: "VALAROIX",
   publisher: "VALAROIX",
+  verification: {
+    google: "bJs1cHNE0x9NprAc-KuKJkcZu2BJGe8MAtIrZDAY8kY",
+  },
   openGraph: {
     title: "VALAROIX — L'Elixir De Distinction",
     description: "Official VALAROIX Haute Parfumerie 3D Luxury Perfume Store",
@@ -61,6 +64,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
+        <meta name="google-site-verification" content="bJs1cHNE0x9NprAc-KuKJkcZu2BJGe8MAtIrZDAY8kY" />
         <link rel="icon" href="/logo.jpg" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/logo.jpg" />
         <script
