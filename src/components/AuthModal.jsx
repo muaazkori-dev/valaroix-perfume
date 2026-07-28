@@ -29,7 +29,7 @@ function GoogleIcon() {
 }
 
 export default function AuthModal() {
-  const { isAuthModalOpen, setIsAuthModalOpen, signInAsVIP, signUpWithEmail, signInWithEmail } = useAuth();
+  const { isAuthModalOpen, setIsAuthModalOpen, signInAsVIP } = useAuth();
   
   const [mode, setMode] = useState('login');
   const [fullName, setFullName] = useState('');
@@ -39,7 +39,6 @@ export default function AuthModal() {
 
   if (!isAuthModalOpen) return null;
 
-  // Direct instant Google login (No external DNS redirect)
   const handleGoogleClick = () => {
     setLoading(true);
     signInAsVIP('Google Patron', 'vip.google@valaroix.com');
@@ -90,14 +89,14 @@ export default function AuthModal() {
               <img src="/logo.jpg" alt="VALAROIX Logo" className="w-full h-full object-cover rounded-full" />
             </div>
             <h3 className="font-serif text-2xl font-bold text-white tracking-wide">
-              {mode === 'login' ? 'VALAROIX Patron Sign In' : 'Create VIP Account'}
+              {mode === 'login' ? 'VALAROIX PATRON SIGN IN' : 'SIGN UP FOR VALAROIX'}
             </h3>
             <p className="text-xs text-gray-400 font-light">
               Sign in to view your order history, track shipments, and access VIP Vault discounts.
             </p>
           </div>
 
-          {/* 1-CLICK CONTINUE WITH GOOGLE (Instant Direct Login) */}
+          {/* 1-CLICK CONTINUE WITH GOOGLE */}
           <button
             onClick={handleGoogleClick}
             disabled={loading}
@@ -166,21 +165,21 @@ export default function AuthModal() {
               disabled={loading}
               className="w-full btn-gold py-3.5 rounded-xl text-xs uppercase font-bold tracking-widest shadow-xl flex items-center justify-center gap-2"
             >
-              {loading ? 'Processing...' : mode === 'login' ? 'Sign In To Account' : 'Create Account'}
+              {loading ? 'Processing...' : mode === 'login' ? 'SIGN IN TO ACCOUNT' : 'CREATE ACCOUNT'}
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
-          {/* Mode Switcher */}
+          {/* Mode Switcher - Changed Create VIP Account to Sign Up */}
           <div className="text-center pt-2 border-t border-valaroix-gold/15">
             {mode === 'login' ? (
               <p className="text-xs text-gray-400">
                 New to VALAROIX?{' '}
                 <button
                   onClick={() => setMode('signup')}
-                  className="text-valaroix-gold font-bold hover:underline ml-1"
+                  className="text-valaroix-gold font-bold hover:underline ml-1 uppercase border border-valaroix-gold/40 px-2.5 py-0.5 rounded-md bg-valaroix-gold/10"
                 >
-                  Create VIP Account
+                  Sign Up
                 </button>
               </p>
             ) : (
@@ -188,7 +187,7 @@ export default function AuthModal() {
                 Already have an account?{' '}
                 <button
                   onClick={() => setMode('login')}
-                  className="text-valaroix-gold font-bold hover:underline ml-1"
+                  className="text-valaroix-gold font-bold hover:underline ml-1 uppercase border border-valaroix-gold/40 px-2.5 py-0.5 rounded-md bg-valaroix-gold/10"
                 >
                   Sign In
                 </button>
