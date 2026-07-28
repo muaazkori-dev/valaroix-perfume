@@ -20,7 +20,7 @@ export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { addToCart, setIsCheckoutOpen } = useCart();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, currency } = useCurrency();
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Find product by URL param ID, fallback to Sauvage
@@ -28,30 +28,34 @@ export default function ProductDetailPage() {
   const product = products.find((p) => p.id === productId) || products[0];
 
   // Options State
-  const [selectedSize, setSelectedSize] = useState('100ml'); // 50ml | 100ml
-  const [selectedEdition, setSelectedEdition] = useState('24h'); // 10h | 24h
+  const [selectedSize, setSelectedSize] = useState('100ml'); // '50ml' | '100ml'
+  const [selectedEdition, setSelectedEdition] = useState('24h'); // '10h' | '24h'
   const [engraving, setEngraving] = useState('');
   const [activeTab, setActiveTab] = useState('notes');
 
-  // Dynamic Price calculation based on options
-  const calculatePriceInUSD = () => {
-    let base = selectedEdition === '24h' ? product.price24h : product.price10h;
-    if (selectedSize === '50ml') {
-      base = Math.round(base * 0.7); // 30% lower for 50ml
+  // Dynamic Price calculation based on exact pricing matrix
+  const getSelectedPriceObj = (size = selectedSize, edition = selectedEdition) => {
+    if (product.pricing && product.pricing[size] && product.pricing[size][edition]) {
+      const base = product.pricing[size][edition];
+      if (engraving.trim().length > 0) {
+        return {
+          pkr: base.pkr + 500,
+          usd: base.usd + 2
+        };
+      }
+      return base;
     }
-    if (engraving.trim().length > 0) {
-      base += 25; // Engraving fee
-    }
-    return base;
+    return { pkr: 2499, usd: 9 };
   };
 
-  const finalPriceUSD = calculatePriceInUSD();
+  const finalPriceObj = getSelectedPriceObj();
 
   const handleAddToCart = () => {
     const customizedProduct = {
       ...product,
-      name: `${product.name} (${selectedEdition === '24h' ? '24 Hours+ Extrait' : '10 Hours+ EDP'})`,
-      price: finalPriceUSD
+      name: `${product.name} (${selectedSize} • ${selectedEdition === '24h' ? '24 Hours+ Extrait' : '10 Hours+ EDP'})`,
+      price: currency === 'PKR' ? finalPriceObj.pkr / 280 : finalPriceObj.usd,
+      exactPkr: finalPriceObj.pkr
     };
     addToCart(customizedProduct, selectedSize, engraving);
   };
@@ -144,12 +148,12 @@ export default function ProductDetailPage() {
               {product.description}
             </p>
 
-            {/* Dynamic Calculated Price with Currency Formatting */}
+            {/* Dynamic Calculated Price with Exact Currency Formatting */}
             <div className="p-6 rounded-2xl glass-panel-gold border border-valaroix-gold flex items-center justify-between shadow-2xl">
               <div>
-                <span className="block text-xs text-gray-400 uppercase tracking-wider">Your Total Investment</span>
+                <span className="block text-xs text-gray-400 uppercase tracking-wider">Total Special Price ({selectedSize} • {selectedEdition === '24h' ? '24 Hours+' : '10 Hours+'})</span>
                 <span className="font-serif text-4xl font-bold text-gold-gradient">
-                  {formatPrice(finalPriceUSD)}
+                  {formatPrice(finalPriceObj)}
                 </span>
               </div>
 
@@ -159,10 +163,47 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* OPTION 1: LONGEVITY & LASTING EDITION SELECTOR */}
+            {/* OPTION 1: BOTTLE VOLUME SIZE SELECTOR */}
+            <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
+              <label className="block text-xs uppercase tracking-widest text-valaroix-gold font-bold">
+                1. Choose Bottle Volume Size
+              </label>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setSelectedSize('50ml')}
+                  className={`py-3.5 px-4 rounded-xl text-xs font-bold border uppercase transition-all flex flex-col items-center gap-1 ${
+                    selectedSize === '50ml'
+                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold shadow-lg'
+                      : 'bg-black/60 text-gray-300 border-valaroix-gold/20 hover:border-valaroix-gold'
+                  }`}
+                >
+                  <span>50 ml Edition</span>
+                  <span className="text-[10px] opacity-80 font-mono">
+                    Starting {formatPrice(getSelectedPriceObj('50ml', '10h'))}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setSelectedSize('100ml')}
+                  className={`py-3.5 px-4 rounded-xl text-xs font-bold border uppercase transition-all flex flex-col items-center gap-1 ${
+                    selectedSize === '100ml'
+                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold shadow-lg'
+                      : 'bg-black/60 text-gray-300 border-valaroix-gold/20 hover:border-valaroix-gold'
+                  }`}
+                >
+                  <span>100 ml Edition</span>
+                  <span className="text-[10px] opacity-80 font-mono">
+                    Starting {formatPrice(getSelectedPriceObj('100ml', '10h'))}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* OPTION 2: LONGEVITY & LASTING EDITION SELECTOR */}
             <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
               <label className="block text-xs uppercase tracking-widest text-valaroix-gold font-bold flex items-center gap-2">
-                <Clock className="w-4 h-4" /> 1. Choose Longevity Lasting Edition
+                <Clock className="w-4 h-4" /> 2. Choose Longevity Lasting Edition ({selectedSize})
               </label>
 
               <div className="grid grid-cols-2 gap-3">
@@ -176,7 +217,9 @@ export default function ProductDetailPage() {
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-sm text-gray-100">10 Hours+ Lasting</span>
-                    <span className="font-mono text-xs text-valaroix-gold">{formatPrice(product.price10h)}</span>
+                    <span className="font-mono text-xs text-valaroix-gold">
+                      {formatPrice(getSelectedPriceObj(selectedSize, '10h'))}
+                    </span>
                   </div>
                   <span className="block text-[11px] text-gray-400">Eau de Parfum Intense (20% Oil)</span>
                 </button>
@@ -191,7 +234,9 @@ export default function ProductDetailPage() {
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-sm">24 Hours+ Lasting 🔥</span>
-                    <span className="font-mono text-xs">{formatPrice(product.price24h)}</span>
+                    <span className="font-mono text-xs">
+                      {formatPrice(getSelectedPriceObj(selectedSize, '24h'))}
+                    </span>
                   </div>
                   <span className={`block text-[11px] ${selectedEdition === '24h' ? 'text-valaroix-dark/80 font-medium' : 'text-gray-400'}`}>
                     Pure Extrait De Parfum (35% Oil)
@@ -200,42 +245,11 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* OPTION 2: BOTTLE VOLUME SIZE SELECTOR */}
-            <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
-              <label className="block text-xs uppercase tracking-widest text-valaroix-gold font-bold">
-                2. Choose Bottle Volume Size
-              </label>
-
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setSelectedSize('50ml')}
-                  className={`py-3.5 px-4 rounded-xl text-xs font-bold border uppercase transition-all ${
-                    selectedSize === '50ml'
-                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold shadow-lg'
-                      : 'bg-black/60 text-gray-300 border-valaroix-gold/20 hover:border-valaroix-gold'
-                  }`}
-                >
-                  50 ml (Handheld Crystal Flask)
-                </button>
-
-                <button
-                  onClick={() => setSelectedSize('100ml')}
-                  className={`py-3.5 px-4 rounded-xl text-xs font-bold border uppercase transition-all ${
-                    selectedSize === '100ml'
-                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold shadow-lg'
-                      : 'bg-black/60 text-gray-300 border-valaroix-gold/20 hover:border-valaroix-gold'
-                  }`}
-                >
-                  100 ml (Grand Flagship Decanter)
-                </button>
-              </div>
-            </div>
-
             {/* OPTION 3: DIAMOND LASER MONOGRAM ENGRAVING */}
             <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-xs uppercase tracking-widest text-valaroix-gold font-bold flex items-center gap-2">
-                  <PenTool className="w-4 h-4" /> 3. Custom Monogram Laser Engraving (+{formatPrice(25)})
+                  <PenTool className="w-4 h-4" /> 3. Custom Monogram Laser Engraving (+{formatPrice({ pkr: 500, usd: 2 })})
                 </label>
                 <span className="text-[10px] text-gray-400">Optional</span>
               </div>
@@ -255,7 +269,7 @@ export default function ProductDetailPage() {
                 onClick={handleAddToCart}
                 className="btn-gold py-4 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-widest shadow-2xl"
               >
-                <ShoppingBag className="w-4 h-4" /> Add To Bag ({formatPrice(finalPriceUSD)})
+                <ShoppingBag className="w-4 h-4" /> Add To Bag ({formatPrice(finalPriceObj)})
               </button>
 
               <button

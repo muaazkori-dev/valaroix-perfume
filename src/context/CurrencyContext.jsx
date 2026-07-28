@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CurrencyContext = createContext();
 
-// Default Exchange Rate: 1 USD = 280 PKR
 const EXCHANGE_RATE_PKR = 280;
 
 export function CurrencyProvider({ children }) {
@@ -14,21 +13,18 @@ export function CurrencyProvider({ children }) {
   // Auto-detect visitor location on mount
   useEffect(() => {
     try {
-      // 1. Check saved user preference in localStorage
       const savedCurrency = localStorage.getItem('valaroix_currency');
       if (savedCurrency) {
         setCurrency(savedCurrency);
         return;
       }
 
-      // 2. Auto-detect via Browser Timezone
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
       if (timezone.includes('Karachi') || timezone.includes('Islamabad') || timezone.includes('Pakistan')) {
         setCurrency('PKR');
         return;
       }
 
-      // 3. Fallback IP Geo-location API check
       fetch('https://ipapi.co/json/')
         .then((res) => res.json())
         .then((data) => {
@@ -41,7 +37,6 @@ export function CurrencyProvider({ children }) {
           }
         })
         .catch(() => {
-          // If API fails, check navigator language
           if (navigator.language && navigator.language.includes('pk')) {
             setCurrency('PKR');
           }
@@ -58,9 +53,19 @@ export function CurrencyProvider({ children }) {
     } catch (e) {}
   };
 
-  // Helper function to format price based on selected currency
-  const formatPrice = (amountInUSD) => {
-    const num = Number(amountInUSD) || 0;
+  // Flexible Helper: accepts numeric USD OR explicit { pkr, usd } object
+  const formatPrice = (priceVal) => {
+    if (typeof priceVal === 'object' && priceVal !== null) {
+      if (currency === 'PKR') {
+        const val = priceVal.pkr ?? Math.round((priceVal.usd || 0) * exchangeRate);
+        return `Rs. ${val.toLocaleString('en-PK')}`;
+      } else {
+        const val = priceVal.usd ?? Math.round((priceVal.pkr || 0) / exchangeRate);
+        return `$${val.toLocaleString('en-US')}`;
+      }
+    }
+
+    const num = Number(priceVal) || 0;
     if (currency === 'PKR') {
       const pkrAmount = Math.round(num * exchangeRate);
       return `Rs. ${pkrAmount.toLocaleString('en-PK')}`;

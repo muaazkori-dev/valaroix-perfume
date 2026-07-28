@@ -12,9 +12,18 @@ export const products = [
     id: 'sauvage',
     name: 'Valaroix Sauvage Imperial',
     subtitle: 'Inspired by Sauvage • Royal Spicy Fresh',
-    price10h: 185,
-    price24h: 245,
-    price: 185,
+    pricing: {
+      '50ml': {
+        '10h': { pkr: 2499, usd: 9 },
+        '24h': { pkr: 3499, usd: 13 }
+      },
+      '100ml': {
+        '10h': { pkr: 4499, usd: 16 },
+        '24h': { pkr: 6499, usd: 23 }
+      }
+    },
+    startingPrice: { pkr: 2499, usd: 9 },
+    price: 9,
     rating: 4.98,
     reviewsCount: 312,
     color: '#d4af37',
@@ -29,9 +38,18 @@ export const products = [
     id: 'cedrat-boise',
     name: 'Valaroix Cedrat Boise',
     subtitle: 'Inspired by Cedrat Boise • Woody Citrus & Leather',
-    price10h: 195,
-    price24h: 265,
-    price: 195,
+    pricing: {
+      '50ml': {
+        '10h': { pkr: 2699, usd: 10 },
+        '24h': { pkr: 3699, usd: 13.5 }
+      },
+      '100ml': {
+        '10h': { pkr: 4699, usd: 17 },
+        '24h': { pkr: 6699, usd: 24 }
+      }
+    },
+    startingPrice: { pkr: 2699, usd: 10 },
+    price: 10,
     rating: 4.95,
     reviewsCount: 248,
     color: '#e67e22',
@@ -46,9 +64,18 @@ export const products = [
     id: 'ysl-y',
     name: 'Valaroix YSL Y Elixir',
     subtitle: 'Inspired by YSL Y • Modern Aromatic Amberwood',
-    price10h: 210,
-    price24h: 285,
-    price: 210,
+    pricing: {
+      '50ml': {
+        '10h': { pkr: 2799, usd: 10 },
+        '24h': { pkr: 3799, usd: 14 }
+      },
+      '100ml': {
+        '10h': { pkr: 4799, usd: 17 },
+        '24h': { pkr: 6799, usd: 24 }
+      }
+    },
+    startingPrice: { pkr: 2799, usd: 10 },
+    price: 10,
     rating: 4.97,
     reviewsCount: 194,
     color: '#06b6d4',
@@ -173,7 +200,7 @@ export default function ProductCatalog() {
                 <div>
                   <span className="block text-[10px] text-gray-400 uppercase">Starting From</span>
                   <span className="font-serif text-2xl font-bold text-gold-gradient">
-                    {formatPrice(product.price)}
+                    {formatPrice(product.startingPrice)}
                   </span>
                 </div>
 
