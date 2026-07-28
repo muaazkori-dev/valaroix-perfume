@@ -2,10 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { 
-  Instagram, Facebook, MessageCircle, 
-  Sparkles, Mail, ShieldCheck, ArrowUp 
-} from 'lucide-react';
+import { Instagram, Facebook, Sparkles, Mail, ShieldCheck, ArrowUp } from 'lucide-react';
+import { WhatsAppIcon, TikTokIcon } from './FloatingWhatsApp';
 
 export default function Footer({ whatsappNumber = '923141397378' }) {
   const scrollToTop = () => {
@@ -23,7 +21,7 @@ export default function Footer({ whatsappNumber = '923141397378' }) {
     {
       name: 'TikTok',
       handle: '@valaroix',
-      icon: Sparkles,
+      icon: TikTokIcon,
       url: 'https://www.tiktok.com/@valaroix?_r=1&_t=ZS-98PpZQGSd5Z',
       color: 'hover:text-cyan-400 hover:border-cyan-400/50'
     },
@@ -37,7 +35,7 @@ export default function Footer({ whatsappNumber = '923141397378' }) {
     {
       name: 'WhatsApp VIP Support',
       handle: '+92 314 1397378',
-      icon: MessageCircle,
+      icon: WhatsAppIcon,
       url: `https://wa.me/${whatsappNumber}`,
       color: 'hover:text-emerald-400 hover:border-emerald-400/50'
     }
@@ -79,7 +77,7 @@ export default function Footer({ whatsappNumber = '923141397378' }) {
             </div>
           </div>
 
-          {/* Real Social Media Links Section (4 Cols) */}
+          {/* Real Social Media Links Section with Official TikTok & WhatsApp SVG Logos */}
           <div className="md:col-span-4 space-y-4">
             <h4 className="font-serif text-sm font-bold uppercase tracking-widest text-valaroix-gold flex items-center gap-2">
               <Sparkles className="w-4 h-4" /> Connect With VALAROIX Privé
@@ -100,7 +98,7 @@ export default function Footer({ whatsappNumber = '923141397378' }) {
                     rel="noopener noreferrer"
                     className={`glass-panel p-3.5 rounded-xl border-valaroix-gold/20 flex items-center gap-3 transition-all text-xs text-gray-300 font-medium ${social.color}`}
                   >
-                    <IconComponent className="w-4 h-4 text-valaroix-gold shrink-0" />
+                    <IconComponent className="w-4.5 h-4.5 text-valaroix-gold shrink-0" />
                     <div className="min-w-0">
                       <span className="block font-bold text-[11px] truncate text-white">{social.name}</span>
                       <span className="block text-[9px] text-gray-400 truncate font-mono">{social.handle}</span>
