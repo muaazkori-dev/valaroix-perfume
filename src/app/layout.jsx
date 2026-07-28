@@ -4,9 +4,32 @@ import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 
 export const metadata = {
-  title: "VALAROIX — L'Elixir De Distinction | Haute Parfumerie",
-  description: "Experience ultra-luxury 3D perfume craftsmanship. Hand-faceted crystal glass bottles, Kashmiri Saffron, and pure aged Cambodian Oud.",
-  keywords: ["Perfume", "Luxury Perfume", "3D Perfume Website", "Valaroix", "Haute Parfumerie", "Oud", "Grasse Rose"],
+  metadataBase: new URL('https://valaroix.com'),
+  title: {
+    default: "VALAROIX — L'Elixir De Distinction | Luxury 3D Perfume Boutique",
+    template: "%s | VALAROIX Parfums"
+  },
+  description: "Official VALAROIX Haute Parfumerie online boutique. Hand-crafted 3D luxury perfumes, Kashmiri Saffron, Damask Rose, and aged Royal Ambergris. Available in 10 Hours+ & 24 Hours+ Lasting Extrait De Parfum.",
+  keywords: ["Valaroix", "Valaroix Perfume", "Valaroix Parfums", "Luxury Perfume Pakistan", "Dior Sauvage Impression", "Cedrat Boise Impression", "YSL Y Impression", "3D Perfume Store"],
+  authors: [{ name: "VALAROIX Haute Parfumerie" }],
+  creator: "VALAROIX",
+  publisher: "VALAROIX",
+  openGraph: {
+    title: "VALAROIX — L'Elixir De Distinction",
+    description: "Official VALAROIX Haute Parfumerie 3D Luxury Perfume Store",
+    url: 'https://valaroix.com',
+    siteName: 'VALAROIX',
+    images: [
+      {
+        url: '/logo.jpg',
+        width: 800,
+        height: 800,
+        alt: 'VALAROIX Logo',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
   icons: {
     icon: '/logo.jpg',
     shortcut: '/logo.jpg',
@@ -15,11 +38,35 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'OnlineStore',
+    name: 'VALAROIX Haute Parfumerie',
+    url: 'https://valaroix.com',
+    logo: 'https://valaroix.com/logo.jpg',
+    description: 'Ultra-luxury 3D perfume boutique featuring 10 Hours+ and 24 Hours+ lasting extrait de parfum.',
+    brand: {
+      '@type': 'Brand',
+      name: 'VALAROIX'
+    },
+    offers: {
+      '@type': 'AggregateOffer',
+      priceCurrency: 'PKR',
+      lowPrice: '2499',
+      highPrice: '6499',
+      offerCount: '3'
+    }
+  };
+
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
         <link rel="icon" href="/logo.jpg" type="image/jpeg" />
         <link rel="apple-touch-icon" href="/logo.jpg" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="bg-valaroix-dark text-gray-100 selection:bg-valaroix-gold selection:text-valaroix-dark">
         <CurrencyProvider>
