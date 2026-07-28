@@ -8,12 +8,12 @@ import PerfumeBottle3D from './PerfumeBottle3D';
 import GoldParticleField from './GoldParticleField';
 import ScentNoteRings from './ScentNoteRings';
 
-export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive = true }) {
+export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive = false, enableMouseTilt = false }) {
   const { settings } = useAnimation();
   const containerRef = useRef(null);
   const [isInView, setIsInView] = useState(true);
 
-  // Pause WebGL 3D rendering when scrolled out of view to ensure 100% smooth page scroll
+  // Pause WebGL rendering when scrolled out of view
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new IntersectionObserver(
@@ -27,7 +27,7 @@ export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive =
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-full relative cursor-grab active:cursor-grabbing">
+    <div ref={containerRef} className="w-full h-full relative">
       {isInView && (
         <Canvas
           camera={{
@@ -66,7 +66,7 @@ export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive =
           <Environment preset={settings.environmentPreset || 'city'} />
 
           <Suspense fallback={null}>
-            <PerfumeBottle3D scrollProgress={scrollProgress} />
+            <PerfumeBottle3D scrollProgress={scrollProgress} enableMouseTilt={enableMouseTilt} />
             <GoldParticleField />
             <ScentNoteRings />
 
@@ -83,11 +83,11 @@ export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive =
 
           {interactive && (
             <OrbitControls
-              enableZoom={false}
+              enableZoom={true}
               enablePan={false}
               maxPolarAngle={Math.PI / 2 + 0.1}
               minPolarAngle={Math.PI / 3}
-              rotateSpeed={0.6}
+              rotateSpeed={0.8}
             />
           )}
         </Canvas>

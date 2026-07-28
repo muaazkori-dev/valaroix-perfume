@@ -2,14 +2,17 @@
 
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
+import { Float, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { useAnimation } from '@/context/AnimationContext';
 
-export default function PerfumeBottle3D({ scrollProgress = 0 }) {
+export default function PerfumeBottle3D({ scrollProgress = 0, enableMouseTilt = false }) {
   const bottleGroup = useRef();
   const liquidMesh = useRef();
   const { settings } = useAnimation();
+
+  // Load custom logo texture for the bottle medallion plaque
+  const logoTexture = useTexture('/logo.jpg');
 
   // Color mappings for metallic accents
   const getMetalColor = () => {
@@ -28,21 +31,25 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
   useFrame((state, delta) => {
     if (!bottleGroup.current) return;
 
-    // Smooth Auto Rotation
-    if (settings.autoRotate) {
-      bottleGroup.current.rotation.y += delta * 0.4 * settings.rotationSpeed;
+    // Smooth, gentle luxury auto-rotation (constant slow speed without cursor disruption)
+    if (settings.autoRotate !== false) {
+      bottleGroup.current.rotation.y += delta * 0.35 * (settings.rotationSpeed || 1);
     }
 
-    // Interactive mouse tilt response with lerp for 60fps smoothness
-    const targetX = state.pointer.y * 0.2 * settings.tiltSensitivity;
-    const targetY = state.pointer.x * 0.3 * settings.tiltSensitivity;
-    
-    bottleGroup.current.rotation.x = THREE.MathUtils.lerp(bottleGroup.current.rotation.x, targetX, 0.05);
-    bottleGroup.current.rotation.y += targetY * 0.01;
+    // Optional mouse tilt (disabled by default on Hero stage as requested)
+    if (enableMouseTilt) {
+      const targetX = state.pointer.y * 0.15;
+      const targetY = state.pointer.x * 0.2;
+      bottleGroup.current.rotation.x = THREE.MathUtils.lerp(bottleGroup.current.rotation.x, targetX, 0.04);
+      bottleGroup.current.rotation.y += targetY * 0.01;
+    } else {
+      // Keep bottle perfectly upright during ambient rotation
+      bottleGroup.current.rotation.x = THREE.MathUtils.lerp(bottleGroup.current.rotation.x, 0, 0.05);
+    }
 
-    // Gentle liquid wave animation
+    // Subtle liquid wave
     if (liquidMesh.current) {
-      liquidMesh.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 1.5) * 0.02;
+      liquidMesh.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 1.2) * 0.015;
     }
   });
 
@@ -50,15 +57,13 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
 
   return (
     <Float
-      speed={settings.floatSpeed * 1.5}
-      rotationIntensity={0.15 * settings.floatSpeed}
-      floatIntensity={0.35 * settings.floatSpeed}
+      speed={settings.floatSpeed ? settings.floatSpeed * 1.2 : 1.2}
+      rotationIntensity={0.1}
+      floatIntensity={0.25}
     >
       <group ref={bottleGroup} position={[0, -0.2, 0]} scale={[1.1, 1.1, 1.1]}>
         
-        {/* ------------------------------------------------------------- */}
-        {/* 1. ULTRA-FAST HIGH PERFORMANCE PHYSICAL CRYSTAL GLASS BOTTLE  */}
-        {/* ------------------------------------------------------------- */}
+        {/* 1. CRYSTAL GLASS BOTTLE BODY */}
         <mesh position={[0, 0, 0]} castShadow receiveShadow>
           <cylinderGeometry args={[1.1, 1.05, 2.6, 32]} />
           <meshPhysicalMaterial
@@ -76,9 +81,7 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
           />
         </mesh>
 
-        {/* ------------------------------------------------------------- */}
-        {/* 2. LIQUID FRAGRANCE INSIDE BOTTLE                              */}
-        {/* ------------------------------------------------------------- */}
+        {/* 2. LIQUID FRAGRANCE INSIDE BOTTLE */}
         <mesh ref={liquidMesh} position={[0, -0.15, 0]}>
           <cylinderGeometry args={[0.94, 0.9, 1.8, 28]} />
           <meshPhysicalMaterial
@@ -93,9 +96,7 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
           />
         </mesh>
 
-        {/* ------------------------------------------------------------- */}
-        {/* 3. METALLIC GOLD SPRAY COLLAR & ATOMIZER                      */}
-        {/* ------------------------------------------------------------- */}
+        {/* 3. METALLIC GOLD SPRAY COLLAR & ATOMIZER */}
         <mesh position={[0, 1.4, 0]} castShadow>
           <cylinderGeometry args={[0.42, 0.55, 0.3, 24]} />
           <meshStandardMaterial
@@ -114,9 +115,7 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
           />
         </mesh>
 
-        {/* ------------------------------------------------------------- */}
-        {/* 4. FACETED CRYSTAL GLASS CAP                                  */}
-        {/* ------------------------------------------------------------- */}
+        {/* 4. FACETED CRYSTAL GLASS CAP */}
         <mesh position={[0, 2.05, 0]} castShadow>
           <cylinderGeometry args={[0.6, 0.65, 0.65, 8]} />
           <meshPhysicalMaterial
@@ -134,12 +133,11 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
           <meshStandardMaterial color={goldColor} metalness={0.95} roughness={0.1} />
         </mesh>
 
-        {/* ------------------------------------------------------------- */}
-        {/* 5. EMBOSSED GOLD VALAROIX LOGO MEDALLION                       */}
-        {/* ------------------------------------------------------------- */}
+        {/* 5. CUSTOM BRAND EMBLEM LABEL MEDALLION (Renders your logo/image) */}
         <group position={[0, 0.1, 1.07]}>
+          {/* Metallic Gold Outer Frame */}
           <mesh castShadow>
-            <boxGeometry args={[1.3, 0.7, 0.04]} />
+            <boxGeometry args={[1.35, 0.75, 0.04]} />
             <meshStandardMaterial
               color={goldColor}
               metalness={0.92}
@@ -147,9 +145,14 @@ export default function PerfumeBottle3D({ scrollProgress = 0 }) {
             />
           </mesh>
 
+          {/* Logo Texture Printed Label Face */}
           <mesh position={[0, 0, 0.022]}>
-            <boxGeometry args={[1.2, 0.6, 0.01]} />
-            <meshStandardMaterial color="#0b0b0e" metalness={0.3} roughness={0.4} />
+            <planeGeometry args={[1.25, 0.65]} />
+            <meshStandardMaterial
+              map={logoTexture}
+              roughness={0.2}
+              metalness={0.1}
+            />
           </mesh>
         </group>
       </group>

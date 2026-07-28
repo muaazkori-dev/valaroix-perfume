@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, MousePointerClick, SlidersHorizontal } from 'lucide-react';
+import { Sparkles, ArrowRight, SlidersHorizontal, Expand } from 'lucide-react';
 import ValaroixBottleCanvas from './3d/ValaroixBottleCanvas';
 import { useAnimation } from '@/context/AnimationContext';
 
@@ -10,7 +11,7 @@ export default function HeroSection({ onOpenAdmin }) {
   const { settings } = useAnimation();
 
   return (
-    <section id="hero" className="relative w-full min-h-screen flex items-center pt-24 pb-12 overflow-hidden">
+    <section id="hero" className="relative w-full min-h-screen flex items-center pt-28 pb-12 overflow-hidden">
       {/* Background Radial Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-valaroix-gold/10 rounded-full blur-[140px] pointer-events-none" />
 
@@ -64,14 +65,14 @@ export default function HeroSection({ onOpenAdmin }) {
           <div className="flex flex-wrap items-center gap-4 pt-4">
             <a
               href="#catalog"
-              className="btn-gold px-8 py-4 rounded-full flex items-center gap-3 text-sm tracking-wider uppercase"
+              className="btn-gold px-8 py-4 rounded-full flex items-center gap-3 text-sm tracking-wider uppercase font-bold"
             >
               Acquire Fragrance <ArrowRight className="w-4 h-4" />
             </a>
 
             <button
               onClick={onOpenAdmin}
-              className="px-6 py-4 rounded-full glass-panel hover:border-valaroix-gold text-valaroix-gold text-sm tracking-wider uppercase flex items-center gap-2.5 transition-all duration-300"
+              className="px-6 py-4 rounded-full glass-panel hover:border-valaroix-gold text-valaroix-gold text-sm tracking-wider uppercase flex items-center gap-2.5 transition-all duration-300 font-bold"
             >
               <SlidersHorizontal className="w-4 h-4" />
               Customize 3D Lighting
@@ -85,24 +86,26 @@ export default function HeroSection({ onOpenAdmin }) {
           </div>
         </motion.div>
 
-        {/* Right Column: Interactive 3D WebGL Canvas Stage */}
+        {/* Right Column: Gentle Auto-Rotating 3D Stage (Clicking opens Full 360 Inspector Page) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1 }}
-          className="lg:col-span-6 h-[550px] sm:h-[650px] relative flex items-center justify-center"
+          className="lg:col-span-6 h-[520px] sm:h-[620px] relative flex items-center justify-center"
         >
-          {/* Glass Studio Stage Card */}
-          <div className="w-full h-full relative rounded-3xl overflow-hidden glass-panel border border-valaroix-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
+          <div className="w-full h-full relative rounded-3xl overflow-hidden glass-panel border border-valaroix-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.15)] group">
             
-            {/* Interactive Drag Hint */}
-            <div className="absolute top-4 left-4 z-20 pointer-events-none flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-valaroix-gold/30 text-[11px] text-valaroix-gold">
-              <MousePointerClick className="w-3.5 h-3.5 animate-bounce" />
-              <span>Drag to rotate 3D Bottle in 360°</span>
-            </div>
+            {/* Click to open 360 interactive inspector badge */}
+            <Link
+              href="/admin"
+              className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-valaroix-gold/40 text-xs text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark transition-all duration-300 shadow-lg font-bold"
+            >
+              <Expand className="w-3.5 h-3.5" />
+              <span>Click for Full 360° 3D Inspector ↗</span>
+            </Link>
 
-            {/* Live WebGL Three.js Canvas */}
-            <ValaroixBottleCanvas interactive={true} />
+            {/* Live WebGL Three.js Canvas (Smooth Ambient Auto-Rotation without Mouse Tilt Disruption) */}
+            <ValaroixBottleCanvas interactive={false} enableMouseTilt={false} />
           </div>
         </motion.div>
 
