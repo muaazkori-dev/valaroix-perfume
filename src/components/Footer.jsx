@@ -3,8 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { 
-  Instagram, Facebook, Twitter, Youtube, MessageCircle, 
-  Sparkles, Mail, ShieldCheck, Truck, Award, ArrowUp 
+  Instagram, Facebook, MessageCircle, 
+  Sparkles, Mail, ShieldCheck, ArrowUp 
 } from 'lucide-react';
 
 export default function Footer({ whatsappNumber = '923000000000' }) {
@@ -40,20 +40,6 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
       icon: MessageCircle,
       url: `https://wa.me/${whatsappNumber}`,
       color: 'hover:text-emerald-400 hover:border-emerald-400/50'
-    },
-    {
-      name: 'Twitter / X',
-      handle: '@valaroix',
-      icon: Twitter,
-      url: 'https://twitter.com/valaroix',
-      color: 'hover:text-sky-400 hover:border-sky-400/50'
-    },
-    {
-      name: 'YouTube',
-      handle: 'Valaroix Official',
-      icon: Youtube,
-      url: 'https://youtube.com/@valaroix',
-      color: 'hover:text-red-500 hover:border-red-500/50'
     }
   ];
 
@@ -93,7 +79,7 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
             </div>
           </div>
 
-          {/* Social Media Links Section (4 Cols) */}
+          {/* Social Media Links Section (4 Cols - Instagram, TikTok, Facebook, WhatsApp) */}
           <div className="md:col-span-4 space-y-4">
             <h4 className="font-serif text-sm font-bold uppercase tracking-widest text-valaroix-gold flex items-center gap-2">
               <Sparkles className="w-4 h-4" /> Connect With VALAROIX Privé
@@ -112,7 +98,7 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`glass-panel p-3 rounded-xl border-valaroix-gold/20 flex items-center gap-2.5 transition-all text-xs text-gray-300 font-medium ${social.color}`}
+                    className={`glass-panel p-3.5 rounded-xl border-valaroix-gold/20 flex items-center gap-3 transition-all text-xs text-gray-300 font-medium ${social.color}`}
                   >
                     <IconComponent className="w-4 h-4 text-valaroix-gold shrink-0" />
                     <div className="min-w-0">
