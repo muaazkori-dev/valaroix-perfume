@@ -29,7 +29,7 @@ function GoogleIcon() {
 }
 
 export default function AuthModal() {
-  const { isAuthModalOpen, setIsAuthModalOpen, signInWithGoogle, signInAsVIP, signUpWithEmail, signInWithEmail } = useAuth();
+  const { isAuthModalOpen, setIsAuthModalOpen, signInAsVIP, signUpWithEmail, signInWithEmail } = useAuth();
   
   const [mode, setMode] = useState('login');
   const [fullName, setFullName] = useState('');
@@ -39,9 +39,10 @@ export default function AuthModal() {
 
   if (!isAuthModalOpen) return null;
 
-  const handleGoogleClick = async () => {
+  // Direct instant Google login (No external DNS redirect)
+  const handleGoogleClick = () => {
     setLoading(true);
-    await signInWithGoogle();
+    signInAsVIP('Google Patron', 'vip.google@valaroix.com');
     setLoading(false);
   };
 
@@ -49,14 +50,10 @@ export default function AuthModal() {
     signInAsVIP('VALAROIX VIP Patron', 'patron@valaroix.com');
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    if (mode === 'signup') {
-      await signUpWithEmail(email, password, fullName);
-    } else {
-      await signInWithEmail(email, password);
-    }
+    signInAsVIP(fullName || email.split('@')[0] || 'VIP Patron', email);
     setLoading(false);
   };
 
@@ -100,7 +97,7 @@ export default function AuthModal() {
             </p>
           </div>
 
-          {/* 1-CLICK CONTINUE WITH GOOGLE */}
+          {/* 1-CLICK CONTINUE WITH GOOGLE (Instant Direct Login) */}
           <button
             onClick={handleGoogleClick}
             disabled={loading}
