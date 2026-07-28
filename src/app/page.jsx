@@ -48,10 +48,10 @@ export default function Home() {
       <ReviewsSection />
 
       {/* Footer with Social Media Links */}
-      <Footer whatsappNumber="923000000000" />
+      <Footer whatsappNumber="923141397378" />
 
       {/* Floating WhatsApp Luxury Concierge Button */}
-      <FloatingWhatsApp phoneNumber="923000000000" />
+      <FloatingWhatsApp phoneNumber="923141397378" />
 
       {/* Interactive Modals & Drawers */}
       <CartDrawer />

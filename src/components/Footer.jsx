@@ -7,7 +7,7 @@ import {
   Sparkles, Mail, ShieldCheck, ArrowUp 
 } from 'lucide-react';
 
-export default function Footer({ whatsappNumber = '923000000000' }) {
+export default function Footer({ whatsappNumber = '923141397378' }) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -36,7 +36,7 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
     },
     {
       name: 'WhatsApp VIP Support',
-      handle: `+${whatsappNumber}`,
+      handle: '+92 314 1397378',
       icon: MessageCircle,
       url: `https://wa.me/${whatsappNumber}`,
       color: 'hover:text-emerald-400 hover:border-emerald-400/50'
@@ -79,7 +79,7 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
             </div>
           </div>
 
-          {/* Real Social Media Links Section (4 Cols - Instagram, TikTok, Facebook, WhatsApp) */}
+          {/* Real Social Media Links Section (4 Cols) */}
           <div className="md:col-span-4 space-y-4">
             <h4 className="font-serif text-sm font-bold uppercase tracking-widest text-valaroix-gold flex items-center gap-2">
               <Sparkles className="w-4 h-4" /> Connect With VALAROIX Privé

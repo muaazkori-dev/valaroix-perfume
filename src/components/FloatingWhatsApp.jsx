@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, X } from 'lucide-react';
 
-export default function FloatingWhatsApp({ phoneNumber = '923000000000' }) {
+export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const defaultMessage = encodeURIComponent(
