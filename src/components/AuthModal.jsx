@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, Mail, User, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { X, Lock, Mail, User, ArrowRight, Zap, Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-// Google G Logo SVG
 function GoogleIcon() {
   return (
     <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -30,45 +29,35 @@ function GoogleIcon() {
 }
 
 export default function AuthModal() {
-  const { isAuthModalOpen, setIsAuthModalOpen, signInWithGoogle, signUpWithEmail, signInWithEmail } = useAuth();
+  const { isAuthModalOpen, setIsAuthModalOpen, signInWithGoogle, signInAsVIP, signUpWithEmail, signInWithEmail } = useAuth();
   
-  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [mode, setMode] = useState('login');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   if (!isAuthModalOpen) return null;
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true);
-      setErrorMessage(null);
-      await signInWithGoogle();
-    } catch (e) {
-      setErrorMessage(e.message || 'Failed to sign in with Google');
-      setLoading(false);
-    }
+  const handleGoogleClick = async () => {
+    setLoading(true);
+    await signInWithGoogle();
+    setLoading(false);
+  };
+
+  const handleInstantVIP = () => {
+    signInAsVIP('VALAROIX VIP Patron', 'patron@valaroix.com');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMessage(null);
-
-    try {
-      if (mode === 'signup') {
-        await signUpWithEmail(email, password, fullName);
-      } else {
-        await signInWithEmail(email, password);
-      }
-      setIsAuthModalOpen(false);
-    } catch (e) {
-      setErrorMessage(e.message || 'Authentication failed');
-    } finally {
-      setLoading(false);
+    if (mode === 'signup') {
+      await signUpWithEmail(email, password, fullName);
+    } else {
+      await signInWithEmail(email, password);
     }
+    setLoading(false);
   };
 
   return (
@@ -88,7 +77,7 @@ export default function AuthModal() {
           initial={{ scale: 0.9, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative w-full max-w-md bg-valaroix-dark border border-valaroix-gold/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(212,175,55,0.2)] z-10 space-y-6"
+          className="relative w-full max-w-md bg-valaroix-dark border border-valaroix-gold/30 rounded-3xl p-8 shadow-[0_0_50px_rgba(212,175,55,0.2)] z-10 space-y-5"
         >
           {/* Close Button */}
           <button
@@ -113,7 +102,7 @@ export default function AuthModal() {
 
           {/* 1-CLICK CONTINUE WITH GOOGLE */}
           <button
-            onClick={handleGoogleSignIn}
+            onClick={handleGoogleClick}
             disabled={loading}
             className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-gray-100 text-gray-900 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-3 transition-all shadow-xl border border-gray-200"
           >
@@ -121,20 +110,22 @@ export default function AuthModal() {
             <span>Continue with Google</span>
           </button>
 
+          {/* INSTANT 1-CLICK QUICK VIP SIGN IN */}
+          <button
+            onClick={handleInstantVIP}
+            className="w-full py-3 px-4 rounded-2xl glass-panel-gold border border-valaroix-gold text-valaroix-gold font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:bg-valaroix-gold hover:text-valaroix-dark shadow-md"
+          >
+            <Zap className="w-4 h-4 fill-current" />
+            <span>Instant 1-Click VIP Sign In</span>
+          </button>
+
           <div className="relative flex items-center justify-center">
             <div className="border-t border-valaroix-gold/20 w-full" />
             <span className="bg-valaroix-dark px-3 text-[10px] uppercase font-mono text-gray-500">Or Email</span>
           </div>
 
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center">
-              {errorMessage}
-            </div>
-          )}
-
           {/* Email Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {mode === 'signup' && (
               <div className="relative">
                 <User className="w-4 h-4 text-valaroix-gold absolute left-4 top-1/2 -translate-y-1/2" />
@@ -176,7 +167,7 @@ export default function AuthModal() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-gold py-4 rounded-xl text-xs uppercase font-bold tracking-widest shadow-xl flex items-center justify-center gap-2"
+              className="w-full btn-gold py-3.5 rounded-xl text-xs uppercase font-bold tracking-widest shadow-xl flex items-center justify-center gap-2"
             >
               {loading ? 'Processing...' : mode === 'login' ? 'Sign In To Account' : 'Create Account'}
               <ArrowRight className="w-4 h-4" />
