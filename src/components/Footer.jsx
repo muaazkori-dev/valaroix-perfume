@@ -15,27 +15,27 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
   const socialLinks = [
     {
       name: 'Instagram',
-      handle: '@valaroix.parfums',
+      handle: '@valaroix',
       icon: Instagram,
-      url: 'https://instagram.com/valaroix.parfums',
+      url: 'https://www.instagram.com/valaroix?igsh=MXBubjJ3OGh3dXkxYg==',
       color: 'hover:text-pink-500 hover:border-pink-500/50'
     },
     {
       name: 'TikTok',
-      handle: '@valaroix.official',
+      handle: '@valaroix',
       icon: Sparkles,
-      url: 'https://tiktok.com/@valaroix.official',
+      url: 'https://www.tiktok.com/@valaroix?_r=1&_t=ZS-98PpZQGSd5Z',
       color: 'hover:text-cyan-400 hover:border-cyan-400/50'
     },
     {
       name: 'Facebook',
-      handle: 'Valaroix Parfumerie',
+      handle: 'Valaroix Parfums',
       icon: Facebook,
-      url: 'https://facebook.com/valaroix',
+      url: 'https://www.facebook.com/share/1DHYggRsn4/',
       color: 'hover:text-blue-500 hover:border-blue-500/50'
     },
     {
-      name: 'WhatsApp Concierge',
+      name: 'WhatsApp VIP Support',
       handle: `+${whatsappNumber}`,
       icon: MessageCircle,
       url: `https://wa.me/${whatsappNumber}`,
@@ -79,7 +79,7 @@ export default function Footer({ whatsappNumber = '923000000000' }) {
             </div>
           </div>
 
-          {/* Social Media Links Section (4 Cols - Instagram, TikTok, Facebook, WhatsApp) */}
+          {/* Real Social Media Links Section (4 Cols - Instagram, TikTok, Facebook, WhatsApp) */}
           <div className="md:col-span-4 space-y-4">
             <h4 className="font-serif text-sm font-bold uppercase tracking-widest text-valaroix-gold flex items-center gap-2">
               <Sparkles className="w-4 h-4" /> Connect With VALAROIX Privé
