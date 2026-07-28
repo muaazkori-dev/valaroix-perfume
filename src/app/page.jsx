@@ -17,6 +17,8 @@ import ProductDetailModal from '@/components/ProductDetailModal';
 import AdminStudioDrawer from '@/components/admin/AdminStudioDrawer';
 import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import Footer from '@/components/Footer';
+import AuthModal from '@/components/AuthModal';
+import CustomerAccountModal from '@/components/CustomerAccountModal';
 
 export default function Home() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
@@ -47,11 +49,15 @@ export default function Home() {
       {/* Patron Reviews */}
       <ReviewsSection />
 
-      {/* Footer with Social Media Links */}
+      {/* Footer with Real Social Media Links */}
       <Footer whatsappNumber="923141397378" />
 
       {/* Floating WhatsApp Luxury Concierge Button */}
       <FloatingWhatsApp phoneNumber="923141397378" />
+
+      {/* Customer Auth & Order History Account Modals */}
+      <AuthModal />
+      <CustomerAccountModal />
 
       {/* Interactive Modals & Drawers */}
       <CartDrawer />

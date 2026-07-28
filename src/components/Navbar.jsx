@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart } from 'lucide-react';
+import { ShoppingBag, Sliders, Volume2, VolumeX, Compass, Truck, Heart, User, LogIn } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar({ onOpenAdmin }) {
   const { cart, wishlist, setIsCartOpen, setIsTrackOrderOpen, setIsQuizOpen } = useCart();
+  const { user, setIsAuthModalOpen, setIsAccountModalOpen } = useAuth();
+  
   const [scrolled, setScrolled] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
 
@@ -22,6 +25,14 @@ export default function Navbar({ onOpenAdmin }) {
 
   const toggleAudio = () => {
     setIsPlayingAudio(!isPlayingAudio);
+  };
+
+  const handleUserClick = () => {
+    if (user) {
+      setIsAccountModalOpen(true);
+    } else {
+      setIsAuthModalOpen(true);
+    }
   };
 
   return (
@@ -80,6 +91,27 @@ export default function Navbar({ onOpenAdmin }) {
         {/* Right Action Icons & Buttons */}
         <div className="flex items-center gap-3 shrink-0">
           
+          {/* CUSTOMER AUTH & VIP PROFILE BUTTON */}
+          <button
+            onClick={handleUserClick}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full glass-panel-gold border border-valaroix-gold/40 text-xs font-bold text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark transition-all shadow-md"
+            title={user ? 'View VIP Account & Order History' : 'Sign In / Sign Up'}
+          >
+            {user ? (
+              <div className="flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-full bg-valaroix-gold text-valaroix-dark text-[10px] font-bold flex items-center justify-center">
+                  {(user.user_metadata?.full_name || user.email)?.[0]?.toUpperCase()}
+                </span>
+                <span className="hidden md:inline font-mono">My Account & Orders</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5">
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In</span>
+              </div>
+            )}
+          </button>
+
           {/* Track Courier Link */}
           <button
             onClick={() => setIsTrackOrderOpen(true)}

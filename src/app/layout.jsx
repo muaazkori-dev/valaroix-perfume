@@ -2,6 +2,7 @@ import './globals.css';
 import { AnimationProvider } from '@/context/AnimationContext';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata = {
   metadataBase: new URL('https://valaroix.com'),
@@ -74,11 +75,13 @@ export default function RootLayout({ children }) {
       </head>
       <body className="bg-valaroix-dark text-gray-100 selection:bg-valaroix-gold selection:text-valaroix-dark">
         <CurrencyProvider>
-          <AnimationProvider>
-            <CartProvider>
-              {children}
-            </CartProvider>
-          </AnimationProvider>
+          <AuthProvider>
+            <AnimationProvider>
+              <CartProvider>
+                {children}
+              </CartProvider>
+            </AnimationProvider>
+          </AuthProvider>
         </CurrencyProvider>
       </body>
     </html>
