@@ -29,7 +29,7 @@ function GoogleIcon() {
 }
 
 export default function AuthModal() {
-  const { isAuthModalOpen, setIsAuthModalOpen, signInAsVIP } = useAuth();
+  const { isAuthModalOpen, setIsAuthModalOpen, signInWithGoogle, signInAsVIP } = useAuth();
   
   const [mode, setMode] = useState('login');
   const [fullName, setFullName] = useState('');
@@ -41,8 +41,7 @@ export default function AuthModal() {
 
   const handleGoogleClick = () => {
     setLoading(true);
-    signInAsVIP('Google Patron', 'vip.google@valaroix.com');
-    setLoading(false);
+    signInWithGoogle();
   };
 
   const handleInstantVIP = () => {
