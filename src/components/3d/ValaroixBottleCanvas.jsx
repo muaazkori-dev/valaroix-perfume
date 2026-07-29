@@ -6,7 +6,6 @@ import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import { useAnimation } from '@/context/AnimationContext';
 import PerfumeBottle3D from './PerfumeBottle3D';
 import GoldParticleField from './GoldParticleField';
-import ScentNoteRings from './ScentNoteRings';
 
 export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive = false, enableMouseTilt = false }) {
   const { settings } = useAnimation();
@@ -27,7 +26,7 @@ export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive =
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-full relative">
+    <div ref={containerRef} className="w-full h-full relative touch-pan-y overflow-hidden">
       {isInView && (
         <Canvas
           camera={{
@@ -44,6 +43,7 @@ export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive =
             depth: true
           }}
           dpr={[1, 1.25]}
+          style={{ touchAction: 'pan-y' }}
         >
           <ambientLight intensity={settings.ambientIntensity || 0.8} />
           
@@ -66,9 +66,8 @@ export default function ValaroixBottleCanvas({ scrollProgress = 0, interactive =
           <Environment preset={settings.environmentPreset || 'city'} />
 
           <Suspense fallback={null}>
-            <PerfumeBottle3D scrollProgress={scrollProgress} enableMouseTilt={enableMouseTilt} />
+            <PerfumeBottle3D scrollProgress={scrollProgress} enableMouseTilt={false} />
             <GoldParticleField />
-            <ScentNoteRings />
 
             <ContactShadows
               position={[0, -1.5, 0]}
