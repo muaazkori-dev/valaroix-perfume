@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   DollarSign, TrendingUp, Package, Users, ShoppingBag, Truck, CheckCircle2, 
   Clock, ArrowLeft, RefreshCw, Smartphone, Sparkles, Filter, ChevronRight, 
-  MessageSquare, Sliders, ExternalLink, Download, AlertCircle, Users2, Split, Check, X, Eye
+  MessageSquare, Sliders, ExternalLink, Download, AlertCircle, Users2, Split, Check, X, Eye, PhoneCall
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -79,6 +79,30 @@ export default function AdminDashboardPage() {
     if (orderFilter === 'delivered') return order.status.includes('Delivered');
     return true;
   });
+
+  // Direct WhatsApp Inquiry to Client (Ask to Confirm or Cancel Order)
+  const handleAskClientOnWhatsApp = (order) => {
+    const itemName = order.items ? order.items.map(i => i.name).join(', ') : order.item;
+    const message = `Assalam-o-Alaikum ${order.customerName}! 👋
+
+Aapka VALAROIX Haute Parfumerie Order #${order.id} receive ho chuka hai!
+
+📦 Item: ${itemName}
+💰 Total Amount: Rs. ${(order.pricePkr || 0).toLocaleString()}
+🚚 Delivery Address: ${order.address}, ${order.city}
+💳 Payment Method: ${order.paymentMethod}
+
+Kya aap is order ko CONFIRM karte hain? 
+Khabar dein taaki hum aapka luxury 3D parcel aaj hi dispatch kar sakein!
+
+Please reply:
+1. CONFIRM ORDER
+2. CANCEL ORDER`;
+
+    const text = encodeURIComponent(message);
+    const cleanPhone = order.phone.replace(/^0/, '');
+    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
+  };
 
   const handleConfirmOrder = (orderId, customerName, phone, pricePkr) => {
     const updated = allOrders.map((o) =>
@@ -216,7 +240,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <span className="text-xs text-gray-400 font-mono">
-                Click Confirm/Cancel to trigger direct WhatsApp notification
+                Click 💬 Ask Client to open WhatsApp inquiry with order details pre-filled
               </span>
             </div>
 
@@ -235,8 +259,22 @@ export default function AdminDashboardPage() {
                         <span className="text-xs text-gray-400 font-mono">Date: {order.date}</span>
                       </div>
                       <h4 className="font-serif text-xl font-bold text-white mt-1">{order.customerName}</h4>
-                      <span className="text-xs text-gray-300 block font-mono">WhatsApp: <strong className="text-valaroix-gold">{order.phone}</strong></span>
-                      <span className="text-xs text-gray-300 block mt-0.5">{order.city} — {order.address}</span>
+                      
+                      {/* WhatsApp Direct Clickable Link next to phone number */}
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-gray-300 font-mono">WhatsApp:</span>
+                        <button
+                          onClick={() => handleAskClientOnWhatsApp(order)}
+                          className="px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold hover:bg-emerald-500 hover:text-black transition-all flex items-center gap-1.5"
+                          title="Open Direct WhatsApp Chat with Client"
+                        >
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>{order.phone}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </button>
+                      </div>
+
+                      <span className="text-xs text-gray-300 block mt-1">{order.city} — {order.address}</span>
                     </div>
 
                     <div className="flex flex-col items-end gap-1">
@@ -292,8 +330,17 @@ export default function AdminDashboardPage() {
                       </span>
                     </div>
 
-                    {/* Admin 2 Action Buttons: Confirm vs Cancel */}
-                    <div className="flex items-center gap-2">
+                    {/* Action Buttons: 💬 Ask Client via WhatsApp, ✅ Confirm, ❌ Cancel */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      {/* Direct WhatsApp Inquiry Button */}
+                      <button
+                        onClick={() => handleAskClientOnWhatsApp(order)}
+                        className="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"
+                        title="Send pre-filled WhatsApp message to client asking to confirm or cancel"
+                      >
+                        <MessageSquare className="w-4 h-4" /> 💬 Ask Client on WhatsApp
+                      </button>
+
                       <button
                         onClick={() => handleConfirmOrder(order.id, order.customerName, order.phone, order.pricePkr)}
                         className="px-4 py-2 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs uppercase font-bold flex items-center gap-1.5 shadow-lg"
