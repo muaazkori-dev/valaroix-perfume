@@ -1,64 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, CheckCircle, Sparkles, MessageSquare, X } from 'lucide-react';
-
-const reviewsData = [
-  {
-    id: 1,
-    author: 'Hamza Malik',
-    location: 'DHA Phase 6, Karachi',
-    rating: 5,
-    date: 'Yesterday',
-    perfume: 'Valaroix Sauvage Imperial (24h Extrait)',
-    title: 'Bhai bilkul insane lasting hai! 24 ghante baad bhi kapron se khushboo arahi hai.',
-    content: 'Pehle mujhe laga online fraud na ho, lekin jab delivery ayi aur bottle spray ki to sach me kamaal smell hai. Sauvage Elixir se 100% match hai aur projection bohut strong hai!',
-    verified: true
-  },
-  {
-    id: 2,
-    author: 'Shahzaib Ahmed',
-    location: 'Gulberg III, Lahore',
-    rating: 5,
-    date: '3 days ago',
-    perfume: 'Valaroix Cedrat Boise Extreme',
-    title: 'Masterpiece fragrance! Express courier delivery in 2 days.',
-    content: 'Packaging aur bottle quality dekh kar dil khush ho gaya. Fresh lemon aur leather smell hai jo poore office me phel jati hai. SadePay se payment ki thi aur instant confirm ho gaya.',
-    verified: true
-  },
-  {
-    id: 3,
-    author: 'Dr. Usman Farooq',
-    location: 'F-8/2, Islamabad',
-    rating: 5,
-    date: '1 week ago',
-    perfume: 'Valaroix Baccarat Amber 540',
-    title: 'Top notch quality. Highly recommended for perfume lovers.',
-    content: 'Baccarat 540 wala same sweet ambergris aur saffron scent profile hai. Lasting effortlessly 12-14 hours+ rehti hai. Value for money deal!',
-    verified: true
-  }
-];
+import { Star, CheckCircle, MessageSquare, X } from 'lucide-react';
 
 export default function ReviewsSection() {
   const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
   const [newReview, setNewReview] = useState({ name: '', title: '', content: '', rating: 5 });
-  const [allReviews, setAllReviews] = useState(reviewsData);
+  const [allReviews, setAllReviews] = useState([]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('valaroix_customer_reviews');
+      if (saved) {
+        setAllReviews(JSON.parse(saved));
+      }
+    } catch (e) {}
+  }, []);
 
   const handleAddReview = (e) => {
     e.preventDefault();
     const created = {
       id: Date.now(),
       author: newReview.name || 'Verified Buyer',
-      location: 'Verified Customer, Pakistan',
+      location: 'Verified Customer',
       rating: newReview.rating,
       date: 'Just now',
-      perfume: 'Valaroix Sauvage Imperial',
       title: newReview.title,
       content: newReview.content,
       verified: true
     };
-    setAllReviews([created, ...allReviews]);
+    const updated = [created, ...allReviews];
+    setAllReviews(updated);
+    try {
+      localStorage.setItem('valaroix_customer_reviews', JSON.stringify(updated));
+    } catch (e) {}
     setIsReviewFormOpen(false);
     setNewReview({ name: '', title: '', content: '', rating: 5 });
   };
@@ -71,10 +47,10 @@ export default function ReviewsSection() {
         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
           <div className="space-y-2">
             <span className="block text-[11px] font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">
-              CUSTOMER TRUST & REVIEWS
+              CUSTOMER REVIEWS
             </span>
             <h2 className="font-serif-mockup text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              WHAT OUR CLIENTS SAY
+              REAL CLIENT REVIEWS
             </h2>
           </div>
 
@@ -86,78 +62,63 @@ export default function ReviewsSection() {
           </button>
         </div>
 
-        {/* Ratings Breakdown Summary */}
-        <div className="bg-[#1A1A1A] p-6 rounded-2xl border border-[#D4AF37]/30 grid grid-cols-1 md:grid-cols-4 gap-6 text-center shadow-xl">
-          <div className="space-y-1">
-            <span className="font-serif-mockup text-3xl font-extrabold text-[#D4AF37]">4.98 / 5.0</span>
-            <div className="flex justify-center text-[#D4AF37]">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-current" />
-              ))}
-            </div>
-            <span className="block text-[10px] text-[#6B6B6B]">Based on 520+ Pakistani Customers</span>
-          </div>
-
-          <div className="space-y-1">
-            <span className="block text-xs uppercase font-bold text-gray-300">Longevity Guarantee</span>
-            <span className="font-serif-mockup text-xl font-bold text-[#D4AF37]">10h - 24h+ Lasting</span>
-            <span className="block text-[10px] text-[#6B6B6B]">Pure Extrait Oils</span>
-          </div>
-
-          <div className="space-y-1">
-            <span className="block text-xs uppercase font-bold text-gray-300">Delivery Speed</span>
-            <span className="font-serif-mockup text-xl font-bold text-[#D4AF37]">24 - 48 Hours</span>
-            <span className="block text-[10px] text-[#6B6B6B]">Free Courier Pakistan</span>
-          </div>
-
-          <div className="space-y-1">
-            <span className="block text-xs uppercase font-bold text-gray-300">Customer Satisfaction</span>
-            <span className="font-serif-mockup text-xl font-bold text-[#D4AF37]">99.2% Positive</span>
-            <span className="block text-[10px] text-[#6B6B6B]">Verified Buyers</span>
-          </div>
-        </div>
-
-        {/* Reviews Cards List */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {allReviews.map((rev) => (
-            <motion.div
-              key={rev.id}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-[#1A1A1A] p-6 rounded-2xl border border-[#D4AF37]/20 flex flex-col justify-between space-y-4 shadow-lg hover:border-[#D4AF37]/50 transition-all"
-            >
-              <div className="space-y-2.5">
-                <div className="flex justify-between items-center">
-                  <div className="flex text-[#D4AF37]">
-                    {[...Array(rev.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                    ))}
+        {/* Reviews Cards List or Empty State */}
+        {allReviews.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {allReviews.map((rev) => (
+              <motion.div
+                key={rev.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-[#1A1A1A] p-6 rounded-2xl border border-[#D4AF37]/20 flex flex-col justify-between space-y-4 shadow-lg hover:border-[#D4AF37]/50 transition-all"
+              >
+                <div className="space-y-2.5">
+                  <div className="flex justify-between items-center">
+                    <div className="flex text-[#D4AF37]">
+                      {[...Array(rev.rating)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                      ))}
+                    </div>
+                    <span className="text-[10px] text-[#6B6B6B]">{rev.date}</span>
                   </div>
-                  <span className="text-[10px] text-[#6B6B6B]">{rev.date}</span>
+
+                  <h3 className="font-serif-mockup text-sm font-bold text-white leading-snug">
+                    "{rev.title}"
+                  </h3>
+
+                  <p className="text-gray-300 text-xs font-light leading-relaxed">
+                    {rev.content}
+                  </p>
                 </div>
 
-                <h3 className="font-serif-mockup text-sm font-bold text-white leading-snug">
-                  "{rev.title}"
-                </h3>
-
-                <p className="text-gray-300 text-xs font-light leading-relaxed">
-                  {rev.content}
-                </p>
-              </div>
-
-              <div className="pt-3 border-t border-[#D4AF37]/15 flex items-center justify-between">
-                <div>
-                  <h4 className="font-bold text-xs text-white flex items-center gap-1.5">
-                    {rev.author}
-                    {rev.verified && <CheckCircle className="w-3.5 h-3.5 text-[#D4AF37]" />}
-                  </h4>
-                  <span className="text-[10px] text-[#6B6B6B] block">{rev.perfume} • {rev.location}</span>
+                <div className="pt-3 border-t border-[#D4AF37]/15 flex items-center justify-between">
+                  <div>
+                    <h4 className="font-bold text-xs text-white flex items-center gap-1.5">
+                      {rev.author}
+                      {rev.verified && <CheckCircle className="w-3.5 h-3.5 text-[#D4AF37]" />}
+                    </h4>
+                    <span className="text-[10px] text-[#6B6B6B] block">{rev.location}</span>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-[#1A1A1A] p-12 rounded-2xl border border-[#D4AF37]/20 text-center space-y-4 max-w-xl mx-auto">
+            <MessageSquare className="w-10 h-10 text-[#D4AF37] mx-auto opacity-80" />
+            <h3 className="font-serif-mockup font-bold text-lg text-white">No Reviews Yet</h3>
+            <p className="text-xs text-[#6B6B6B]">
+              Be the first customer to leave an authentic review after receiving your VALAROIX perfume parcel!
+            </p>
+            <button
+              onClick={() => setIsReviewFormOpen(true)}
+              className="px-6 py-3 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider inline-block"
+            >
+              Write First Review
+            </button>
+          </div>
+        )}
 
       </div>
 
@@ -187,7 +148,7 @@ export default function ReviewsSection() {
                 <input
                   type="text"
                   required
-                  placeholder="Review Headline (e.g. Amazing Smell & Fast Delivery)"
+                  placeholder="Review Title (e.g. Excellent Smell & Quality)"
                   value={newReview.title}
                   onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
                   className="w-full bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#D4AF37]"
@@ -195,7 +156,7 @@ export default function ReviewsSection() {
                 <textarea
                   required
                   rows={4}
-                  placeholder="Tell us about your experience with VALAROIX Perfumes..."
+                  placeholder="Share your honest thoughts about your VALAROIX perfume..."
                   value={newReview.content}
                   onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
                   className="w-full bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-xl p-3 text-white focus:outline-none focus:border-[#D4AF37]"
