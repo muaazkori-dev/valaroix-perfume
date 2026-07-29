@@ -11,7 +11,7 @@ export default function HeroSection({ onOpenAdmin }) {
   const { settings } = useAnimation();
 
   return (
-    <section id="hero" className="relative w-full min-h-screen flex items-center pt-28 pb-12 overflow-hidden">
+    <section id="hero" className="relative w-full min-h-screen flex items-center pt-8 sm:pt-12 pb-12 overflow-hidden">
       {/* Background Radial Glow */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-valaroix-gold/10 rounded-full blur-[140px] pointer-events-none" />
 
