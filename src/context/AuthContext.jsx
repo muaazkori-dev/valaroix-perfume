@@ -1,7 +1,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 
 const AuthContext = createContext();
 
@@ -34,18 +33,11 @@ export function AuthProvider({ children }) {
   // Check saved patron session on load or URL hash token from Google OAuth
   useEffect(() => {
     try {
-      // Check local storage for signed in user
-      const savedUser = localStorage.getItem('valaroix_patron_user');
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
-      }
-
       // Check Google OAuth URL response token
       if (window.location.hash.includes('access_token')) {
         const params = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = params.get('access_token');
         if (accessToken) {
-          // Fetch Google User Profile
           fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
             headers: { Authorization: `Bearer ${accessToken}` }
           })
@@ -53,19 +45,25 @@ export function AuthProvider({ children }) {
             .then((data) => {
               if (data && data.email) {
                 const googleUser = {
-                  id: data.sub || 'google-user-1',
+                  id: data.sub || 'google-user-' + Date.now(),
                   email: data.email,
                   user_metadata: { full_name: data.name || data.email.split('@')[0] }
                 };
                 setUser(googleUser);
                 localStorage.setItem('valaroix_patron_user', JSON.stringify(googleUser));
                 setIsAccountModalOpen(true);
-                // Clean hash from URL
                 window.history.replaceState(null, null, window.location.pathname);
               }
             })
             .catch(() => {});
+          return;
         }
+      }
+
+      // Check local storage for signed in user
+      const savedUser = localStorage.getItem('valaroix_patron_user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
       }
     } catch (e) {}
   }, []);
@@ -75,7 +73,7 @@ export function AuthProvider({ children }) {
     const redirectUri = encodeURIComponent(window.location.origin);
     const scope = encodeURIComponent('email profile');
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&prompt=select_account`;
-    window.location.href = authUrl;
+    window.location.assign(authUrl);
   };
 
   // Instant 1-Click VIP Patron Sign In
@@ -120,8 +118,8 @@ export function AuthProvider({ children }) {
     return newUser;
   };
 
-  // Sign Out
-  const signOut = async () => {
+  // Sign Out (Completely clear user state)
+  const signOut = () => {
     setUser(null);
     setSession(null);
     localStorage.removeItem('valaroix_patron_user');
