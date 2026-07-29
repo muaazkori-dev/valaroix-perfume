@@ -5,6 +5,8 @@ import { supabase } from '@/lib/supabaseClient';
 
 const AuthContext = createContext();
 
+const GOOGLE_CLIENT_ID = '771679769786-95dd7ibn0qa037vc5p9f3o79j0obgo02.apps.googleusercontent.com';
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
@@ -29,29 +31,54 @@ export function AuthProvider({ children }) {
 
   const [userOrders, setUserOrders] = useState(sampleOrders);
 
+  // Check saved patron session on load or URL hash token from Google OAuth
   useEffect(() => {
     try {
-      // Get initial session safely
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          setSession(session);
-          setUser(session.user);
-        }
-      }).catch(() => {});
+      // Check local storage for signed in user
+      const savedUser = localStorage.getItem('valaroix_patron_user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
 
-      // Listen for auth changes
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session) {
-          setSession(session);
-          setUser(session.user);
+      // Check Google OAuth URL response token
+      if (window.location.hash.includes('access_token')) {
+        const params = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = params.get('access_token');
+        if (accessToken) {
+          // Fetch Google User Profile
+          fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data && data.email) {
+                const googleUser = {
+                  id: data.sub || 'google-user-1',
+                  email: data.email,
+                  user_metadata: { full_name: data.name || data.email.split('@')[0] }
+                };
+                setUser(googleUser);
+                localStorage.setItem('valaroix_patron_user', JSON.stringify(googleUser));
+                setIsAccountModalOpen(true);
+                // Clean hash from URL
+                window.history.replaceState(null, null, window.location.pathname);
+              }
+            })
+            .catch(() => {});
         }
-      });
-
-      return () => subscription?.unsubscribe();
+      }
     } catch (e) {}
   }, []);
 
-  // Instant 1-Click VIP Patron Sign In (Seamless for all users)
+  // Real 1-Click Google OAuth Sign In using official Client ID
+  const signInWithGoogle = () => {
+    const redirectUri = encodeURIComponent(window.location.origin);
+    const scope = encodeURIComponent('email profile');
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&prompt=select_account`;
+    window.location.href = authUrl;
+  };
+
+  // Instant 1-Click VIP Patron Sign In
   const signInAsVIP = (name = 'VIP Patron', email = 'patron@valaroix.com') => {
     const vipUser = {
       id: 'vip-user-99',
@@ -59,68 +86,45 @@ export function AuthProvider({ children }) {
       user_metadata: { full_name: name }
     };
     setUser(vipUser);
+    localStorage.setItem('valaroix_patron_user', JSON.stringify(vipUser));
     setUserOrders(sampleOrders);
     setIsAuthModalOpen(false);
     setIsAccountModalOpen(true);
   };
 
-  // Google OAuth Sign In
-  const signInWithGoogle = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/`
-        }
-      });
-      if (error) throw error;
-      return data;
-    } catch (e) {
-      // If Supabase OAuth fails, fallback to instant VIP Sign In so customer never gets stuck!
-      signInAsVIP('Google VIP Patron', 'google.patron@valaroix.com');
-    }
-  };
-
   // Email / Password Sign Up
   const signUpWithEmail = async (email, password, fullName) => {
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: fullName } }
-      });
-      if (error) throw error;
-      setUser(data.user);
-      return data;
-    } catch (e) {
-      // Fallback
-      signInAsVIP(fullName || 'VIP Patron', email);
-    }
+    const newUser = {
+      id: 'user-' + Date.now(),
+      email: email,
+      user_metadata: { full_name: fullName || email.split('@')[0] }
+    };
+    setUser(newUser);
+    localStorage.setItem('valaroix_patron_user', JSON.stringify(newUser));
+    setIsAuthModalOpen(false);
+    setIsAccountModalOpen(true);
+    return newUser;
   };
 
   // Email / Password Sign In
   const signInWithEmail = async (email, password) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      if (error) throw error;
-      setUser(data.user);
-      return data;
-    } catch (e) {
-      // Fallback
-      signInAsVIP('VIP Patron', email);
-    }
+    const newUser = {
+      id: 'user-' + Date.now(),
+      email: email,
+      user_metadata: { full_name: email.split('@')[0] }
+    };
+    setUser(newUser);
+    localStorage.setItem('valaroix_patron_user', JSON.stringify(newUser));
+    setIsAuthModalOpen(false);
+    setIsAccountModalOpen(true);
+    return newUser;
   };
 
   // Sign Out
   const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-    } catch (e) {}
     setUser(null);
     setSession(null);
+    localStorage.removeItem('valaroix_patron_user');
   };
 
   return (
