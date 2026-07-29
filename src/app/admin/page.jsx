@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { 
   DollarSign, TrendingUp, Package, Users, ShoppingBag, Truck, CheckCircle2, 
   Clock, ArrowLeft, RefreshCw, Smartphone, Sparkles, Filter, ChevronRight, 
-  MessageSquare, Sliders, ExternalLink, Download, AlertCircle 
+  MessageSquare, Sliders, ExternalLink, Download, AlertCircle, Users2, Split, Check
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'orders' | 'inventory' | 'studio'
+  const [activeTab, setActiveTab] = useState('partners'); // 'partners' | 'overview' | 'orders' | 'inventory'
   const [orderFilter, setOrderFilter] = useState('all');
 
   // Sample Live Customer Orders
@@ -30,7 +30,8 @@ export default function AdminDashboardPage() {
       status: 'In Transit',
       trackingCode: 'DHL-VAL-88921',
       engraving: 'M.K. 2026',
-      paymentMethod: 'Cash On Delivery'
+      paymentMethod: 'Cash On Delivery',
+      settled: false
     },
     {
       id: 'VLX-98242',
@@ -48,7 +49,8 @@ export default function AdminDashboardPage() {
       status: 'Pending Dispatch',
       trackingCode: 'DHL-VAL-88922',
       engraving: 'S.A. VIP',
-      paymentMethod: 'Card Online'
+      paymentMethod: 'Card Online',
+      settled: false
     },
     {
       id: 'VLX-98243',
@@ -66,7 +68,8 @@ export default function AdminDashboardPage() {
       status: 'Delivered',
       trackingCode: 'DHL-VAL-88920',
       engraving: 'H.K. Privé',
-      paymentMethod: 'Cash On Delivery'
+      paymentMethod: 'Cash On Delivery',
+      settled: true
     }
   ]);
 
@@ -76,6 +79,10 @@ export default function AdminDashboardPage() {
   const totalNetProfit = totalRevenue - totalCogs;
   const profitMarginPercent = totalRevenue > 0 ? ((totalNetProfit / totalRevenue) * 100).toFixed(1) : 0;
   const pendingOrdersCount = orders.filter((o) => o.status === 'Pending Dispatch').length;
+
+  // 50/50 Partner Profit Shares
+  const muaazShare = Math.round(totalNetProfit / 2);
+  const fahadShare = Math.round(totalNetProfit / 2);
 
   // Filtered Orders
   const filteredOrders = orders.filter((order) => {
@@ -88,6 +95,12 @@ export default function AdminDashboardPage() {
   const handleUpdateOrderStatus = (orderId, newStatus) => {
     setOrders(
       orders.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+    );
+  };
+
+  const handleToggleSettleOrder = (orderId) => {
+    setOrders(
+      orders.map((o) => (o.id === orderId ? { ...o, settled: !o.settled } : o))
     );
   };
 
@@ -112,7 +125,7 @@ export default function AdminDashboardPage() {
             </div>
             <div>
               <span className="font-serif font-bold text-lg text-white leading-tight block">VALAROIX Executive</span>
-              <span className="text-[9px] text-valaroix-gold uppercase font-mono tracking-widest block">Store Owner Admin Portal</span>
+              <span className="text-[9px] text-valaroix-gold uppercase font-mono tracking-widest block">Partner Portal: Muaaz & Fahad</span>
             </div>
           </div>
         </div>
@@ -132,6 +145,15 @@ export default function AdminDashboardPage() {
       {/* 2. NAVIGATION TABS */}
       <div className="bg-valaroix-dark border-b border-valaroix-gold/20 px-4 sm:px-8 py-2 sticky top-[61px] z-30 overflow-x-auto">
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+          <button
+            onClick={() => setActiveTab('partners')}
+            className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all ${
+              activeTab === 'partners' ? 'bg-valaroix-gold text-valaroix-dark shadow-lg' : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <Split className="w-4 h-4" /> 50/50 Partner Profit Share
+          </button>
+
           <button
             onClick={() => setActiveTab('overview')}
             className={`px-4 py-2 rounded-xl flex items-center gap-2 transition-all ${
@@ -169,6 +191,151 @@ export default function AdminDashboardPage() {
       {/* 3. MAIN DASHBOARD CONTENT AREA */}
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-8 flex-1 w-full">
         
+        {/* TAB 0: 50/50 PARTNER PROFIT SHARE & LEDGER (MUAAZ & FAHAD) */}
+        {activeTab === 'partners' && (
+          <div className="space-y-8">
+            
+            {/* Header Banner */}
+            <div className="glass-panel-gold p-6 rounded-3xl border border-valaroix-gold/50 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+              <div className="space-y-2 text-center md:text-left">
+                <span className="text-xs uppercase font-mono text-valaroix-gold font-bold tracking-widest flex items-center gap-2 justify-center md:justify-start">
+                  <Sparkles className="w-4 h-4" /> Equal Equity Partnership (50% / 50%)
+                </span>
+                <h2 className="font-serif text-3xl font-bold text-white">MUAAZ & FAHAD Profit Splitter</h2>
+                <p className="text-xs text-gray-300 max-w-xl font-light">
+                  Har sale ka cost price (COGS) nikal kar baqi saara net profit automated 50/50 split hota hai.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="text-center p-4 rounded-2xl bg-black/80 border border-valaroix-gold/30 min-w-[140px]">
+                  <span className="text-[10px] text-gray-400 font-mono block uppercase">Total Net Profit</span>
+                  <span className="font-serif text-2xl font-bold text-emerald-400">Rs. {totalNetProfit.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Muaaz & Fahad Partner Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* MUAAZ CARD */}
+              <div className="glass-panel p-6 rounded-3xl border-valaroix-gold/40 space-y-4 shadow-xl relative overflow-hidden">
+                <div className="flex items-center justify-between border-b border-valaroix-gold/20 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-valaroix-gold text-valaroix-dark font-serif font-bold text-xl flex items-center justify-center shadow-lg">
+                      M
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-2xl font-bold text-white">MUAAZ</h3>
+                      <span className="text-xs text-valaroix-gold font-mono">50% Equal Equity Share</span>
+                    </div>
+                  </div>
+
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold">
+                    Active Partner
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-xs text-gray-400 font-mono uppercase block">Muaaz Net Profit Earnings:</span>
+                  <span className="font-serif text-4xl font-bold text-gold-gradient block">
+                    Rs. {muaazShare.toLocaleString()}
+                  </span>
+                  <p className="text-[11px] text-gray-400">50% share calculated from all sold orders after deducting production cost.</p>
+                </div>
+              </div>
+
+              {/* FAHAD CARD */}
+              <div className="glass-panel p-6 rounded-3xl border-valaroix-gold/40 space-y-4 shadow-xl relative overflow-hidden">
+                <div className="flex items-center justify-between border-b border-valaroix-gold/20 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-valaroix-gold text-valaroix-dark font-serif font-bold text-xl flex items-center justify-center shadow-lg">
+                      F
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-2xl font-bold text-white">FAHAD</h3>
+                      <span className="text-xs text-valaroix-gold font-mono">50% Equal Equity Share</span>
+                    </div>
+                  </div>
+
+                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold">
+                    Active Partner
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <span className="text-xs text-gray-400 font-mono uppercase block">Fahad Net Profit Earnings:</span>
+                  <span className="font-serif text-4xl font-bold text-gold-gradient block">
+                    Rs. {fahadShare.toLocaleString()}
+                  </span>
+                  <p className="text-[11px] text-gray-400">50% share calculated from all sold orders after deducting production cost.</p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Per-Order 50/50 Profit Split Ledger Table */}
+            <div className="glass-panel p-6 rounded-3xl border-valaroix-gold/30 space-y-4">
+              <div className="flex justify-between items-center border-b border-valaroix-gold/20 pb-3">
+                <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
+                  <Split className="w-5 h-5 text-valaroix-gold" /> Per-Order 50/50 Profit Ledger
+                </h3>
+                <span className="text-xs text-gray-400 font-mono">Auto-Calculated Margin</span>
+              </div>
+
+              <div className="space-y-3">
+                {orders.map((order) => {
+                  const perOrderMuaazShare = Math.round(order.profitPkr / 2);
+                  const perOrderFahadShare = Math.round(order.profitPkr / 2);
+
+                  return (
+                    <div
+                      key={order.id}
+                      className="p-4 rounded-2xl bg-black border border-valaroix-gold/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 text-xs font-mono"
+                    >
+                      <div>
+                        <span className="font-bold text-valaroix-gold text-sm block">{order.id} — {order.customerName}</span>
+                        <span className="text-gray-400 text-[11px] block">{order.item}</span>
+                        <span className="text-gray-500 text-[10px] block">Price: Rs. {order.pricePkr.toLocaleString()} | COGS: Rs. {order.cogsPkr.toLocaleString()}</span>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div className="px-3 py-1.5 rounded-xl bg-valaroix-gold/10 border border-valaroix-gold/30 text-center">
+                          <span className="text-[10px] text-gray-400 block">Net Profit</span>
+                          <strong className="text-emerald-400 text-sm">Rs. {order.profitPkr.toLocaleString()}</strong>
+                        </div>
+
+                        <div className="px-3 py-1.5 rounded-xl bg-black border border-valaroix-gold/40 text-center">
+                          <span className="text-[10px] text-gray-400 block">Muaaz (50%)</span>
+                          <strong className="text-white text-sm">Rs. {perOrderMuaazShare.toLocaleString()}</strong>
+                        </div>
+
+                        <div className="px-3 py-1.5 rounded-xl bg-black border border-valaroix-gold/40 text-center">
+                          <span className="text-[10px] text-gray-400 block">Fahad (50%)</span>
+                          <strong className="text-white text-sm">Rs. {perOrderFahadShare.toLocaleString()}</strong>
+                        </div>
+
+                        <button
+                          onClick={() => handleToggleSettleOrder(order.id)}
+                          className={`px-3 py-1.5 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-all ${
+                            order.settled
+                              ? 'bg-emerald-500 text-black'
+                              : 'glass-panel text-gray-400 hover:text-white border-valaroix-gold/30'
+                          }`}
+                        >
+                          {order.settled ? <Check className="w-3.5 h-3.5" /> : null}
+                          {order.settled ? 'Settled ✓' : 'Mark Settled'}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+          </div>
+        )}
+
         {/* TAB 1: EXECUTIVE FINANCIAL METRICS & PROFIT ANALYTICS */}
         {activeTab === 'overview' && (
           <div className="space-y-8">
