@@ -23,7 +23,7 @@ export default function Navbar({ onOpenAdmin }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 15);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -48,29 +48,29 @@ export default function Navbar({ onOpenAdmin }) {
   return (
     <header className="sticky top-0 left-0 right-0 z-40 transition-all duration-300">
       
-      {/* MAIN NAVBAR BAR */}
+      {/* MAIN NAVBAR CONTAINER */}
       <div
         className={`transition-all duration-300 ${
           scrolled
             ? 'py-2 bg-[#070709]/98 border-b border-valaroix-gold/30 shadow-2xl backdrop-blur-md'
-            : 'py-2.5 bg-black/95 border-b border-valaroix-gold/20'
+            : 'py-3 bg-black/95 border-b border-valaroix-gold/20'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-2">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 space-y-2.5">
           
           {/* Top Row: Logo (Left) + Action Icons (Right) */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2">
             
-            {/* BRAND LOGO & EMBLEM */}
-            <Link href="/" className="flex items-center gap-2 shrink-0 group">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-valaroix-gold/60 p-0.5 bg-valaroix-dark group-hover:border-valaroix-gold transition-all duration-300 overflow-hidden shrink-0">
+            {/* BRAND LOGO & EMBLEM (With ample left padding so it never touches screen edge) */}
+            <Link href="/" className="flex items-center gap-2 shrink-0 group py-0.5">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-valaroix-gold/70 p-0.5 bg-valaroix-dark group-hover:border-valaroix-gold transition-all duration-300 overflow-hidden shrink-0 shadow-md">
                 <img
                   src="/logo.jpg"
                   alt="VALAROIX Emblem"
                   className="w-full h-full object-cover rounded-full"
                 />
               </div>
-              <div>
+              <div className="flex flex-col">
                 <span className="font-bold text-base sm:text-lg tracking-wider text-white block leading-tight">
                   VALAROIX
                 </span>
@@ -89,7 +89,7 @@ export default function Navbar({ onOpenAdmin }) {
             </nav>
 
             {/* Right Action Buttons */}
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               
               {/* TRACK ORDER */}
               <button
@@ -104,7 +104,7 @@ export default function Navbar({ onOpenAdmin }) {
               {/* USER SIGN IN / ACCOUNT */}
               <button
                 onClick={handleUserClick}
-                className="px-3 py-1.5 rounded-xl glass-panel-gold border border-valaroix-gold/40 text-xs font-bold text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark transition-all"
+                className="px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl glass-panel-gold border border-valaroix-gold/40 text-xs font-bold text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark transition-all"
                 title={user ? 'My Account' : 'Sign In'}
               >
                 {user ? (
@@ -112,26 +112,26 @@ export default function Navbar({ onOpenAdmin }) {
                     <span className="w-4 h-4 rounded-full bg-valaroix-gold text-valaroix-dark text-[9px] font-bold flex items-center justify-center">
                       {(user.user_metadata?.full_name || user.email)?.[0]?.toUpperCase()}
                     </span>
-                    <span className="font-medium text-xs">Account</span>
+                    <span className="hidden sm:inline font-medium text-xs">Account</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-1">
                     <User className="w-3.5 h-3.5" />
-                    <span>Sign In</span>
+                    <span className="hidden sm:inline">Sign In</span>
                   </div>
                 )}
               </button>
 
-              {/* CLEAN CART BAG BUTTON WITH COUNT PILL */}
+              {/* CLEAN CART BUTTON (Integrated count badge inside pill) */}
               <button
                 onClick={() => setIsCartOpen(true)}
-                className="px-3 py-1.5 rounded-xl btn-gold text-xs font-bold text-valaroix-dark flex items-center gap-1.5 shadow-md hover:scale-105 transition-all"
+                className="px-3 py-1.5 rounded-xl btn-gold text-xs font-bold text-valaroix-dark flex items-center gap-1 shadow-md hover:scale-105 transition-all"
                 title="Cart"
               >
                 <ShoppingBag className="w-3.5 h-3.5 text-valaroix-dark" />
                 <span>Cart</span>
                 {totalItems > 0 && (
-                  <span className="px-1.5 py-0.2 rounded-full bg-black text-valaroix-gold text-[10px] font-bold min-w-[18px] text-center">
+                  <span className="px-1.5 py-0.2 rounded-full bg-black text-valaroix-gold text-[10px] font-bold min-w-[16px] text-center">
                     {totalItems}
                   </span>
                 )}

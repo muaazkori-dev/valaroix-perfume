@@ -29,7 +29,6 @@ export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 pointer-events-auto">
-      {/* 1 CLICK DIRECT WHATSAPP OPEN (No Popup Tooltip) */}
       <a
         href={whatsappUrl}
         target="_blank"
@@ -40,13 +39,8 @@ export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
         {/* Glowing Ambient Outer Ring */}
         <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
 
-        {/* Authentic Official WhatsApp Icon */}
+        {/* Authentic Official WhatsApp Icon (Clean, no floating 1 badge) */}
         <WhatsAppIcon className="w-8 h-8 text-white group-hover:rotate-12 transition-transform duration-300" />
-
-        {/* Notification Badge Dot */}
-        <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-valaroix-gold border-2 border-black flex items-center justify-center text-[8px] font-bold text-valaroix-dark">
-          1
-        </span>
       </a>
     </div>
   );
