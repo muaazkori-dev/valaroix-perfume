@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sparkles, ShoppingBag, Eye, Star, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ShieldCheck, Award, Clock, Truck, RotateCcw, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 
 export const products = [
   {
     id: 'valaroix-sauvage-imperial',
-    name: 'Valaroix Sauvage Imperial',
+    name: 'OUD NOIR (SAUVAGE IMPERIAL)',
     subtitle: 'Inspired by Sauvage Elixir • Spicy Bergamot & Wild Lavender',
     description: 'An intoxicating blend of Calabrian Bergamot, Nutmeg, and French Lavender layered over raw Amber Wood and Haitian Vetiver.',
     startingPrice: { pkr: 2499, usd: 9 },
@@ -32,7 +32,7 @@ export const products = [
   },
   {
     id: 'valaroix-cedrat-boise-extreme',
-    name: 'Valaroix Cedrat Boise Extreme',
+    name: 'CEDRAT BOISE EXTREME',
     subtitle: 'Inspired by Mancera Cedrat Boise • Sicilian Citrus & Leather',
     description: 'Zesty Lemon of Sicily, Blackcurrant, and Cold Spiced Wood melting into a rich Leather and White Musk heart.',
     startingPrice: { pkr: 2499, usd: 9 },
@@ -54,7 +54,7 @@ export const products = [
   },
   {
     id: 'valaroix-aventu-royal',
-    name: 'Valaroix Aventu Royal',
+    name: 'BLEU INTENSE (AVENTU ROYAL)',
     subtitle: 'Inspired by Creed Aventus • Smoky Pineapple & Birch Wood',
     description: 'Sensational French Pineapple and Italian Bergamot infused with Birch Wood smoke and Spanish Oakmoss.',
     startingPrice: { pkr: 2499, usd: 9 },
@@ -76,7 +76,7 @@ export const products = [
   },
   {
     id: 'valaroix-baccarat-amber-540',
-    name: 'Valaroix Baccarat Amber 540',
+    name: 'AMBRE ROYAL (BACCARAT 540)',
     subtitle: 'Inspired by Baccarat Rouge 540 • Saffron & Cotton Candy Amber',
     description: 'Luminous Saffron and Egyptian Jasmine woven over Amberwood crystals and fresh Fir Resin.',
     startingPrice: { pkr: 2499, usd: 9 },
@@ -99,110 +99,137 @@ export const products = [
 ];
 
 export default function ProductCatalog() {
-  const { addToCart } = useCart();
+  const { addToCart, setIsCheckoutOpen } = useCart();
   const { formatPrice } = useCurrency();
 
   const handleQuickAdd = (product) => {
     addToCart(product, '50ml', 'None', '10h');
   };
 
+  const handleBuyNow = (product) => {
+    addToCart(product, '50ml', 'None', '10h');
+    setIsCheckoutOpen(true);
+  };
+
   return (
-    <section id="shop" className="py-24 relative overflow-hidden bg-[#08080c]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
-        
-        {/* Section Header */}
-        <div className="text-center space-y-3 max-w-2xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel-gold text-valaroix-gold text-xs uppercase tracking-widest font-semibold">
-            <Sparkles className="w-3.5 h-3.5" /> Haute Parfumerie Collection
+    <div>
+      {/* 1. EXACT MOCKUP SOFT CREAM SECTION (#F7F4EE) FOR OUR COLLECTION */}
+      <section id="shop" className="py-20 bg-[#F7F4EE] text-[#0D0D0D]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8">
+          
+          {/* Section Header */}
+          <div className="text-center space-y-2 max-w-2xl mx-auto mb-14">
+            <span className="block text-[11px] font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">
+              OUR COLLECTION
+            </span>
+            <h2 className="font-serif-mockup text-3xl sm:text-4xl font-extrabold text-[#0D0D0D] tracking-tight">
+              DISCOVER OUR BEST SELLERS
+            </h2>
           </div>
-          <h2 className="font-serif-luxury text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            Curated <span className="text-gold-gradient">Masterpiece Scents</span>
-          </h2>
-          <p className="text-gray-400 font-light text-sm sm:text-base font-sans">
-            Hand-poured 3D crystal bottles with 24k gold atomizers. Formulated with rare French essential oils.
-          </p>
-        </div>
 
-        {/* Product Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="glass-panel p-5 rounded-3xl border-valaroix-gold/25 flex flex-col justify-between space-y-4 hover:border-valaroix-gold/60 transition-all shadow-xl group"
-            >
-              <div className="space-y-3">
-                
-                {/* Product Image Container */}
-                <Link href={`/product/${product.id}`} className="block relative w-full h-64 rounded-2xl overflow-hidden bg-black border border-valaroix-gold/30">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-valaroix-gold/40 text-[10px] text-valaroix-gold font-bold uppercase tracking-wider">
-                    Pure Extrait
-                  </div>
-                </Link>
+          {/* Product Cards Grid on Soft Cream Background */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {products.map((product) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+                className="bg-white rounded-2xl p-5 border border-black/5 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-xl transition-all group"
+              >
+                <div className="space-y-3 text-center">
+                  
+                  {/* Bottle Image */}
+                  <Link href={`/product/${product.id}`} className="block relative w-full h-56 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </Link>
 
-                {/* Meta & Title */}
-                <div>
-                  <h3 className="font-serif-luxury font-bold text-lg text-white group-hover:text-valaroix-gold transition-colors">
-                    {product.name}
-                  </h3>
-                  <p className="text-xs text-gray-400 line-clamp-2 mt-1 font-sans">
-                    {product.subtitle}
-                  </p>
-                </div>
-
-                {/* Scent Notes Badge */}
-                <div className="p-2.5 rounded-xl bg-black/60 border border-valaroix-gold/15 text-[11px] text-gray-300 font-sans space-y-1">
-                  <span className="text-[9px] uppercase tracking-wider text-valaroix-gold font-bold block">Key Notes:</span>
-                  <span className="block truncate">{product.topNotes}</span>
-                </div>
-
-              </div>
-
-              {/* Price & Action Buttons */}
-              <div className="pt-2 border-t border-valaroix-gold/20 space-y-3">
-                <div className="flex justify-between items-center">
+                  {/* Title & Type */}
                   <div>
-                    <span className="block text-[10px] text-gray-400 uppercase font-sans">Starting From</span>
-                    <span className="font-serif-luxury text-xl font-bold text-gold-gradient">
+                    <h3 className="font-serif-mockup font-bold text-base text-[#0D0D0D] tracking-wider">
+                      {product.name}
+                    </h3>
+                    <span className="block text-[10px] text-[#6B6B6B] uppercase tracking-widest mt-1">
+                      EXTRAIT DE PARFUM
+                    </span>
+                  </div>
+
+                  {/* Price */}
+                  <div className="pt-1">
+                    <span className="font-bold text-sm text-[#0D0D0D] tracking-wider">
                       {formatPrice(product.startingPrice)}
                     </span>
                   </div>
-                  
-                  <span className="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/30">
-                    Free Delivery
-                  </span>
+
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                {/* Buttons */}
+                <div className="space-y-2 pt-2 border-t border-gray-100">
                   <button
-                    onClick={() => handleQuickAdd(product)}
-                    className="btn-gold py-2.5 px-3 rounded-xl text-xs font-bold uppercase flex items-center justify-center gap-1.5 shadow-md"
+                    onClick={() => handleBuyNow(product)}
+                    className="w-full py-2.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider"
                   >
-                    <ShoppingBag className="w-3.5 h-3.5" /> Add
+                    Buy Now
                   </button>
 
-                  <Link
-                    href={`/product/${product.id}`}
-                    className="py-2.5 px-3 rounded-xl glass-panel border-valaroix-gold/40 text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark text-xs font-bold uppercase flex items-center justify-center gap-1 transition-all"
+                  <button
+                    onClick={() => handleQuickAdd(product)}
+                    className="w-full py-2.5 rounded-xl btn-mockup-outline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5"
                   >
-                    <span>Details</span> <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                    <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
+                  </button>
                 </div>
-              </div>
 
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
+
         </div>
+      </section>
 
-      </div>
-    </section>
+      {/* 2. EXACT MOCKUP TRUST BADGES SECTION (#0D0D0D RICH BLACK) */}
+      <section className="py-16 bg-[#0D0D0D] border-t border-b border-[#D4AF37]/20 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          
+          <div className="space-y-2 flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+              <Award className="w-6 h-6" />
+            </div>
+            <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">PREMIUM QUALITY</h4>
+            <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">Finest ingredients from around the world</p>
+          </div>
+
+          <div className="space-y-2 flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+              <Clock className="w-6 h-6" />
+            </div>
+            <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">LONG LASTING</h4>
+            <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">Fragrances that stay with you all day</p>
+          </div>
+
+          <div className="space-y-2 flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+              <Truck className="w-6 h-6" />
+            </div>
+            <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">FAST DELIVERY</h4>
+            <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">Quick & secure delivery across Pakistan</p>
+          </div>
+
+          <div className="space-y-2 flex flex-col items-center">
+            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+              <RotateCcw className="w-6 h-6" />
+            </div>
+            <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">EASY RETURNS</h4>
+            <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">Hassle free returns within 7 days</p>
+          </div>
+
+        </div>
+      </section>
+    </div>
   );
 }

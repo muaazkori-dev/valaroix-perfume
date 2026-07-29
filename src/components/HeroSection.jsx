@@ -3,103 +3,73 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, SlidersHorizontal, Expand } from 'lucide-react';
-import ValaroixBottleCanvas from './3d/ValaroixBottleCanvas';
-import { useAnimation } from '@/context/AnimationContext';
+import { ShoppingBag, ArrowRight } from 'lucide-react';
 
-export default function HeroSection({ onOpenAdmin }) {
-  const { settings } = useAnimation();
-
+export default function HeroSection() {
   return (
-    <section id="hero" className="relative w-full min-h-screen flex items-center pt-8 sm:pt-12 pb-12 overflow-hidden">
-      {/* Background Radial Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-valaroix-gold/10 rounded-full blur-[140px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center z-10">
+    <section id="hero" className="relative w-full bg-[#0D0D0D] py-16 sm:py-24 overflow-hidden border-b border-[#D4AF37]/20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
-        {/* Left Column: Editorial Text & CTAs */}
+        {/* LEFT COLUMN: HERO TEXT & SHOP NOW CTA */}
         <motion.div
-          initial={{ opacity: 0, x: -40 }}
+          initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.7 }}
           className="lg:col-span-6 space-y-6 text-left"
         >
-          {/* Luxury Atelier Tag */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel-gold border border-valaroix-gold/40">
-            <Sparkles className="w-3.5 h-3.5 text-valaroix-gold" />
-            <span className="text-xs uppercase tracking-[0.25em] text-valaroix-gold font-semibold">
-              Haute Parfumerie • Pure Amber Extrait
-            </span>
-          </div>
-
-          {/* Editorial Main Title */}
-          <div className="space-y-3">
-            <h1 className="font-serif-luxury text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-wider text-white leading-[1.05]">
-              VALAROIX
-              <span className="block font-serif text-3xl sm:text-5xl lg:text-6xl text-gold-gradient italic font-normal mt-2">
-                {settings.heroTitle || "L'Elixir De Distinction"}
-              </span>
+          <div className="space-y-4">
+            <h1 className="font-serif-mockup text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.1]">
+              SCENT OF <br />
+              <span className="text-[#D4AF37]">ELEGANCE</span>
             </h1>
-            <p className="text-gray-300 text-sm sm:text-base font-light leading-relaxed max-w-xl font-sans">
-              {settings.heroSubtitle || "Encased in hand-faceted crystal glass with 24k gold leaf atomizer. A sensory symphony of rare Damask Rose and aged Royal Ambergris."}
+
+            <p className="text-[#6B6B6B] text-base sm:text-lg font-light leading-relaxed max-w-lg">
+              Discover premium fragrances crafted to leave a lasting impression.
             </p>
           </div>
 
-          {/* Scent Highlights Pill Cards */}
-          <div className="grid grid-cols-3 gap-3 pt-2 max-w-md">
-            <div className="glass-panel p-3 rounded-2xl border-valaroix-gold/20 text-center">
-              <span className="block text-[9px] text-valaroix-gold uppercase tracking-wider font-bold">Top Note</span>
-              <span className="text-xs font-medium text-gray-200 block mt-0.5">Kashmiri Saffron</span>
-            </div>
-            <div className="glass-panel p-3 rounded-2xl border-valaroix-gold/20 text-center">
-              <span className="block text-[9px] text-valaroix-gold uppercase tracking-wider font-bold">Heart Note</span>
-              <span className="text-xs font-medium text-gray-200 block mt-0.5">Damask Rose</span>
-            </div>
-            <div className="glass-panel p-3 rounded-2xl border-valaroix-gold/20 text-center">
-              <span className="block text-[9px] text-valaroix-gold uppercase tracking-wider font-bold">Base Note</span>
-              <span className="text-xs font-medium text-gray-200 block mt-0.5">Aged Oud Wood</span>
-            </div>
-          </div>
-
-          {/* Call to Actions */}
-          <div className="flex flex-wrap items-center gap-4 pt-2">
+          <div className="pt-2">
             <a
               href="#shop"
-              className="btn-gold px-8 py-4 rounded-2xl flex items-center gap-3 text-xs tracking-wider uppercase font-bold shadow-2xl"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-xl btn-mockup-gold text-xs uppercase font-bold tracking-widest shadow-xl"
             >
-              Acquire Fragrance <ArrowRight className="w-4 h-4" />
+              <span>SHOP NOW</span>
+              <ArrowRight className="w-4 h-4" />
             </a>
-
-            <button
-              onClick={onOpenAdmin}
-              className="px-6 py-4 rounded-2xl glass-panel hover:border-valaroix-gold text-valaroix-gold text-xs tracking-wider uppercase flex items-center gap-2 transition-all font-bold"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              3D Studio
-            </button>
           </div>
-
         </motion.div>
 
-        {/* Right Column: High-Fashion 3D Stage */}
+        {/* RIGHT COLUMN: HIGH-RES LUXURY PERFUME BOTTLE SHOWCASE (NO 3D CANVAS) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.9 }}
-          className="lg:col-span-6 h-[480px] sm:h-[580px] relative flex items-center justify-center"
+          transition={{ duration: 0.8 }}
+          className="lg:col-span-6 relative flex items-center justify-center"
         >
-          <div className="w-full h-full relative rounded-3xl overflow-hidden glass-panel border border-valaroix-gold/30 shadow-[0_0_50px_rgba(212,175,55,0.15)]">
+          <div className="relative w-full max-w-md h-[420px] sm:h-[500px] rounded-3xl overflow-hidden bg-[#1A1A1A] border border-[#D4AF37]/30 shadow-2xl flex items-center justify-center p-6 group">
             
-            <Link
-              href="/admin"
-              className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-valaroix-gold/40 text-xs text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark transition-all shadow-lg font-bold"
-            >
-              <Expand className="w-3.5 h-3.5" />
-              <span>Click for Full 360° 3D Inspector ↗</span>
-            </Link>
+            {/* Dramatic Ambient Glow Behind Bottle */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-[#D4AF37]/10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-[#D4AF37]/15 rounded-full blur-[90px] pointer-events-none" />
 
-            {/* Live WebGL 3D Canvas */}
-            <ValaroixBottleCanvas interactive={false} enableMouseTilt={false} />
+            {/* High-Res Master Perfume Image */}
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+              <img
+                src="/products/sauvage.jpg"
+                alt="Valaroix Sauvage Imperial"
+                className="w-full h-full object-cover rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+
+            {/* Bottom Floating Perfume Tag */}
+            <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/90 backdrop-blur-md p-3.5 rounded-2xl border border-[#D4AF37]/40 flex items-center justify-between">
+              <div>
+                <span className="font-serif-mockup font-bold text-white text-sm block">Valaroix Sauvage Imperial</span>
+                <span className="text-[10px] text-[#D4AF37] uppercase font-semibold">Pure Extrait De Parfum (35% Oil)</span>
+              </div>
+              <span className="font-serif-mockup font-bold text-[#D4AF37] text-sm">Rs. 2,499</span>
+            </div>
+
           </div>
         </motion.div>
 
