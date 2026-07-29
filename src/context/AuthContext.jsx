@@ -70,7 +70,8 @@ export function AuthProvider({ children }) {
 
   // Real 1-Click Google OAuth Sign In using official Client ID
   const signInWithGoogle = () => {
-    const redirectUri = encodeURIComponent(window.location.origin);
+    const origin = window.location.origin.replace(/\/$/, '');
+    const redirectUri = encodeURIComponent(origin + '/');
     const scope = encodeURIComponent('email profile');
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}&prompt=select_account`;
     window.location.assign(authUrl);
@@ -118,7 +119,7 @@ export function AuthProvider({ children }) {
     return newUser;
   };
 
-  // Sign Out (Completely clear user state)
+  // Sign Out
   const signOut = () => {
     setUser(null);
     setSession(null);
