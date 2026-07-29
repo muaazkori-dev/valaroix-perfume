@@ -13,22 +13,8 @@ export function AuthProvider({ children }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
 
-  // Sample Order History
-  const sampleOrders = [
-    {
-      id: 'VLX-98241',
-      date: '2026-07-26',
-      items: [
-        { name: 'Valaroix Sauvage Imperial (100ml • 24 Hours+ Extrait)', pricePkr: 6499, size: '100ml', quantity: 1 }
-      ],
-      totalPkr: 6499,
-      status: 'In Transit via DHL Express',
-      trackingCode: 'DHL-VAL-88921',
-      engraving: 'V.A. 2026'
-    }
-  ];
-
-  const [userOrders, setUserOrders] = useState(sampleOrders);
+  // Initialize with empty orders array for real users
+  const [userOrders, setUserOrders] = useState([]);
 
   // Check saved patron session on load or URL hash token from Google OAuth
   useEffect(() => {
@@ -86,7 +72,6 @@ export function AuthProvider({ children }) {
     };
     setUser(vipUser);
     localStorage.setItem('valaroix_patron_user', JSON.stringify(vipUser));
-    setUserOrders(sampleOrders);
     setIsAuthModalOpen(false);
     setIsAccountModalOpen(true);
   };
@@ -123,6 +108,7 @@ export function AuthProvider({ children }) {
   const signOut = () => {
     setUser(null);
     setSession(null);
+    setUserOrders([]);
     localStorage.removeItem('valaroix_patron_user');
   };
 
