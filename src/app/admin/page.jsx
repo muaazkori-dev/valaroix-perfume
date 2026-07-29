@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   DollarSign, TrendingUp, Package, Users, ShoppingBag, Truck, CheckCircle2, 
@@ -11,11 +11,11 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function AdminDashboardPage() {
   const { userOrders, setUserOrders } = useAuth();
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'partners' | 'overview' | 'inventory'
+  const [activeTab, setActiveTab] = useState('orders');
   const [orderFilter, setOrderFilter] = useState('all');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
 
-  // Initial Sample Orders merged with User Submitted Orders
+  // Initial Sample Orders
   const initialSampleOrders = [
     {
       id: 'VLX-98241',
@@ -59,14 +59,27 @@ export default function AdminDashboardPage() {
     }
   ];
 
-  const allOrders = [...userOrders, ...initialSampleOrders];
+  const [localOrders, setLocalOrders] = useState([]);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('valaroix_orders');
+      if (saved) {
+        setLocalOrders(JSON.parse(saved));
+      }
+    } catch (e) {}
+  }, []);
+
+  const allOrders = [...localOrders, ...userOrders, ...initialSampleOrders].filter(
+    (order, index, self) => index === self.findIndex((o) => o.id === order.id)
+  );
 
   // Financial Metrics Calculation
   const totalRevenue = allOrders.reduce((sum, o) => sum + (o.pricePkr || 0), 0);
   const totalCogs = allOrders.reduce((sum, o) => sum + (o.cogsPkr || 0), 0);
   const totalNetProfit = totalRevenue - totalCogs;
   const profitMarginPercent = totalRevenue > 0 ? ((totalNetProfit / totalRevenue) * 100).toFixed(1) : 0;
-  const pendingOrdersCount = allOrders.filter((o) => o.status.includes('Pending')).length;
+  const pendingOrdersCount = allOrders.filter((o) => (o.status || '').includes('Pending')).length;
 
   // 50/50 Partner Profit Shares
   const muaazShare = Math.round(totalNetProfit / 2);
@@ -74,9 +87,10 @@ export default function AdminDashboardPage() {
 
   // Filtered Orders
   const filteredOrders = allOrders.filter((order) => {
-    if (orderFilter === 'pending') return order.status.includes('Pending');
-    if (orderFilter === 'confirmed') return order.status.includes('Confirmed');
-    if (orderFilter === 'delivered') return order.status.includes('Delivered');
+    const st = order.status || '';
+    if (orderFilter === 'pending') return st.includes('Pending');
+    if (orderFilter === 'confirmed') return st.includes('Confirmed');
+    if (orderFilter === 'delivered') return st.includes('Delivered');
     return true;
   });
 
@@ -93,14 +107,14 @@ Aapka VALAROIX Haute Parfumerie Order #${order.id} receive ho chuka hai!
 💳 Payment Method: ${order.paymentMethod}
 
 Kya aap is order ko CONFIRM karte hain? 
-Khabar dein taaki hum aapka luxury 3D parcel aaj hi dispatch kar sakein!
+Khabar dein taaki hum aapka luxury parcel aaj hi dispatch kar sakein!
 
-Please reply:
+Reply:
 1. CONFIRM ORDER
 2. CANCEL ORDER`;
 
     const text = encodeURIComponent(message);
-    const cleanPhone = order.phone.replace(/^0/, '');
+    const cleanPhone = (order.phone || '').replace(/^0/, '');
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
@@ -109,10 +123,13 @@ Please reply:
       o.id === orderId ? { ...o, status: 'Confirmed & Processing' } : o
     );
     setUserOrders(updated);
+    try {
+      localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+    } catch (e) {}
 
-    // Open WhatsApp pre-filled confirmation text
-    const text = encodeURIComponent(`Assalam-o-Alaikum ${customerName}! Your VALAROIX order #${orderId} has been CONFIRMED. Total: Rs. ${pricePkr.toLocaleString()}. We are preparing your 3D luxury perfume package for courier dispatch!`);
-    window.open(`https://wa.me/92${phone.replace(/^0/, '')}?text=${text}`, '_blank');
+    const cleanPhone = (phone || '').replace(/^0/, '');
+    const text = encodeURIComponent(`Assalam-o-Alaikum ${customerName}! Your VALAROIX order #${orderId} has been CONFIRMED. Total: Rs. ${(pricePkr || 0).toLocaleString()}. We are preparing your luxury perfume package for courier dispatch!`);
+    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
   const handleCancelOrder = (orderId, customerName, phone) => {
@@ -120,10 +137,13 @@ Please reply:
       o.id === orderId ? { ...o, status: 'Cancelled' } : o
     );
     setUserOrders(updated);
+    try {
+      localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+    } catch (e) {}
 
-    // Open WhatsApp pre-filled cancellation text
+    const cleanPhone = (phone || '').replace(/^0/, '');
     const text = encodeURIComponent(`Assalam-o-Alaikum ${customerName}! Your VALAROIX order #${orderId} has been CANCELLED as requested.`);
-    window.open(`https://wa.me/92${phone.replace(/^0/, '')}?text=${text}`, '_blank');
+    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
   return (
@@ -205,7 +225,7 @@ Please reply:
       {/* MAIN CONTENT AREA */}
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-8 flex-1 w-full">
         
-        {/* TAB 1: LIVE ORDERS MANAGEMENT & CONFIRMATION / CANCELLATION */}
+        {/* TAB 1: LIVE ORDERS MANAGEMENT */}
         {activeTab === 'orders' && (
           <div className="space-y-6">
             
@@ -320,9 +340,9 @@ Please reply:
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 font-mono">Current Status:</span>
                       <span className={`px-3 py-1 rounded-full font-bold text-[11px] ${
-                        order.status.includes('Confirmed')
+                        (order.status || '').includes('Confirmed')
                           ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                          : order.status.includes('Cancelled')
+                          : (order.status || '').includes('Cancelled')
                           ? 'bg-red-500/20 text-red-400 border border-red-500/40'
                           : 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
                       }`}>
@@ -330,9 +350,8 @@ Please reply:
                       </span>
                     </div>
 
-                    {/* Action Buttons: 💬 Ask Client via WhatsApp, ✅ Confirm, ❌ Cancel */}
+                    {/* Action Buttons */}
                     <div className="flex flex-wrap items-center gap-2">
-                      {/* Direct WhatsApp Inquiry Button */}
                       <button
                         onClick={() => handleAskClientOnWhatsApp(order)}
                         className="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40 text-xs font-bold flex items-center gap-1.5 transition-all shadow-md"

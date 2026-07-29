@@ -263,20 +263,20 @@ export default function ProductDetailPage() {
               />
             </div>
 
-            {/* ACTION CTAs: Add to Bag & Buy Now */}
-            <div className="grid grid-cols-2 gap-4 pt-2">
+            {/* ACTION CTAs: Add to Cart & Buy Now */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <button
                 onClick={handleAddToCart}
-                className="btn-gold py-4 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-widest shadow-2xl"
+                className="btn-gold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-2xl"
               >
-                <ShoppingBag className="w-4 h-4" /> Add To Bag ({formatPrice(finalPriceObj)})
+                <ShoppingBag className="w-4 h-4" /> Add to Cart ({formatPrice(finalPriceObj)})
               </button>
 
               <button
                 onClick={handleBuyNow}
-                className="py-4 rounded-full glass-panel hover:border-valaroix-gold text-valaroix-gold text-xs uppercase font-bold tracking-widest border-valaroix-gold/50 shadow-2xl"
+                className="py-4 px-6 rounded-2xl glass-panel-gold border border-valaroix-gold text-valaroix-gold text-xs uppercase font-bold tracking-wider hover:bg-valaroix-gold hover:text-valaroix-dark transition-all shadow-2xl"
               >
-                Express Buy Now ⚡
+                Buy Now ⚡
               </button>
             </div>
 

@@ -12,13 +12,17 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-
-  // Initialize with empty orders array for real users
   const [userOrders, setUserOrders] = useState([]);
 
-  // Check saved patron session on load or URL hash token from Google OAuth
+  // Check saved patron session & orders from local storage on load
   useEffect(() => {
     try {
+      // Load orders from localStorage
+      const savedOrders = localStorage.getItem('valaroix_orders');
+      if (savedOrders) {
+        setUserOrders(JSON.parse(savedOrders));
+      }
+
       // Check Google OAuth URL response token
       if (window.location.hash.includes('access_token')) {
         const params = new URLSearchParams(window.location.hash.substring(1));
@@ -53,6 +57,13 @@ export function AuthProvider({ children }) {
       }
     } catch (e) {}
   }, []);
+
+  const saveOrdersToStorage = (newOrders) => {
+    setUserOrders(newOrders);
+    try {
+      localStorage.setItem('valaroix_orders', JSON.stringify(newOrders));
+    } catch (e) {}
+  };
 
   // Real 1-Click Google OAuth Sign In using official Client ID
   const signInWithGoogle = () => {
@@ -108,7 +119,6 @@ export function AuthProvider({ children }) {
   const signOut = () => {
     setUser(null);
     setSession(null);
-    setUserOrders([]);
     localStorage.removeItem('valaroix_patron_user');
   };
 
@@ -123,7 +133,7 @@ export function AuthProvider({ children }) {
         isAccountModalOpen,
         setIsAccountModalOpen,
         userOrders,
-        setUserOrders,
+        setUserOrders: saveOrdersToStorage,
         signInAsVIP,
         signInWithGoogle,
         signUpWithEmail,
