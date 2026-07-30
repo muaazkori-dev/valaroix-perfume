@@ -1,0 +1,15 @@
+{
+  "appId": "com.valaroix.executive",
+  "appName": "VALAROIX Executive",
+  "webDir": "out",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "https://valaroix.com/admin",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "backgroundColor": "#0D0D0D"
+  }
+}

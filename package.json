@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@capacitor/android": "^8.4.2",
+    "@capacitor/cli": "^8.4.2",
+    "@capacitor/core": "^8.4.2",
     "@react-three/drei": "^9.120.4",
     "@react-three/fiber": "^8.17.14",
     "@supabase/supabase-js": "^2.110.2",
