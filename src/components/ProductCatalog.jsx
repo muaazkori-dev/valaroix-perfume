@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ShoppingBag, ShieldCheck, Award, Clock, Truck, RotateCcw, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ShieldCheck, Award, Clock, Truck, RotateCcw } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 
@@ -140,7 +140,7 @@ export default function ProductCatalog() {
               >
                 <div className="space-y-3 text-center">
                   
-                  {/* Bottle Image */}
+                  {/* Bottle Image (Clicking opens product detail page) */}
                   <Link href={`/product/${product.id}`} className="block relative w-full h-56 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
                     <img
                       src={product.image}
@@ -149,12 +149,12 @@ export default function ProductCatalog() {
                     />
                   </Link>
 
-                  {/* Title & Type */}
+                  {/* Title (Clicking opens product detail page) */}
                   <div>
-                    <h3 className="font-serif-mockup font-bold text-base text-[#0D0D0D] tracking-wider">
+                    <Link href={`/product/${product.id}`} className="font-serif-mockup font-bold text-base text-[#0D0D0D] tracking-wider hover:text-[#D4AF37] transition-colors block">
                       {product.name}
-                    </h3>
-                    <span className="block text-[10px] text-[#6B6B6B] uppercase tracking-widest mt-1">
+                    </Link>
+                    <span className="block text-[10px] text-[#6B6B6B] uppercase tracking-widest mt-1 font-sans font-medium">
                       EXTRAIT DE PARFUM
                     </span>
                   </div>
@@ -168,11 +168,11 @@ export default function ProductCatalog() {
 
                 </div>
 
-                {/* Buttons */}
+                {/* 2 Clean Direct Action Buttons: Buy Now & Add to Cart */}
                 <div className="space-y-2 pt-2 border-t border-gray-100">
                   <button
                     onClick={() => handleBuyNow(product)}
-                    className="w-full py-2.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider"
+                    className="w-full py-2.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-md"
                   >
                     Buy Now
                   </button>
