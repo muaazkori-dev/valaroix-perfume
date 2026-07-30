@@ -5,12 +5,18 @@ import Link from 'next/link';
 import { 
   DollarSign, TrendingUp, Package, Users, ShoppingBag, Truck, CheckCircle2, 
   Clock, ArrowLeft, RefreshCw, Smartphone, Sparkles, Filter, ChevronRight, 
-  MessageSquare, Sliders, ExternalLink, Download, AlertCircle, Users2, Split, Check, X, Eye, PhoneCall, Printer, FileText
+  MessageSquare, Sliders, ExternalLink, Download, AlertCircle, Users2, Split, Check, X, Eye, PhoneCall, Printer, FileText, Lock, ShieldCheck, Key
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function AdminDashboardPage() {
   const { userOrders, setUserOrders } = useAuth();
+  
+  // Security Gate State
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState(false);
+
   const [activeTab, setActiveTab] = useState('orders');
   const [orderFilter, setOrderFilter] = useState('all');
   const [selectedReceipt, setSelectedReceipt] = useState(null);
@@ -68,8 +74,25 @@ export default function AdminDashboardPage() {
       if (saved) {
         setLocalOrders(JSON.parse(saved));
       }
+      const authSaved = sessionStorage.getItem('valaroix_admin_auth');
+      if (authSaved === 'true') {
+        setIsAuthenticated(true);
+      }
     } catch (e) {}
   }, []);
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+    if (pinInput === '9824') {
+      setIsAuthenticated(true);
+      setPinError(false);
+      try {
+        sessionStorage.setItem('valaroix_admin_auth', 'true');
+      } catch (e) {}
+    } else {
+      setPinError(true);
+    }
+  };
 
   const allOrders = [...localOrders, ...userOrders, ...initialSampleOrders].filter(
     (order, index, self) => index === self.findIndex((o) => o.id === order.id)
@@ -153,6 +176,70 @@ Reply:
     const text = encodeURIComponent(`Assalam-o-Alaikum ${customerName}! Your VALAROIX order #${orderId} has been CANCELLED as requested.`);
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
+
+  // IF NOT AUTHENTICATED: SHOW HIGH SECURITY PARTNER VAULT LOGIN GATE
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] text-white flex items-center justify-center p-4 selection:bg-[#D4AF37] selection:text-[#0D0D0D]">
+        <div className="w-full max-w-md bg-[#1A1A1A] border border-[#D4AF37]/40 rounded-3xl p-8 shadow-[0_0_80px_rgba(212,175,55,0.2)] text-center space-y-6">
+          
+          <div className="w-16 h-16 rounded-full border-2 border-[#D4AF37] mx-auto flex items-center justify-center text-[#D4AF37] bg-black/60 shadow-lg">
+            <Lock className="w-8 h-8" />
+          </div>
+
+          <div>
+            <span className="text-[10px] text-[#D4AF37] uppercase font-mono tracking-[0.25em] block">
+              SECURE PARTNER VAULT
+            </span>
+            <h1 className="font-serif-mockup text-2xl font-extrabold text-white mt-1">
+              VALAROIX Executive App
+            </h1>
+            <p className="text-xs text-[#6B6B6B] mt-2">
+              Enter Owner Passcode (PIN) to access live orders, SadaPay receipts & 50/50 profit metrics.
+            </p>
+          </div>
+
+          <form onSubmit={handlePinSubmit} className="space-y-4">
+            <div className="relative">
+              <input
+                type="password"
+                maxLength={6}
+                required
+                value={pinInput}
+                onChange={(e) => {
+                  setPinInput(e.target.value);
+                  setPinError(false);
+                }}
+                placeholder="Enter Passcode (PIN: 9824)"
+                className="w-full bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl py-3.5 px-4 text-center text-xl font-mono text-[#D4AF37] tracking-[0.4em] focus:outline-none focus:border-[#D4AF37]"
+              />
+              <Key className="w-4 h-4 text-[#D4AF37]/60 absolute right-4 top-4" />
+            </div>
+
+            {pinError && (
+              <p className="text-xs text-red-400 font-mono font-bold animate-shake">
+                ❌ Invalid Passcode! Please enter correct owner PIN.
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-3.5 rounded-2xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-xl flex items-center justify-center gap-2"
+            >
+              <ShieldCheck className="w-4 h-4 text-[#0D0D0D]" /> Unlock Owner Portal
+            </button>
+          </form>
+
+          <div className="pt-4 border-t border-[#D4AF37]/15">
+            <Link href="/" className="text-xs text-[#6B6B6B] hover:text-[#D4AF37] transition-colors flex items-center justify-center gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" /> Return to Customer Storefront
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-gray-100 font-sans flex flex-col pb-20">
@@ -246,7 +333,9 @@ Reply:
                 <img src="/logo.jpg" alt="VALAROIX Logo" className="w-full h-full object-cover rounded-full" />
               </div>
               <div>
-                <span className="font-serif font-bold text-lg text-white leading-tight block">VALAROIX Executive App</span>
+                <span className="font-serif font-bold text-lg text-white leading-tight block flex items-center gap-1.5">
+                  VALAROIX Executive App <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                </span>
                 <span className="text-[9px] text-valaroix-gold uppercase font-mono tracking-widest block">Owner Portal: Muaaz & Fahad</span>
               </div>
             </div>
@@ -264,11 +353,13 @@ Reply:
             </button>
 
             <button
-              onClick={() => alert("To install VALAROIX Owner App on your Phone:\n\niPhone: Tap Share Button -> 'Add to Home Screen'\nAndroid: Tap 3 Dots Menu -> 'Install app'")}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl glass-panel-gold border border-valaroix-gold/40 text-xs font-bold text-valaroix-gold hover:bg-valaroix-gold hover:text-valaroix-dark transition-all"
+              onClick={() => {
+                sessionStorage.removeItem('valaroix_admin_auth');
+                setIsAuthenticated(false);
+              }}
+              className="px-3 py-2 rounded-xl bg-red-500/20 text-red-400 border border-red-500/40 text-xs font-bold hover:bg-red-500 hover:text-white transition-all"
             >
-              <Smartphone className="w-3.5 h-3.5" />
-              <span>Add Mobile App</span>
+              Lock Vault
             </button>
           </div>
         </header>
