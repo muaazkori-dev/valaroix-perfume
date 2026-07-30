@@ -163,41 +163,10 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* OPTION 1: BOTTLE VOLUME SIZE SELECTOR */}
-            <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
-              <label className="block text-xs uppercase tracking-widest text-valaroix-gold font-bold">
-                1. Choose Bottle Volume Size
-              </label>
-
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setSelectedSize('50ml')}
-                  className={`py-3.5 px-4 rounded-xl text-xs font-bold border uppercase transition-all flex flex-col items-center gap-1 ${
-                    selectedSize === '50ml'
-                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold shadow-lg'
-                      : 'bg-black/60 text-gray-300 border-valaroix-gold/20 hover:border-valaroix-gold'
-                  }`}
-                >
-                  <span>50 ml Edition</span>
-                  <span className="text-[10px] opacity-80 font-mono">
-                    Starting {formatPrice(getSelectedPriceObj('50ml', '10h'))}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setSelectedSize('100ml')}
-                  className={`py-3.5 px-4 rounded-xl text-xs font-bold border uppercase transition-all flex flex-col items-center gap-1 ${
-                    selectedSize === '100ml'
-                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold shadow-lg'
-                      : 'bg-black/60 text-gray-300 border-valaroix-gold/20 hover:border-valaroix-gold'
-                  }`}
-                >
-                  <span>100 ml Edition</span>
-                  <span className="text-[10px] opacity-80 font-mono">
-                    Starting {formatPrice(getSelectedPriceObj('100ml', '10h'))}
-                  </span>
-                </button>
-              </div>
+            {/* BOTTLE VOLUME TAG */}
+            <div className="glass-panel p-4 rounded-2xl border-valaroix-gold/25 flex items-center justify-between">
+              <span className="text-xs uppercase tracking-widest text-valaroix-gold font-bold">Bottle Volume Size</span>
+              <span className="px-3 py-1 rounded-full bg-valaroix-gold text-valaroix-dark font-mono text-xs font-bold uppercase">50 ml Luxury Glass Edition</span>
             </div>
 
             {/* OPTION 2: LONGEVITY & LASTING EDITION SELECTOR */}

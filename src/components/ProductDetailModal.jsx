@@ -130,20 +130,10 @@ export default function ProductDetailModal() {
                   <span className="font-serif text-3xl font-bold text-gold-gradient">${price}</span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                  {['50ml', '100ml', '250ml Extrait'].map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`py-2 text-xs font-semibold rounded-xl border transition-all ${
-                        selectedSize === size
-                          ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold font-bold'
-                          : 'bg-black/60 text-gray-300 border-valaroix-gold/30 hover:border-valaroix-gold'
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
+                <div className="grid grid-cols-1 gap-2">
+                  <div className="py-2 text-center text-xs font-bold rounded-xl bg-valaroix-gold text-valaroix-dark border border-valaroix-gold uppercase">
+                    50 ml Luxury Glass Edition
+                  </div>
                 </div>
               </div>
 

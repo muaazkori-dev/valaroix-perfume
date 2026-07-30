@@ -23,10 +23,6 @@ export const products = [
       '50ml': {
         '10h': { pkr: 2499, usd: 9 },
         '24h': { pkr: 3499, usd: 13 }
-      },
-      '100ml': {
-        '10h': { pkr: 4499, usd: 16 },
-        '24h': { pkr: 6499, usd: 23 }
       }
     }
   },
@@ -45,10 +41,6 @@ export const products = [
       '50ml': {
         '10h': { pkr: 2499, usd: 9 },
         '24h': { pkr: 3499, usd: 13 }
-      },
-      '100ml': {
-        '10h': { pkr: 4499, usd: 16 },
-        '24h': { pkr: 6499, usd: 23 }
       }
     }
   },
@@ -67,10 +59,6 @@ export const products = [
       '50ml': {
         '10h': { pkr: 2499, usd: 9 },
         '24h': { pkr: 3499, usd: 13 }
-      },
-      '100ml': {
-        '10h': { pkr: 4499, usd: 16 },
-        '24h': { pkr: 6499, usd: 23 }
       }
     }
   },
@@ -89,10 +77,6 @@ export const products = [
       '50ml': {
         '10h': { pkr: 2499, usd: 9 },
         '24h': { pkr: 3499, usd: 13 }
-      },
-      '100ml': {
-        '10h': { pkr: 4499, usd: 16 },
-        '24h': { pkr: 6499, usd: 23 }
       }
     }
   }
@@ -140,7 +124,7 @@ export default function ProductCatalog() {
               >
                 <div className="space-y-3 text-center">
                   
-                  {/* Bottle Image (Clicking opens product detail page) */}
+                  {/* Bottle Image */}
                   <Link href={`/product/${product.id}`} className="block relative w-full h-56 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
                     <img
                       src={product.image}
@@ -149,13 +133,13 @@ export default function ProductCatalog() {
                     />
                   </Link>
 
-                  {/* Title (Clicking opens product detail page) */}
+                  {/* Title */}
                   <div>
                     <Link href={`/product/${product.id}`} className="font-serif-mockup font-bold text-base text-[#0D0D0D] tracking-wider hover:text-[#D4AF37] transition-colors block">
                       {product.name}
                     </Link>
                     <span className="block text-[10px] text-[#6B6B6B] uppercase tracking-widest mt-1 font-sans font-medium">
-                      EXTRAIT DE PARFUM
+                      50ML EXTRAIT DE PARFUM
                     </span>
                   </div>
 
