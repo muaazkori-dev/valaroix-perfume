@@ -55,8 +55,8 @@ export default function HeroSection() {
             {/* High-Res Master Perfume Image (Full Bottle Uncropped) */}
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pb-12">
               <img
-                src="/products/sauvage.jpg"
-                alt="Valaroix Sauvage Imperial"
+                src="/products/sauvage.jpg?v=2"
+                alt="Valaroix Dior Sauvage"
                 className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 max-h-[420px]"
               />
             </div>
