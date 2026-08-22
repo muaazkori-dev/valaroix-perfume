@@ -64,7 +64,7 @@ export default function HeroSection() {
             {/* Bottom Floating Perfume Tag */}
             <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-20 bg-black/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-[#D4AF37]/50 flex items-center justify-between gap-2 shadow-xl">
               <div className="min-w-0">
-                <span className="font-serif-mockup font-bold text-white text-xs sm:text-sm block truncate">Valaroix Sauvage Imperial</span>
+                <span className="font-serif-mockup font-bold text-white text-xs sm:text-sm block truncate">Valaroix Dior Sauvage</span>
                 <span className="text-[9px] sm:text-[10px] text-[#D4AF37] uppercase font-semibold block truncate">Pure Extrait De Parfum (30% Oil) • Free Delivery</span>
               </div>
               <span className="font-serif-mockup font-bold text-[#D4AF37] text-xs sm:text-sm shrink-0 ml-2">Rs. 2,699</span>

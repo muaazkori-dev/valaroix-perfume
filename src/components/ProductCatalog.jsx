@@ -10,7 +10,7 @@ import { useCurrency } from '@/context/CurrencyContext';
 export const products = [
   {
     id: 'valaroix-sauvage-imperial',
-    name: 'VALAROIX SAUVAGE IMPERIAL',
+    name: 'VALAROIX DIOR SAUVAGE',
     subtitle: 'Inspired by Dior Sauvage • Spicy Bergamot & Wild Lavender',
     description: 'An intoxicating blend of Calabrian Bergamot, Nutmeg, and French Lavender layered over raw Amber Wood and Haitian Vetiver.',
     startingPrice: { pkr: 2699, usd: 10 },
@@ -31,7 +31,7 @@ export const products = [
   },
   {
     id: 'valaroix-cedrat-boise-extreme',
-    name: 'CEDRAT BOISE EXTREME',
+    name: 'VALAROIX CEDRAT BOISE',
     subtitle: 'Inspired by Mancera Cedrat Boise • Sicilian Citrus & Leather',
     description: 'Zesty Lemon of Sicily, Blackcurrant, and Cold Spiced Wood melting into a rich Leather and White Musk heart.',
     startingPrice: { pkr: 2999, usd: 11 },
@@ -52,7 +52,7 @@ export const products = [
   },
   {
     id: 'valaroix-ysl-y',
-    name: 'VALAROIX Y (YSL Y)',
+    name: 'VALAROIX YSL Y',
     subtitle: 'Inspired by Yves Saint Laurent Y EDP • Crisp Apple & Amber Wood',
     description: 'Fresh crisp Apple, vibrant Ginger, and aromatic Sage resting upon rich Vetiver, Tonka Bean, and smoky Amberwood.',
     startingPrice: { pkr: 3300, usd: 12 },
