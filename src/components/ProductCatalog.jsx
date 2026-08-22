@@ -129,15 +129,15 @@ export default function ProductCatalog() {
 
                 <div className="space-y-3 text-center">
                   
-                  {/* Bottle Image */}
-                  <Link href={`/product/${product.id}`} className="block relative w-full h-60 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                  {/* Bottle Image (Full Uncropped Bottle) */}
+                  <Link href={`/product/${product.id}`} className="block relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden bg-[#0D0D0D] border border-black/10 p-2 group-hover:border-[#D4AF37]/40 transition-all flex items-center justify-center">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain rounded-xl group-hover:scale-105 transition-transform duration-500"
                     />
                     {product.isSoldOut && (
-                      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center">
                         <span className="bg-red-600 text-white text-xs font-bold uppercase px-4 py-1.5 rounded-full shadow-2xl tracking-widest">
                           SOLD OUT
                         </span>

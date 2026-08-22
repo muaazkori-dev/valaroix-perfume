@@ -39,30 +39,30 @@ export default function HeroSection() {
           </div>
         </motion.div>
 
-        {/* RIGHT COLUMN: HIGH-RES LUXURY PERFUME BOTTLE SHOWCASE (NO 3D CANVAS) */}
+        {/* RIGHT COLUMN: HIGH-RES LUXURY PERFUME BOTTLE SHOWCASE */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
           className="lg:col-span-6 relative flex items-center justify-center"
         >
-          <div className="relative w-full max-w-sm sm:max-w-md h-[300px] xs:h-[340px] sm:h-[450px] lg:h-[500px] rounded-3xl overflow-hidden bg-[#1A1A1A] border border-[#D4AF37]/30 shadow-2xl flex items-center justify-center p-3 sm:p-6 group">
+          <div className="relative w-full max-w-sm sm:max-w-md h-[340px] xs:h-[380px] sm:h-[480px] lg:h-[520px] rounded-3xl overflow-hidden bg-[#111111] border border-[#D4AF37]/40 shadow-2xl flex items-center justify-center p-3 sm:p-6 group">
             
             {/* Dramatic Ambient Glow Behind Bottle */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-[#D4AF37]/10" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 sm:w-72 h-56 sm:h-72 bg-[#D4AF37]/15 rounded-full blur-[70px] sm:blur-[90px] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-[#D4AF37]/15" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-80 h-64 sm:h-80 bg-[#D4AF37]/20 rounded-full blur-[80px] sm:blur-[100px] pointer-events-none" />
 
-            {/* High-Res Master Perfume Image */}
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+            {/* High-Res Master Perfume Image (Full Bottle Uncropped) */}
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pb-12">
               <img
                 src="/products/sauvage.jpg"
                 alt="Valaroix Sauvage Imperial"
-                className="w-full h-full object-cover rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 max-h-[420px]"
               />
             </div>
 
             {/* Bottom Floating Perfume Tag */}
-            <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-20 bg-black/90 backdrop-blur-md p-2.5 sm:p-3.5 rounded-2xl border border-[#D4AF37]/40 flex items-center justify-between gap-2">
+            <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-20 bg-black/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-[#D4AF37]/50 flex items-center justify-between gap-2 shadow-xl">
               <div className="min-w-0">
                 <span className="font-serif-mockup font-bold text-white text-xs sm:text-sm block truncate">Valaroix Sauvage Imperial</span>
                 <span className="text-[9px] sm:text-[10px] text-[#D4AF37] uppercase font-semibold block truncate">Pure Extrait De Parfum (30% Oil) • Free Delivery</span>
