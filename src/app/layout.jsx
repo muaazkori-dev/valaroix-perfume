@@ -3,6 +3,7 @@ import { AnimationProvider } from '@/context/AnimationContext';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
 import { AuthProvider } from '@/context/AuthContext';
+import FloatingCartButton from '@/components/FloatingCartButton';
 
 export const metadata = {
   metadataBase: new URL('https://valaroix.com'),
@@ -79,6 +80,7 @@ export default function RootLayout({ children }) {
             <AnimationProvider>
               <CartProvider>
                 {children}
+                <FloatingCartButton />
               </CartProvider>
             </AnimationProvider>
           </AuthProvider>

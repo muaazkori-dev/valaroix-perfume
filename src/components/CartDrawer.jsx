@@ -29,22 +29,22 @@ export default function CartDrawer() {
           className="fixed inset-0 bg-black/80 backdrop-blur-sm"
         />
 
-        <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        <div className="fixed inset-y-0 right-0 max-w-full flex z-50">
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="w-screen max-w-md bg-valaroix-dark border-l border-valaroix-gold/30 shadow-2xl flex flex-col justify-between"
+            className="w-screen max-w-full sm:max-w-md bg-valaroix-dark border-l border-valaroix-gold/30 shadow-2xl flex flex-col justify-between"
           >
             {/* 1. Header */}
-            <div className="p-6 border-b border-valaroix-gold/20 flex items-center justify-between">
+            <div className="p-4 sm:p-6 border-b border-valaroix-gold/20 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full glass-panel-gold border-valaroix-gold text-valaroix-gold">
                   <ShoppingBag className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-xl font-bold text-white">Shopping Cart</h3>
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-white">Shopping Cart</h3>
                   <span className="text-xs text-valaroix-gold font-mono">{cart.length} Fragrance Items</span>
                 </div>
               </div>
@@ -58,7 +58,7 @@ export default function CartDrawer() {
             </div>
 
             {/* 2. Cart Items List */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
               {cart.length === 0 ? (
                 <div className="text-center py-16 space-y-4">
                   <ShoppingBag className="w-12 h-12 text-valaroix-gold/30 mx-auto" />
@@ -71,72 +71,76 @@ export default function CartDrawer() {
                   </button>
                 </div>
               ) : (
-                cart.map((item) => (
-                  <div
-                    key={`${item.id}-${item.selectedSize}-${item.selectedLasting}`}
-                    className="p-4 rounded-2xl glass-panel border-valaroix-gold/20 flex gap-4 items-center"
-                  >
-                    <div className="w-16 h-16 rounded-xl border border-valaroix-gold/40 p-1 bg-black shrink-0 overflow-hidden">
-                      <img src={item.image || '/logo.jpg'} alt={item.name} className="w-full h-full object-cover rounded-lg" />
-                    </div>
+                cart.map((item) => {
+                  const itemId = item.cartItemId || item.id;
+                  const itemPrice = item.exactPkr || item.price || 2699;
+                  return (
+                    <div
+                      key={itemId}
+                      className="p-3.5 sm:p-4 rounded-2xl glass-panel border-valaroix-gold/20 flex gap-3 sm:gap-4 items-center"
+                    >
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-valaroix-gold/40 p-1 bg-black shrink-0 overflow-hidden">
+                        <img src={item.image || '/products/sauvage.jpg'} alt={item.name} className="w-full h-full object-contain rounded-lg" />
+                      </div>
 
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-serif font-bold text-sm text-white truncate">{item.name}</h4>
-                      <span className="text-xs text-valaroix-gold font-mono block">
-                        {item.selectedSize} • {item.selectedLasting}
-                      </span>
-                      <span className="font-bold text-white text-sm block mt-1">
-                        {formatPrice(item.price * item.quantity)}
-                      </span>
-                    </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-serif font-bold text-xs sm:text-sm text-white truncate">{item.name}</h4>
+                        <span className="text-[11px] text-valaroix-gold font-mono block">
+                          50ml • 30% Oil Concentration
+                        </span>
+                        <span className="font-bold text-white text-xs sm:text-sm block mt-1">
+                          {formatPrice(itemPrice * (item.quantity || 1))}
+                        </span>
+                      </div>
 
-                    <div className="flex flex-col items-end gap-2">
-                      <button
-                        onClick={() => removeFromCart(item.id, item.selectedSize, item.selectedLasting)}
-                        className="text-gray-500 hover:text-red-400 p-1"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-
-                      <div className="flex items-center border border-valaroix-gold/30 rounded-lg overflow-hidden bg-black text-xs">
+                      <div className="flex flex-col items-end gap-2 shrink-0">
                         <button
-                          onClick={() => updateQuantity(item.id, item.selectedSize, item.selectedLasting, item.quantity - 1)}
-                          className="px-2 py-0.5 text-gray-400 hover:text-white"
+                          onClick={() => removeFromCart(itemId)}
+                          className="text-gray-500 hover:text-red-400 p-1"
                         >
-                          -
+                          <Trash2 className="w-4 h-4" />
                         </button>
-                        <span className="px-2 font-mono text-white font-bold">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.selectedSize, item.selectedLasting, item.quantity + 1)}
-                          className="px-2 py-0.5 text-gray-400 hover:text-white"
-                        >
-                          +
-                        </button>
+
+                        <div className="flex items-center border border-valaroix-gold/30 rounded-lg overflow-hidden bg-black text-xs">
+                          <button
+                            onClick={() => updateQuantity(itemId, -1)}
+                            className="px-2 py-0.5 text-gray-400 hover:text-white"
+                          >
+                            -
+                          </button>
+                          <span className="px-2 font-mono text-white font-bold">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(itemId, 1)}
+                            className="px-2 py-0.5 text-gray-400 hover:text-white"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
             {/* 3. Footer & Checkout CTA */}
             {cart.length > 0 && (
-              <div className="p-6 border-t border-valaroix-gold/20 space-y-4 bg-black/80">
-                <div className="flex justify-between items-center text-sm font-bold">
-                  <span className="text-gray-400 uppercase">Subtotal</span>
-                  <span className="font-serif text-2xl text-gold-gradient">{formatPrice(total)}</span>
+              <div className="p-4 sm:p-6 border-t border-valaroix-gold/20 space-y-4 bg-black/95">
+                <div className="flex justify-between items-center text-sm font-bold gap-2">
+                  <span className="text-gray-400 uppercase tracking-wider">Subtotal</span>
+                  <span className="font-serif text-xl sm:text-2xl text-gold-gradient shrink-0">{formatPrice(total)}</span>
                 </div>
 
                 <button
                   onClick={handleProceedToCheckout}
-                  className="w-full btn-gold py-4 rounded-2xl text-xs uppercase font-bold tracking-widest flex items-center justify-center gap-2 shadow-2xl"
+                  className="w-full btn-gold py-3.5 sm:py-4 rounded-2xl text-xs uppercase font-bold tracking-widest flex items-center justify-center gap-2 shadow-2xl"
                 >
                   <span>Proceed to Checkout</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <div className="flex items-center justify-center gap-2 text-[10px] text-valaroix-gold/80 font-mono">
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-valaroix-gold" />
                   <span>Free Express Courier Delivery Included</span>
                 </div>
               </div>

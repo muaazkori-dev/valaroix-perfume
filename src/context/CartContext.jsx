@@ -44,26 +44,35 @@ export function CartProvider({ children }) {
     } catch (e) {}
   };
 
-  const addToCart = (product, size = '100ml', engraving = '') => {
-    const cartItemId = `${product.id}-${size}-${engraving}`;
-    const existingIndex = cart.findIndex((item) => item.cartItemId === cartItemId);
+  const addToCart = (product, size = '50ml', engraving = '') => {
+    const cartItemId = `${product.id}-${size}`;
+    const existingIndex = cart.findIndex((item) => (item.cartItemId === cartItemId || item.id === product.id));
 
-    let price = product.price;
-    if (size === '50ml') price = Math.round(product.price * 0.65);
-    if (size === '250ml Extrait') price = Math.round(product.price * 1.8);
+    let price = 2699;
+    if (product.exactPkr && product.exactPkr > 0) {
+      price = product.exactPkr;
+    } else if (product.startingPrice?.pkr && product.startingPrice.pkr > 0) {
+      price = product.startingPrice.pkr;
+    } else if (typeof product.price === 'number' && product.price > 100) {
+      price = product.price;
+    }
 
     if (existingIndex > -1) {
       const updated = [...cart];
-      updated[existingIndex].quantity += 1;
+      updated[existingIndex].quantity = (updated[existingIndex].quantity || 1) + 1;
+      if (!updated[existingIndex].price || updated[existingIndex].price <= 0) {
+        updated[existingIndex].price = price;
+      }
       saveCart(updated);
     } else {
       const newItem = {
         cartItemId,
         id: product.id,
         name: product.name,
-        subtitle: product.subtitle,
-        image: product.image,
+        subtitle: product.subtitle || '',
+        image: product.image || '/products/sauvage.jpg',
         price,
+        exactPkr: price,
         size,
         engraving,
         quantity: 1,
@@ -88,8 +97,9 @@ export function CartProvider({ children }) {
   const updateQuantity = (cartItemId, delta) => {
     const updated = cart
       .map((item) => {
-        if (item.cartItemId === cartItemId) {
-          const newQty = item.quantity + delta;
+        const id = item.cartItemId || item.id;
+        if (id === cartItemId) {
+          const newQty = (item.quantity || 1) + delta;
           return newQty > 0 ? { ...item, quantity: newQty } : null;
         }
         return item;
@@ -99,7 +109,7 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = (cartItemId) => {
-    saveCart(cart.filter((item) => item.cartItemId !== cartItemId));
+    saveCart(cart.filter((item) => (item.cartItemId || item.id) !== cartItemId));
   };
 
   const applyPromo = (code) => {
