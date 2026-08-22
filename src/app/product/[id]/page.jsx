@@ -10,8 +10,6 @@ import {
 import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import CheckoutModal from '@/components/CheckoutModal';
-import AdminStudioDrawer from '@/components/admin/AdminStudioDrawer';
-import ValaroixBottleCanvas from '@/components/3d/ValaroixBottleCanvas';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { products } from '@/components/ProductCatalog';
@@ -100,25 +98,42 @@ export default function ProductDetailPage() {
         {/* Main Product Showcase Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
-          {/* Left Column: Interactive 3D Bottle Stage (6 Cols) */}
-          <div className="lg:col-span-6 h-[500px] lg:h-[620px] relative rounded-3xl glass-panel border border-valaroix-gold/30 shadow-[0_0_60px_rgba(212,175,55,0.18)] overflow-hidden">
+          {/* Left Column: High-Res Luxury Perfume Bottle Showcase */}
+          <div className="lg:col-span-6 h-[460px] sm:h-[540px] lg:h-[620px] relative rounded-3xl overflow-hidden bg-[#1A1A1A] border border-valaroix-gold/30 shadow-[0_0_60px_rgba(212,175,55,0.18)] flex items-center justify-center p-6 group">
             
-            {/* Tag Badge */}
-            <div className="absolute top-6 left-6 z-20 px-3.5 py-1.5 rounded-full glass-panel-gold border border-valaroix-gold/50 text-valaroix-gold text-xs font-bold uppercase tracking-wider">
-              {product.tag}
+            {/* Ambient Glow */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-valaroix-gold/10" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-valaroix-gold/15 rounded-full blur-[90px] pointer-events-none" />
+
+            {/* Badges */}
+            <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
+              <span className="px-3.5 py-1.5 rounded-full glass-panel-gold border border-valaroix-gold/50 text-valaroix-gold text-xs font-bold uppercase tracking-wider">
+                50ml Pure Extrait
+              </span>
+              {product.isSoldOut && (
+                <span className="px-3.5 py-1.5 rounded-full bg-red-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
+                  SOLD OUT
+                </span>
+              )}
             </div>
 
-            {/* Drag Hint */}
-            <div className="absolute top-6 right-6 z-20 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-valaroix-gold/30 text-[11px] text-gray-300 font-mono">
-              360° Interactive 3D Model
+            <div className="absolute top-6 right-6 z-20 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-valaroix-gold/30 text-[11px] text-emerald-400 font-mono flex items-center gap-1.5">
+              <Truck className="w-3.5 h-3.5" /> Free Courier Delivery
             </div>
 
-            {/* 3D WebGL Bottle Canvas */}
-            <ValaroixBottleCanvas interactive={true} />
+            {/* High-Resolution Official Bottle Image */}
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-contain rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-700 max-h-[520px]"
+              />
+            </div>
 
-            <div className="absolute bottom-6 left-6 right-6 z-20 p-4 rounded-2xl glass-panel border-valaroix-gold/20 flex items-center justify-between text-xs">
-              <span className="text-gray-300 font-medium">Selected Bottle Finish:</span>
-              <span className="font-serif text-valaroix-gold font-bold">{product.name.split(' ')[1]} Metallic Edition</span>
+            {/* Bottom Floating Tag */}
+            <div className="absolute bottom-6 left-6 right-6 z-20 bg-black/90 backdrop-blur-md p-3.5 rounded-2xl border border-valaroix-gold/30 flex items-center justify-between text-xs">
+              <span className="text-gray-300 font-medium">Authentic Formulation:</span>
+              <span className="font-serif text-valaroix-gold font-bold">30% Pure Oil Concentration</span>
             </div>
           </div>
 
@@ -365,7 +380,6 @@ export default function ProductDetailPage() {
       {/* Drawers and Modals */}
       <CartDrawer />
       <CheckoutModal />
-      <AdminStudioDrawer isOpen={isAdminOpen} onClose={() => setIsAdminOpen(false)} />
     </main>
   );
 }

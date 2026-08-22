@@ -2,26 +2,24 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, ShoppingBag, Check, ShieldCheck, Truck, Sparkles, PenTool, ChevronDown } from 'lucide-react';
+import { X, Star, ShoppingBag, Check, ShieldCheck, Truck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import ValaroixBottleCanvas from './3d/ValaroixBottleCanvas';
 
 export default function ProductDetailModal() {
   const { selectedProductModal, setSelectedProductModal, addToCart, setIsCheckoutOpen } = useCart();
-  const [activeView, setActiveView] = useState('3d'); // 3d | visual
-  const [selectedSize, setSelectedSize] = useState('100ml');
-  const [engraving, setEngraving] = useState('');
-  const [activeTab, setActiveTab] = useState('composition');
+  const [selectedSize, setSelectedSize] = useState('50ml');
 
   if (!selectedProductModal) return null;
 
   const product = selectedProductModal;
-  let price = product.price;
-  if (selectedSize === '50ml') price = Math.round(product.price * 0.65);
-  if (selectedSize === '250ml Extrait') price = Math.round(product.price * 1.8);
+  const price = product.startingPrice?.pkr || product.price;
 
   const handleBuyNow = () => {
-    addToCart(product, selectedSize, engraving);
+    if (product.isSoldOut) {
+      alert('This item is currently sold out!');
+      return;
+    }
+    addToCart(product, selectedSize, '');
     setSelectedProductModal(null);
     setIsCheckoutOpen(true);
   };
@@ -55,47 +53,16 @@ export default function ProductDetailModal() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             
-            {/* Left 3D Interactive Stage / Visual Preview (6 Cols) */}
-            <div className="lg:col-span-6 h-[420px] sm:h-[480px] relative rounded-2xl glass-panel border border-valaroix-gold/30 overflow-hidden flex items-center justify-center">
-              
-              {/* View Switcher Controls */}
-              <div className="absolute top-4 left-4 z-20 flex gap-2">
-                <button
-                  onClick={() => setActiveView('3d')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
-                    activeView === '3d'
-                      ? 'btn-gold shadow-md'
-                      : 'bg-black/60 text-gray-300 border border-valaroix-gold/30'
-                  }`}
-                >
-                  Interactive 3D Stage
-                </button>
-                <button
-                  onClick={() => setActiveView('visual')}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all ${
-                    activeView === 'visual'
-                      ? 'btn-gold shadow-md'
-                      : 'bg-black/60 text-gray-300 border border-valaroix-gold/30'
-                  }`}
-                >
-                  Visual Studio
-                </button>
-              </div>
-
-              {activeView === '3d' ? (
-                <ValaroixBottleCanvas interactive={true} />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-black via-valaroix-dark to-black p-6">
-                  <div
-                    className="w-32 h-48 rounded-xl border-2 flex flex-col items-center justify-between p-3 shadow-2xl"
-                    style={{ borderColor: product.color }}
-                  >
-                    <div className="w-10 h-6 rounded bg-valaroix-gold/80" />
-                    <span className="font-serif text-xs font-bold text-valaroix-gold tracking-widest">
-                      VALAROIX
-                    </span>
-                    <div className="w-20 h-24 rounded-lg opacity-80" style={{ backgroundColor: product.color }} />
-                  </div>
+            {/* Left High-Res Perfume Image Showcase (6 Cols) */}
+            <div className="lg:col-span-6 h-[380px] sm:h-[440px] relative rounded-2xl bg-[#1A1A1A] border border-valaroix-gold/30 overflow-hidden flex items-center justify-center p-4">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-full object-contain rounded-xl shadow-2xl"
+              />
+              {product.isSoldOut && (
+                <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold uppercase px-3 py-1 rounded-full shadow-lg">
+                  SOLD OUT
                 </div>
               )}
             </div>
