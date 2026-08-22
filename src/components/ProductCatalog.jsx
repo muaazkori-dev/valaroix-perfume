@@ -10,19 +10,22 @@ import { useCurrency } from '@/context/CurrencyContext';
 export const products = [
   {
     id: 'valaroix-sauvage-imperial',
-    name: 'OUD NOIR (SAUVAGE IMPERIAL)',
-    subtitle: 'Inspired by Sauvage Elixir • Spicy Bergamot & Wild Lavender',
+    name: 'VALAROIX SAUVAGE IMPERIAL',
+    subtitle: 'Inspired by Dior Sauvage • Spicy Bergamot & Wild Lavender',
     description: 'An intoxicating blend of Calabrian Bergamot, Nutmeg, and French Lavender layered over raw Amber Wood and Haitian Vetiver.',
-    startingPrice: { pkr: 2499, usd: 9 },
+    startingPrice: { pkr: 2699, usd: 10 },
     image: '/products/sauvage.jpg',
     color: '#d4af37',
+    isSoldOut: false,
+    freeDelivery: true,
+    oilConcentration: '30% Pure Oil',
     topNotes: 'Calabrian Bergamot, Cinnamon, Nutmeg',
     heartNotes: 'Lavender, Damask Rose, Cardamom',
     baseNotes: 'Amber Wood, Sandalwood, Haitian Vetiver',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2499, usd: 9 },
-        '24h': { pkr: 3499, usd: 13 }
+        '10h': { pkr: 2699, usd: 10, soldOut: false },
+        '24h': { pkr: 3699, usd: 14, soldOut: true }
       }
     }
   },
@@ -31,52 +34,40 @@ export const products = [
     name: 'CEDRAT BOISE EXTREME',
     subtitle: 'Inspired by Mancera Cedrat Boise • Sicilian Citrus & Leather',
     description: 'Zesty Lemon of Sicily, Blackcurrant, and Cold Spiced Wood melting into a rich Leather and White Musk heart.',
-    startingPrice: { pkr: 2499, usd: 9 },
+    startingPrice: { pkr: 2999, usd: 11 },
     image: '/products/cedrat.jpg',
     color: '#e0a96d',
+    isSoldOut: true,
+    freeDelivery: true,
+    oilConcentration: '30% Pure Oil',
     topNotes: 'Sicilian Lemon, Blackcurrant, Spicy Notes',
     heartNotes: 'Fruity Notes, Jasmine Leaf, Patchouli',
     baseNotes: 'Tuscan Leather, Cedarwood, Oakmoss, Vanilla',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2499, usd: 9 },
-        '24h': { pkr: 3499, usd: 13 }
+        '10h': { pkr: 2999, usd: 11, soldOut: true },
+        '24h': { pkr: 3999, usd: 15, soldOut: true }
       }
     }
   },
   {
-    id: 'valaroix-aventu-royal',
-    name: 'BLEU INTENSE (AVENTU ROYAL)',
-    subtitle: 'Inspired by Creed Aventus • Smoky Pineapple & Birch Wood',
-    description: 'Sensational French Pineapple and Italian Bergamot infused with Birch Wood smoke and Spanish Oakmoss.',
-    startingPrice: { pkr: 2499, usd: 9 },
-    image: '/products/aventu.jpg',
-    color: '#d4af37',
-    topNotes: 'French Pineapple, Bergamot, Blackcurrant',
-    heartNotes: 'Dry Birch, Moroccan Jasmine, Patchouli',
-    baseNotes: 'Musk, Oakmoss, Ambergris, Vanilla',
+    id: 'valaroix-ysl-y',
+    name: 'VALAROIX Y (YSL Y)',
+    subtitle: 'Inspired by Yves Saint Laurent Y EDP • Crisp Apple & Amber Wood',
+    description: 'Fresh crisp Apple, vibrant Ginger, and aromatic Sage resting upon rich Vetiver, Tonka Bean, and smoky Amberwood.',
+    startingPrice: { pkr: 3300, usd: 12 },
+    image: '/products/ysly.jpg',
+    color: '#1e3a8a',
+    isSoldOut: false,
+    freeDelivery: true,
+    oilConcentration: '30% Pure Oil',
+    topNotes: 'Crisp Apple, Fresh Ginger, Bergamot',
+    heartNotes: 'Sage, Juniper Berries, Geranium',
+    baseNotes: 'Amberwood, Tonka Bean, Cedarwood, Vetiver',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2499, usd: 9 },
-        '24h': { pkr: 3499, usd: 13 }
-      }
-    }
-  },
-  {
-    id: 'valaroix-baccarat-amber-540',
-    name: 'AMBRE ROYAL (BACCARAT 540)',
-    subtitle: 'Inspired by Baccarat Rouge 540 • Saffron & Cotton Candy Amber',
-    description: 'Luminous Saffron and Egyptian Jasmine woven over Amberwood crystals and fresh Fir Resin.',
-    startingPrice: { pkr: 2499, usd: 9 },
-    image: '/products/baccarat.jpg',
-    color: '#e2e8f0',
-    topNotes: 'Grandiflorum Jasmine, Kashmiri Saffron',
-    heartNotes: 'Amberwood, Ambergris Accord',
-    baseNotes: 'Fir Resin, Cedarwood',
-    pricing: {
-      '50ml': {
-        '10h': { pkr: 2499, usd: 9 },
-        '24h': { pkr: 3499, usd: 13 }
+        '10h': { pkr: 3300, usd: 12, soldOut: false },
+        '24h': { pkr: 4300, usd: 16, soldOut: true }
       }
     }
   }
@@ -87,10 +78,12 @@ export default function ProductCatalog() {
   const { formatPrice } = useCurrency();
 
   const handleQuickAdd = (product) => {
+    if (product.isSoldOut) return;
     addToCart(product, '50ml', 'None', '10h');
   };
 
   const handleBuyNow = (product) => {
+    if (product.isSoldOut) return;
     addToCart(product, '50ml', 'None', '10h');
     setIsCheckoutOpen(true);
   };
@@ -109,10 +102,13 @@ export default function ProductCatalog() {
             <h2 className="font-serif-mockup text-2xl sm:text-4xl font-extrabold text-[#0D0D0D] tracking-tight">
               DISCOVER OUR BEST SELLERS
             </h2>
+            <p className="text-xs text-gray-500 font-medium">
+              30% Pure Extrait De Parfum • Free Nationwide Delivery
+            </p>
           </div>
 
-          {/* Product Cards Grid on Soft Cream Background */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Product Cards Grid (3 Columns) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {products.map((product) => (
               <motion.div
                 key={product.id}
@@ -120,53 +116,88 @@ export default function ProductCatalog() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4 }}
-                className="bg-white rounded-2xl p-5 border border-black/5 shadow-sm flex flex-col justify-between space-y-4 hover:shadow-xl transition-all group"
+                className={`bg-white rounded-2xl p-5 border shadow-sm flex flex-col justify-between space-y-4 hover:shadow-xl transition-all group relative overflow-hidden ${
+                  product.isSoldOut ? 'border-red-200/80 opacity-90' : 'border-black/5'
+                }`}
               >
+                {/* Sold Out Watermark / Badge if entire product is sold out */}
+                {product.isSoldOut && (
+                  <div className="absolute top-4 right-4 z-20 bg-red-600 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-full shadow-lg tracking-wider">
+                    SOLD OUT
+                  </div>
+                )}
+
                 <div className="space-y-3 text-center">
                   
                   {/* Bottle Image */}
-                  <Link href={`/product/${product.id}`} className="block relative w-full h-56 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
+                  <Link href={`/product/${product.id}`} className="block relative w-full h-60 rounded-xl overflow-hidden bg-gray-50 border border-gray-100">
                     <img
                       src={product.image}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
+                    {product.isSoldOut && (
+                      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center">
+                        <span className="bg-red-600 text-white text-xs font-bold uppercase px-4 py-1.5 rounded-full shadow-2xl tracking-widest">
+                          SOLD OUT
+                        </span>
+                      </div>
+                    )}
                   </Link>
 
-                  {/* Title */}
+                  {/* Title & Badges */}
                   <div>
                     <Link href={`/product/${product.id}`} className="font-serif-mockup font-bold text-base text-[#0D0D0D] tracking-wider hover:text-[#D4AF37] transition-colors block">
                       {product.name}
                     </Link>
                     <span className="block text-[10px] text-[#6B6B6B] uppercase tracking-widest mt-1 font-sans font-medium">
-                      50ML EXTRAIT DE PARFUM
+                      50ML • 30% OIL CONCENTRATION
                     </span>
+                    
+                    {/* Free Delivery Tag */}
+                    <div className="flex items-center justify-center gap-1.5 mt-2">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                        <Truck className="w-3 h-3 text-emerald-600" /> Free Delivery
+                      </span>
+                    </div>
                   </div>
 
                   {/* Price */}
                   <div className="pt-1">
-                    <span className="font-bold text-sm text-[#0D0D0D] tracking-wider">
+                    <span className="font-bold text-base text-[#0D0D0D] tracking-wider">
                       {formatPrice(product.startingPrice)}
                     </span>
+                    <span className="text-[10px] text-gray-500 block">10h: {formatPrice(product.pricing['50ml']['10h'])} | 24h: {formatPrice(product.pricing['50ml']['24h'])} <span className="text-red-500 font-bold">(Sold Out)</span></span>
                   </div>
 
                 </div>
 
-                {/* 2 Clean Direct Action Buttons: Buy Now & Add to Cart */}
+                {/* Direct Action Buttons */}
                 <div className="space-y-2 pt-2 border-t border-gray-100">
-                  <button
-                    onClick={() => handleBuyNow(product)}
-                    className="w-full py-2.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-md"
-                  >
-                    Buy Now
-                  </button>
+                  {product.isSoldOut ? (
+                    <button
+                      disabled
+                      className="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wider cursor-not-allowed"
+                    >
+                      Currently Sold Out
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleBuyNow(product)}
+                        className="w-full py-2.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-md"
+                      >
+                        Buy Now
+                      </button>
 
-                  <button
-                    onClick={() => handleQuickAdd(product)}
-                    className="w-full py-2.5 rounded-xl btn-mockup-outline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5"
-                  >
-                    <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
-                  </button>
+                      <button
+                        onClick={() => handleQuickAdd(product)}
+                        className="w-full py-2.5 rounded-xl btn-mockup-outline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5"
+                      >
+                        <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
+                      </button>
+                    </>
+                  )}
                 </div>
 
               </motion.div>

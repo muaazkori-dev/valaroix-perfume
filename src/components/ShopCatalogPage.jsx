@@ -24,9 +24,9 @@ export default function ShopCatalogPage() {
                           p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.topNotes.toLowerCase().includes(searchQuery.toLowerCase());
     
-    if (selectedCategory === 'Spicy Fresh (Sauvage)') return matchesSearch && p.id === 'sauvage';
-    if (selectedCategory === 'Woody Citrus (Cedrat)') return matchesSearch && p.id === 'cedrat-boise';
-    if (selectedCategory === 'Aromatic Amber (YSL Y)') return matchesSearch && p.id === 'ysl-y';
+    if (selectedCategory === 'Spicy Fresh (Sauvage)') return matchesSearch && p.id.includes('sauvage');
+    if (selectedCategory === 'Woody Citrus (Cedrat)') return matchesSearch && p.id.includes('cedrat');
+    if (selectedCategory === 'Aromatic Amber (YSL Y)') return matchesSearch && p.id.includes('ysl');
     
     return matchesSearch;
   });

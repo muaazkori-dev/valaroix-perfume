@@ -24,12 +24,12 @@ export default function ProductDetailPage() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
   // Find product by URL param ID, fallback to Sauvage
-  const productId = params?.id || 'sauvage';
-  const product = products.find((p) => p.id === productId) || products[0];
+  const productId = params?.id || 'valaroix-sauvage-imperial';
+  const product = products.find((p) => p.id === productId || p.id.includes(productId)) || products[0];
 
   // Options State
-  const [selectedSize, setSelectedSize] = useState('100ml'); // '50ml' | '100ml'
-  const [selectedEdition, setSelectedEdition] = useState('24h'); // '10h' | '24h'
+  const [selectedSize, setSelectedSize] = useState('50ml');
+  const [selectedEdition, setSelectedEdition] = useState('10h'); // '10h' | '24h'
   const [engraving, setEngraving] = useState('');
   const [activeTab, setActiveTab] = useState('notes');
 
@@ -45,12 +45,20 @@ export default function ProductDetailPage() {
       }
       return base;
     }
-    return { pkr: 2499, usd: 9 };
+    return product.startingPrice || { pkr: 2699, usd: 10 };
   };
 
   const finalPriceObj = getSelectedPriceObj();
 
   const handleAddToCart = () => {
+    if (product.isSoldOut) {
+      alert('This product is currently Sold Out!');
+      return;
+    }
+    if (selectedEdition === '24h') {
+      alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
+      return;
+    }
     const customizedProduct = {
       ...product,
       name: `${product.name} (${selectedSize} • ${selectedEdition === '24h' ? '24 Hours+ Extrait' : '10 Hours+ EDP'})`,
@@ -61,6 +69,14 @@ export default function ProductDetailPage() {
   };
 
   const handleBuyNow = () => {
+    if (product.isSoldOut) {
+      alert('This product is currently Sold Out!');
+      return;
+    }
+    if (selectedEdition === '24h') {
+      alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
+      return;
+    }
     handleAddToCart();
     setIsCheckoutOpen(true);
   };
@@ -138,9 +154,15 @@ export default function ProductDetailPage() {
                   <span className="ml-1 text-sm">{product.rating}</span>
                 </div>
                 <span className="text-gray-400">({product.reviewsCount} Verified Patron Reviews)</span>
-                <span className="text-valaroix-emerald font-semibold flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-valaroix-emerald animate-ping" /> In Stock (Batch #904)
-                </span>
+                {product.isSoldOut ? (
+                  <span className="text-red-400 font-bold flex items-center gap-1 bg-red-500/10 border border-red-500/30 px-2.5 py-0.5 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-red-500" /> Out of Stock (Sold Out)
+                  </span>
+                ) : (
+                  <span className="text-valaroix-emerald font-semibold flex items-center gap-1">
+                    <span className="w-2 h-2 rounded-full bg-valaroix-emerald animate-ping" /> In Stock • Free Nationwide Delivery
+                  </span>
+                )}
               </div>
             </div>
 
@@ -201,12 +223,15 @@ export default function ProductDetailPage() {
                       : 'bg-black/60 border-valaroix-gold/20 text-gray-400 hover:border-valaroix-gold/50'
                   }`}
                 >
-                  <div className="flex justify-between items-center mb-1">
+                  <span className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-bold bg-red-600 text-white uppercase shadow-sm">
+                    SOLD OUT
+                  </span>
+                  <div className="flex justify-between items-center mb-1 pr-12">
                     <span className="font-bold text-sm">24 Hours+ Lasting 🔥</span>
-                    <span className="font-mono text-xs">
-                      {formatPrice(getSelectedPriceObj(selectedSize, '24h'))}
-                    </span>
                   </div>
+                  <span className="font-mono text-xs block mb-1">
+                    {formatPrice(getSelectedPriceObj(selectedSize, '24h'))}
+                  </span>
                   <span className={`block text-[11px] ${selectedEdition === '24h' ? 'text-valaroix-dark/80 font-medium' : 'text-gray-400'}`}>
                     Pure Extrait De Parfum (30% Oil)
                   </span>
@@ -234,19 +259,32 @@ export default function ProductDetailPage() {
 
             {/* ACTION CTAs: Add to Cart & Buy Now */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <button
-                onClick={handleAddToCart}
-                className="btn-gold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-2xl"
-              >
-                <ShoppingBag className="w-4 h-4" /> Add to Cart ({formatPrice(finalPriceObj)})
-              </button>
+              {product.isSoldOut ? (
+                <div className="col-span-full">
+                  <button
+                    disabled
+                    className="w-full py-4 rounded-2xl bg-gray-800 text-gray-400 border border-gray-700 text-xs uppercase font-bold tracking-wider cursor-not-allowed text-center shadow-lg"
+                  >
+                    CURRENTLY SOLD OUT
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={handleAddToCart}
+                    className="btn-gold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-2xl"
+                  >
+                    <ShoppingBag className="w-4 h-4" /> Add to Cart ({formatPrice(finalPriceObj)})
+                  </button>
 
-              <button
-                onClick={handleBuyNow}
-                className="py-4 px-6 rounded-2xl glass-panel-gold border border-valaroix-gold text-valaroix-gold text-xs uppercase font-bold tracking-wider hover:bg-valaroix-gold hover:text-valaroix-dark transition-all shadow-2xl"
-              >
-                Buy Now ⚡
-              </button>
+                  <button
+                    onClick={handleBuyNow}
+                    className="py-4 px-6 rounded-2xl glass-panel-gold border border-valaroix-gold text-valaroix-gold text-xs uppercase font-bold tracking-wider hover:bg-valaroix-gold hover:text-valaroix-dark transition-all shadow-2xl"
+                  >
+                    Buy Now ⚡
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Trust Guarantee Icons */}
