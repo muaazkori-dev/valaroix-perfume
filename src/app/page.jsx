@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import AdminDashboardPage from '@/app/admin/page';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import ProductCatalog from '@/components/ProductCatalog';
@@ -16,22 +15,6 @@ import AuthModal from '@/components/AuthModal';
 import CustomerAccountModal from '@/components/CustomerAccountModal';
 
 export default function Home() {
-  const [isNativeApp, setIsNativeApp] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isCap = !!window.Capacitor?.isNativePlatform() || window.navigator.userAgent.includes('Capacitor') || window.location.hostname === 'localhost';
-      // In native mobile app context, default directly to Admin Dashboard
-      if (isCap) {
-        setIsNativeApp(true);
-      }
-    }
-  }, []);
-
-  if (isNativeApp) {
-    return <AdminDashboardPage />;
-  }
-
   return (
     <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden">
       {/* 1. Header Navbar */}
