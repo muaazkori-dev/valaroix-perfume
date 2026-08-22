@@ -15,6 +15,7 @@ export function CartProvider({ children }) {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [lastAddedProduct, setLastAddedProduct] = useState(null);
 
   // Load saved state from localStorage
   useEffect(() => {
@@ -44,7 +45,7 @@ export function CartProvider({ children }) {
     } catch (e) {}
   };
 
-  const addToCart = (product, size = '50ml', engraving = '') => {
+  const addToCart = (product, size = '50ml', engraving = '', openDrawer = false) => {
     const cartItemId = `${product.id}-${size}`;
     const existingIndex = cart.findIndex((item) => (item.cartItemId === cartItemId || item.id === product.id));
 
@@ -80,7 +81,18 @@ export function CartProvider({ children }) {
       };
       saveCart([...cart, newItem]);
     }
-    setIsCartOpen(true);
+
+    // Trigger smooth animated feedback toast instead of abruptly opening drawer
+    setLastAddedProduct({
+      id: Date.now(),
+      name: product.name,
+      image: product.image || '/products/sauvage.jpg',
+      price
+    });
+
+    if (openDrawer) {
+      setIsCartOpen(true);
+    }
   };
 
   const toggleWishlist = (product) => {
@@ -166,7 +178,9 @@ export function CartProvider({ children }) {
         subtotal,
         discountAmount,
         total,
-        clearCart
+        clearCart,
+        lastAddedProduct,
+        setLastAddedProduct
       }}
     >
       {children}

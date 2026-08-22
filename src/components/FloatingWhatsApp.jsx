@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 
 // Official Pixel-Perfect Authentic WhatsApp Vector SVG Logo Icon
 export function WhatsAppIcon({ className = 'w-6 h-6' }) {
@@ -11,37 +12,65 @@ export function WhatsAppIcon({ className = 'w-6 h-6' }) {
   );
 }
 
-// Official Authentic TikTok SVG Logo Icon
-export function TikTokIcon({ className = 'w-5 h-5' }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.33 0 .64.06.94.16V9.02a6.3 6.3 0 0 0-.94-.07 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V9.05a8.27 8.27 0 0 0 4.77 1.48V7.07a4.85 4.85 0 0 1-1.01-.38z" />
-    </svg>
-  );
-}
-
 export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
+  const controls = useAnimation();
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef(null);
+
   const defaultMessage = encodeURIComponent(
     'Hello VALAROIX Haute Parfumerie, I am interested in acquiring your Luxury Perfumes.'
   );
-
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
-  return (
-    <div className="fixed bottom-6 right-6 z-50 pointer-events-auto">
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Direct WhatsApp Chat with VALAROIX Support"
-        className="group relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.5)] hover:scale-110 hover:shadow-[0_0_35px_rgba(37,211,102,0.8)] transition-all duration-300 border border-white/30"
-      >
-        {/* Glowing Ambient Outer Ring */}
-        <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
+  const handleDragEnd = (event, info) => {
+    setTimeout(() => setIsDragging(false), 100);
+    
+    // Magnetic Snap to Nearest Screen Edge (Left or Right)
+    const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 400;
+    const dropX = info.point.x;
+    
+    const snapToRight = dropX > screenWidth / 2;
+    
+    controls.start({
+      x: snapToRight ? 0 : -(screenWidth - 76),
+      transition: { type: 'spring', stiffness: 450, damping: 28 }
+    });
+  };
 
-        {/* Authentic Official WhatsApp Icon */}
-        <WhatsAppIcon className="w-7 h-7 text-white group-hover:rotate-12 transition-transform duration-300" />
-      </a>
+  return (
+    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+      <motion.div
+        drag
+        dragConstraints={containerRef}
+        dragElastic={0.1}
+        dragMomentum={false}
+        animate={controls}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={handleDragEnd}
+        whileDrag={{ scale: 1.15 }}
+        whileHover={{ scale: 1.08 }}
+        whileTap={{ scale: 0.95 }}
+        className="absolute bottom-6 right-6 pointer-events-auto cursor-grab active:cursor-grabbing touch-none select-none"
+      >
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            if (isDragging) {
+              e.preventDefault();
+            }
+          }}
+          aria-label="Direct WhatsApp Chat with VALAROIX Support"
+          className="group relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.6)] hover:shadow-[0_0_35px_rgba(37,211,102,0.9)] transition-shadow duration-300 border-2 border-white/40"
+        >
+          {/* Glowing Ambient Outer Ring */}
+          <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
+
+          {/* Authentic Official WhatsApp Icon */}
+          <WhatsAppIcon className="w-7 h-7 text-white group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
+        </a>
+      </motion.div>
     </div>
   );
 }
