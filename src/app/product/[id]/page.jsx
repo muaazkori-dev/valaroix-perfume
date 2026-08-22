@@ -208,7 +208,7 @@ export default function ProductDetailPage() {
                     </span>
                   </div>
                   <span className={`block text-[11px] ${selectedEdition === '24h' ? 'text-valaroix-dark/80 font-medium' : 'text-gray-400'}`}>
-                    Pure Extrait De Parfum (35% Oil)
+                    Pure Extrait De Parfum (30% Oil)
                   </span>
                 </button>
               </div>
@@ -314,7 +314,7 @@ export default function ProductDetailPage() {
               {activeTab === 'craft' && (
                 <div className="p-4 rounded-xl glass-panel text-xs text-gray-300 space-y-2 leading-relaxed font-light">
                   <p><strong>Maceration:</strong> Aged for 180 days in French Oak Casks in Grasse, France.</p>
-                  <p><strong>Concentration:</strong> 24 Hours+ Extrait contains 35% pure perfume oil density.</p>
+                  <p><strong>Concentration:</strong> 24 Hours+ Extrait contains 30% pure perfume oil density.</p>
                   <p><strong>Bottle:</strong> Hand-faceted crystal glass with 24k gold leaf atomizer nozzle.</p>
                 </div>
               )}

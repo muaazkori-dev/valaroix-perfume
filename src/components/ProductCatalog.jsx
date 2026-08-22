@@ -98,21 +98,21 @@ export default function ProductCatalog() {
   return (
     <div>
       {/* 1. EXACT MOCKUP SOFT CREAM SECTION (#F7F4EE) FOR OUR COLLECTION */}
-      <section id="shop" className="py-20 bg-[#F7F4EE] text-[#0D0D0D]">
+      <section id="shop" className="py-12 sm:py-20 bg-[#F7F4EE] text-[#0D0D0D]">
         <div className="max-w-7xl mx-auto px-4 sm:px-8">
           
           {/* Section Header */}
-          <div className="text-center space-y-2 max-w-2xl mx-auto mb-14">
+          <div className="text-center space-y-2 max-w-2xl mx-auto mb-10 sm:mb-14">
             <span className="block text-[11px] font-semibold uppercase tracking-[0.25em] text-[#D4AF37]">
               OUR COLLECTION
             </span>
-            <h2 className="font-serif-mockup text-3xl sm:text-4xl font-extrabold text-[#0D0D0D] tracking-tight">
+            <h2 className="font-serif-mockup text-2xl sm:text-4xl font-extrabold text-[#0D0D0D] tracking-tight">
               DISCOVER OUR BEST SELLERS
             </h2>
           </div>
 
           {/* Product Cards Grid on Soft Cream Background */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {products.map((product) => (
               <motion.div
                 key={product.id}

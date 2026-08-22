@@ -19,7 +19,7 @@ export default function Footer() {
                 <img src="/logo.jpg" alt="VALAROIX" className="w-full h-full object-cover rounded-full" />
               </div>
               <span className="font-serif-mockup text-lg font-bold text-white tracking-widest">
-                V VALAROIX
+                VALAROIX
               </span>
             </div>
             <p className="text-xs text-[#6B6B6B] leading-relaxed max-w-xs">

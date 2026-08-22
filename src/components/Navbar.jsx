@@ -68,7 +68,7 @@ export default function Navbar({ onOpenAdmin }) {
               />
             </div>
             <span className="font-serif-mockup text-lg sm:text-xl font-bold tracking-widest text-white group-hover:text-[#D4AF37] transition-colors leading-tight">
-              V VALAROIX
+              VALAROIX
             </span>
           </Link>
 
@@ -219,7 +219,7 @@ export default function Navbar({ onOpenAdmin }) {
                   <div className="w-8 h-8 rounded-full border border-[#D4AF37] p-0.5">
                     <img src="/logo.jpg" alt="Logo" className="w-full h-full rounded-full object-cover" />
                   </div>
-                  <span className="font-serif-mockup text-lg font-bold text-white">V VALAROIX</span>
+                  <span className="font-serif-mockup text-lg font-bold text-white">VALAROIX</span>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
