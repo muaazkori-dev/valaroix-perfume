@@ -30,20 +30,12 @@ export default function ProductDetailPage() {
   // Options State
   const [selectedSize, setSelectedSize] = useState('50ml');
   const [selectedEdition, setSelectedEdition] = useState('10h'); // '10h' | '24h'
-  const [engraving, setEngraving] = useState('');
   const [activeTab, setActiveTab] = useState('notes');
 
   // Dynamic Price calculation based on exact pricing matrix
   const getSelectedPriceObj = (size = selectedSize, edition = selectedEdition) => {
     if (product.pricing && product.pricing[size] && product.pricing[size][edition]) {
-      const base = product.pricing[size][edition];
-      if (engraving.trim().length > 0) {
-        return {
-          pkr: base.pkr + 500,
-          usd: base.usd + 2
-        };
-      }
-      return base;
+      return product.pricing[size][edition];
     }
     return product.startingPrice || { pkr: 2699, usd: 10 };
   };
@@ -55,7 +47,7 @@ export default function ProductDetailPage() {
       alert('This product is currently Sold Out!');
       return;
     }
-    if (selectedEdition === '24h') {
+    if (selectedEdition === '24h' || product.pricing?.[selectedSize]?.['24h']?.soldOut) {
       alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
       return;
     }
@@ -65,7 +57,7 @@ export default function ProductDetailPage() {
       price: currency === 'PKR' ? finalPriceObj.pkr / 280 : finalPriceObj.usd,
       exactPkr: finalPriceObj.pkr
     };
-    addToCart(customizedProduct, selectedSize, engraving);
+    addToCart(customizedProduct, selectedSize, '');
   };
 
   const handleBuyNow = () => {
@@ -73,7 +65,7 @@ export default function ProductDetailPage() {
       alert('This product is currently Sold Out!');
       return;
     }
-    if (selectedEdition === '24h') {
+    if (selectedEdition === '24h' || product.pricing?.[selectedSize]?.['24h']?.soldOut) {
       alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
       return;
     }
@@ -194,32 +186,49 @@ export default function ProductDetailPage() {
             {/* OPTION 2: LONGEVITY & LASTING EDITION SELECTOR */}
             <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
               <label className="block text-xs uppercase tracking-widest text-valaroix-gold font-bold flex items-center gap-2">
-                <Clock className="w-4 h-4" /> 2. Choose Longevity Lasting Edition ({selectedSize})
+                <Clock className="w-4 h-4" /> Choose Longevity Lasting Edition ({selectedSize})
               </label>
 
               <div className="grid grid-cols-2 gap-3">
+                {/* 10 Hours Lasting Button */}
                 <button
-                  onClick={() => setSelectedEdition('10h')}
+                  onClick={() => {
+                    if (product.isSoldOut || product.pricing?.[selectedSize]?.['10h']?.soldOut) {
+                      alert('This item is currently Sold Out!');
+                      return;
+                    }
+                    setSelectedEdition('10h');
+                  }}
                   className={`p-4 rounded-xl border text-left transition-all relative ${
-                    selectedEdition === '10h'
+                    (product.isSoldOut || product.pricing?.[selectedSize]?.['10h']?.soldOut)
+                      ? 'bg-black/40 border-red-500/40 text-gray-400 opacity-80 cursor-not-allowed'
+                      : selectedEdition === '10h'
                       ? 'bg-valaroix-gold/20 border-valaroix-gold text-white shadow-lg'
                       : 'bg-black/60 border-valaroix-gold/20 text-gray-400 hover:border-valaroix-gold/50'
                   }`}
                 >
+                  {(product.isSoldOut || product.pricing?.[selectedSize]?.['10h']?.soldOut) && (
+                    <span className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-bold bg-red-600 text-white uppercase shadow-sm">
+                      SOLD OUT
+                    </span>
+                  )}
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-sm text-gray-100">10 Hours+ Lasting</span>
-                    <span className="font-mono text-xs text-valaroix-gold">
-                      {formatPrice(getSelectedPriceObj(selectedSize, '10h'))}
-                    </span>
                   </div>
+                  <span className="font-mono text-xs text-valaroix-gold block mb-1">
+                    {formatPrice(getSelectedPriceObj(selectedSize, '10h'))}
+                  </span>
                   <span className="block text-[11px] text-gray-400">Eau de Parfum Intense (20% Oil)</span>
                 </button>
 
+                {/* 24 Hours Lasting Button */}
                 <button
-                  onClick={() => setSelectedEdition('24h')}
+                  onClick={() => {
+                    alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
+                  }}
                   className={`p-4 rounded-xl border text-left transition-all relative ${
                     selectedEdition === '24h'
-                      ? 'bg-valaroix-gold text-valaroix-dark border-valaroix-gold font-bold shadow-xl'
+                      ? 'bg-valaroix-gold/30 text-white border-valaroix-gold shadow-xl'
                       : 'bg-black/60 border-valaroix-gold/20 text-gray-400 hover:border-valaroix-gold/50'
                   }`}
                 >
@@ -232,29 +241,11 @@ export default function ProductDetailPage() {
                   <span className="font-mono text-xs block mb-1">
                     {formatPrice(getSelectedPriceObj(selectedSize, '24h'))}
                   </span>
-                  <span className={`block text-[11px] ${selectedEdition === '24h' ? 'text-valaroix-dark/80 font-medium' : 'text-gray-400'}`}>
+                  <span className="block text-[11px] text-gray-400">
                     Pure Extrait De Parfum (30% Oil)
                   </span>
                 </button>
               </div>
-            </div>
-
-            {/* OPTION 3: DIAMOND LASER MONOGRAM ENGRAVING */}
-            <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
-              <div className="flex justify-between items-center">
-                <label className="text-xs uppercase tracking-widest text-valaroix-gold font-bold flex items-center gap-2">
-                  <PenTool className="w-4 h-4" /> 3. Custom Monogram Laser Engraving (+{formatPrice({ pkr: 500, usd: 2 })})
-                </label>
-                <span className="text-[10px] text-gray-400">Optional</span>
-              </div>
-              <input
-                type="text"
-                maxLength={12}
-                value={engraving}
-                onChange={(e) => setEngraving(e.target.value)}
-                placeholder="Enter Name / Monogram (e.g. V.A. 2026)"
-                className="w-full bg-black border border-valaroix-gold/30 rounded-xl px-4 py-3 text-xs font-mono text-valaroix-gold tracking-widest uppercase focus:outline-none focus:border-valaroix-gold"
-              />
             </div>
 
             {/* ACTION CTAs: Add to Cart & Buy Now */}

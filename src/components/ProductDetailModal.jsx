@@ -137,26 +137,11 @@ export default function ProductDetailModal() {
                 </div>
               </div>
 
-              {/* Optional Custom Monogram Engraving Input */}
-              <div className="space-y-1.5">
-                <label className="text-[11px] text-valaroix-gold font-semibold uppercase tracking-wider flex items-center gap-1.5">
-                  <PenTool className="w-3.5 h-3.5" /> Optional Laser Monogram Engraving (+$35)
-                </label>
-                <input
-                  type="text"
-                  maxLength={12}
-                  value={engraving}
-                  onChange={(e) => setEngraving(e.target.value)}
-                  placeholder="e.g. V.A. 2026"
-                  className="w-full bg-black border border-valaroix-gold/30 rounded-xl px-3.5 py-2 text-xs font-mono text-valaroix-gold uppercase focus:outline-none focus:border-valaroix-gold"
-                />
-              </div>
-
               {/* Purchase Action CTAs */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   onClick={() => {
-                    addToCart(product, selectedSize, engraving);
+                    addToCart(product, selectedSize, '');
                     setSelectedProductModal(null);
                   }}
                   className="btn-gold py-3.5 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider"
