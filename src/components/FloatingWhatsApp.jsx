@@ -1,7 +1,6 @@
-'use client';
+﻿'use client';
 
-import React, { useState, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Official Pixel-Perfect Authentic WhatsApp Vector SVG Logo Icon
 export function WhatsAppIcon({ className = 'w-6 h-6' }) {
@@ -22,64 +21,127 @@ export function TikTokIcon({ className = 'w-5 h-5' }) {
 }
 
 export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
-  const controls = useAnimation();
+  const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const containerRef = useRef(null);
+  const [isSnapping, setIsSnapping] = useState(false);
+  const dragStartRef = useRef({ startX: 0, startY: 0, initialPosX: 0, initialPosY: 0 });
+  const hasMovedRef = useRef(false);
 
   const defaultMessage = encodeURIComponent(
     'Hello VALAROIX Haute Parfumerie, I am interested in acquiring your Luxury Perfumes.'
   );
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
-  const handleDragEnd = (event, info) => {
-    setTimeout(() => setIsDragging(false), 100);
-    
+  // Initial placement on screen load (bottom right)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const initialX = Math.max(16, window.innerWidth - 76);
+      const initialY = Math.max(100, window.innerHeight - 90);
+      setPos({ x: initialX, y: initialY });
+    }
+  }, []);
+
+  const handlePointerDown = (e) => {
+    const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY ?? (e.touches && e.touches[0].clientY);
+    if (clientX === undefined || clientY === undefined) return;
+
+    setIsDragging(true);
+    setIsSnapping(false);
+    hasMovedRef.current = false;
+    dragStartRef.current = {
+      startX: clientX,
+      startY: clientY,
+      initialPosX: pos.x,
+      initialPosY: pos.y
+    };
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isDragging) return;
+    const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
+    const clientY = e.clientY ?? (e.touches && e.touches[0].clientY);
+    if (clientX === undefined || clientY === undefined) return;
+
+    const deltaX = clientX - dragStartRef.current.startX;
+    const deltaY = clientY - dragStartRef.current.startY;
+
+    if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
+      hasMovedRef.current = true;
+    }
+
+    const newX = Math.max(12, Math.min(window.innerWidth - 68, dragStartRef.current.initialPosX + deltaX));
+    const newY = Math.max(80, Math.min(window.innerHeight - 80, dragStartRef.current.initialPosY + deltaY));
+
+    setPos({ x: newX, y: newY });
+  };
+
+  const handlePointerUp = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    setIsSnapping(true);
+
     // Magnetic Snap to Nearest Screen Edge (Left or Right)
     const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 400;
-    const dropX = info.point.x;
-    
-    const snapToRight = dropX > screenWidth / 2;
-    
-    controls.start({
-      x: snapToRight ? 0 : -(screenWidth - 76),
-      transition: { type: 'spring', stiffness: 450, damping: 28 }
-    });
+    const snapToRight = pos.x > screenWidth / 2;
+    const targetX = snapToRight ? screenWidth - 76 : 16;
+
+    setPos((prev) => ({ ...prev, x: targetX }));
+  };
+
+  useEffect(() => {
+    const onMove = (e) => handlePointerMove(e);
+    const onUp = () => handlePointerUp();
+
+    if (isDragging) {
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('touchend', onUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('touchmove', onMove);
+      window.removeEventListener('touchend', onUp);
+    };
+  }, [isDragging, pos]);
+
+  const handleClick = (e) => {
+    if (hasMovedRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   return (
-    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      <motion.div
-        drag
-        dragConstraints={containerRef}
-        dragElastic={0.1}
-        dragMomentum={false}
-        animate={controls}
-        onDragStart={() => setIsDragging(true)}
-        onDragEnd={handleDragEnd}
-        whileDrag={{ scale: 1.15 }}
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.95 }}
-        className="absolute bottom-6 right-6 pointer-events-auto cursor-grab active:cursor-grabbing touch-none select-none"
+    <div
+      style={{
+        position: 'fixed',
+        left: `${pos.x}px`,
+        top: `${pos.y}px`,
+        zIndex: 9999,
+        transition: isSnapping ? 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'none',
+        touchAction: 'none'
+      }}
+      onMouseDown={handlePointerDown}
+      onTouchStart={handlePointerDown}
+      className="cursor-grab active:cursor-grabbing select-none"
+    >
+      <a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handleClick}
+        aria-label="Direct WhatsApp Chat with VALAROIX Support"
+        className="group relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.6)] hover:scale-110 hover:shadow-[0_0_35px_rgba(37,211,102,0.9)] transition-transform duration-300 border-2 border-white/40 block"
       >
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => {
-            if (isDragging) {
-              e.preventDefault();
-            }
-          }}
-          aria-label="Direct WhatsApp Chat with VALAROIX Support"
-          className="group relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.6)] hover:shadow-[0_0_35px_rgba(37,211,102,0.9)] transition-shadow duration-300 border-2 border-white/40"
-        >
-          {/* Glowing Ambient Outer Ring */}
-          <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
+        {/* Glowing Ambient Outer Ring */}
+        <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
 
-          {/* Authentic Official WhatsApp Icon */}
-          <WhatsAppIcon className="w-7 h-7 text-white group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
-        </a>
-      </motion.div>
+        {/* Authentic Official WhatsApp Icon */}
+        <WhatsAppIcon className="w-7 h-7 text-white group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
+      </a>
     </div>
   );
 }

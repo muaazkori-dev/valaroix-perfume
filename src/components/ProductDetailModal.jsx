@@ -105,22 +105,15 @@ export default function ProductDetailModal() {
               </div>
 
               {/* Purchase Action CTAs */}
-              <div className="grid grid-cols-2 gap-3 pt-2">
+              <div className="pt-2">
                 <button
                   onClick={() => {
                     addToCart(product, selectedSize, '');
                     setSelectedProductModal(null);
                   }}
-                  className="btn-gold py-3.5 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider"
+                  className="w-full btn-gold py-3.5 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-lg"
                 >
                   <ShoppingBag className="w-4 h-4" /> Add To Bag
-                </button>
-
-                <button
-                  onClick={handleBuyNow}
-                  className="py-3.5 rounded-full glass-panel hover:border-valaroix-gold text-valaroix-gold text-xs uppercase font-bold tracking-wider border-valaroix-gold/50"
-                >
-                  Buy Now Instant
                 </button>
               </div>
 

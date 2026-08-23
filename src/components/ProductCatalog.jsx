@@ -173,30 +173,21 @@ export default function ProductCatalog() {
                 </div>
 
                 {/* Direct Action Buttons */}
-                <div className="space-y-2 pt-2 border-t border-gray-100">
+                <div className="pt-2 border-t border-gray-100">
                   {product.isSoldOut ? (
                     <button
                       disabled
-                      className="w-full py-2.5 rounded-xl bg-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wider cursor-not-allowed"
+                      className="w-full py-3 rounded-xl bg-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wider cursor-not-allowed"
                     >
                       Currently Sold Out
                     </button>
                   ) : (
-                    <>
-                      <button
-                        onClick={() => handleBuyNow(product)}
-                        className="w-full py-2.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-md"
-                      >
-                        Buy Now
-                      </button>
-
-                      <button
-                        onClick={() => handleQuickAdd(product)}
-                        className="w-full py-2.5 rounded-xl btn-mockup-outline text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5"
-                      >
-                        <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
-                      </button>
-                    </>
+                    <button
+                      onClick={() => handleQuickAdd(product)}
+                      className="w-full py-3 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
+                    >
+                      <ShoppingBag className="w-4 h-4" /> Add to Cart
+                    </button>
                   )}
                 </div>
 
