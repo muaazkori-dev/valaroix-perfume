@@ -6,7 +6,8 @@ import {
   ShieldCheck, Lock, Check, X, Eye, Printer, Filter, 
   MessageSquare, Trash2, Split, TrendingUp, Sparkles, ExternalLink,
   ShoppingBag, ArrowLeft, Truck, PackageCheck, Bell, Volume2, VolumeX,
-  Phone, MapPin, Clock, AlertCircle, CheckCircle2
+  Phone, MapPin, Clock, AlertCircle, CheckCircle2, RefreshCw, Send,
+  HelpCircle
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -17,8 +18,8 @@ export default function AdminDashboardPage() {
   const [pinError, setPinError] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [orderFilter, setOrderFilter] = useState('all');
-  const [isPrintingSlips, setIsPrintingSlips] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [hasNotificationPermission, setHasNotificationPermission] = useState(false);
   const [newOrderToast, setNewOrderToast] = useState(null);
   const [statusToast, setStatusToast] = useState(null);
 
@@ -82,6 +83,32 @@ export default function AdminDashboardPage() {
     } catch (e) {}
   };
 
+  // Trigger System Push Notification
+  const triggerNativePushNotification = (order) => {
+    try {
+      if (typeof window !== 'undefined' && 'Notification' in window) {
+        if (Notification.permission === 'granted') {
+          new Notification(`🔔 New Order #${order.id} — Rs. ${getOrderPrice(order).toLocaleString()}`, {
+            body: `${order.customerName || 'Customer'} ordered ${order.item || 'Perfume'} (${order.city || 'Pakistan'})`,
+            icon: '/favicon.ico'
+          });
+        }
+      }
+    } catch (e) {}
+  };
+
+  const requestNotificationPermission = () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          setHasNotificationPermission(true);
+          setStatusToast('🔔 System Notifications Enabled! You will receive alerts even when screen is closed.');
+          setTimeout(() => setStatusToast(null), 4000);
+        }
+      });
+    }
+  };
+
   // Helper calculation for Price & Profit
   const getOrderPrice = (o) => {
     if (o.pricePkr && o.pricePkr > 0) return o.pricePkr;
@@ -120,6 +147,7 @@ export default function AdminDashboardPage() {
               if (newOrders.length > 0) {
                 const latest = newOrders[0];
                 playAlertSound();
+                triggerNativePushNotification(latest);
                 setNewOrderToast(latest);
                 setTimeout(() => setNewOrderToast(null), 6000);
               }
@@ -172,6 +200,7 @@ export default function AdminDashboardPage() {
       channel.onmessage = (event) => {
         if (event.data?.type === 'NEW_ORDER' && event.data.order) {
           playAlertSound();
+          triggerNativePushNotification(event.data.order);
           setNewOrderToast(event.data.order);
           setTimeout(() => setNewOrderToast(null), 6000);
           fetchServerOrders();
@@ -274,12 +303,31 @@ export default function AdminDashboardPage() {
     return true;
   });
 
-  // Client WhatsApp Action (Separate dedicated button)
-  const handleSendWhatsAppNotification = (order) => {
+  // Client WhatsApp Action 1: ASK CUSTOMER TO CONFIRM ON WHATSAPP
+  const handleAskCustomerToConfirm = (order) => {
+    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
     const price = getOrderPrice(order);
+    const text = encodeURIComponent(
+      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nHum VALAROIX Luxury Fragrance se baat kar rahe hain.\n\nAapka order receive hua hai:\n📦 Order: #${order.id}\n🌸 Product: ${order.items ? order.items.map(i=>i.name).join(', ') : order.item}\n💰 Total Amount: Rs. ${price.toLocaleString()}\n📍 Address: ${order.address}, ${order.city}\n\n👉 Kya aap is order ko CONFIRM karte hain taake hum TCS Express se parcel dispatch kar dein? Baraye meharbani 'YES' likh kar reply karein. Shukriya!`
+    );
+    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
+  };
+
+  // Client WhatsApp Action 2: SEND TCS DISPATCH CONFIRMATION
+  const handleSendDispatchWhatsApp = (order) => {
+    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
+    const price = getOrderPrice(order);
+    const text = encodeURIComponent(
+      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nAapka VALAROIX Luxury Perfume order #${order.id} CONFIRM kar diya gaya hai!\n\n📦 Item: ${order.items ? order.items.map(i=>i.name).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n🚚 Delivery via: TCS Express Courier (Tracking CN: ${order.tcsTrackingNumber || '7780863721'})\n\nParcel 24 hours ke andar deliver ho jayega. Shukriya!`
+    );
+    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
+  };
+
+  // Client WhatsApp Action 3: SEND CANCEL ALERT
+  const handleSendCancelWhatsApp = (order) => {
     const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
     const text = encodeURIComponent(
-      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nAapka VALAROIX Luxury Perfume order #${order.id} CONFIRM kar diya gaya hai!\n\n📦 Item: ${order.items ? order.items.map(i=>i.name).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n🚚 Delivery via: TCS Express Courier (Tracking: ${order.tcsTrackingNumber || '7748291048'})\n\nParcel 24 hours ke andar deliver ho jayega. Shukriya!`
+      `Assalam-o-Alaikum ${order.customerName}! Aapka VALAROIX order #${order.id} cancel kar diya gaya hai. Mazeed maloomat ke liye hum se rabta karein.`
     );
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
@@ -580,20 +628,22 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center gap-2">
                           <div
                             onClick={() => setSelectedReceipt(receiptUrl)}
-                            className="w-10 h-10 rounded-xl overflow-hidden border border-[#D4AF37] cursor-pointer"
+                            className="w-12 h-12 rounded-xl overflow-hidden border-2 border-[#D4AF37] bg-black cursor-pointer shadow-md shrink-0 hover:scale-105 transition-transform"
                           >
                             <img src={receiptUrl} alt="Slip" className="w-full h-full object-cover" />
                           </div>
                           <button
                             onClick={() => setSelectedReceipt(receiptUrl)}
-                            className="px-3 py-1.5 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
+                            className="px-3 py-2 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
                           >
-                            <Eye className="w-3.5 h-3.5" /> View SadaPay Slip
+                            <Eye className="w-4 h-4" /> View SadaPay Slip
                           </button>
                         </div>
                       ) : (
-                        <span className="text-gray-500 italic text-xs">
-                          {order.paymentMethod?.includes('Advance') ? 'No slip attached (Check bank)' : 'Cash on Delivery'}
+                        <span className="text-gray-400 text-xs italic block py-1">
+                          {order.paymentMethod?.toLowerCase().includes('advance') || order.paymentMethod?.toLowerCase().includes('sada')
+                            ? '⚠️ SadaPay Screenshot not attached (Verify in SadaPay: 03472818878)'
+                            : 'Cash on Delivery (No slip required)'}
                         </span>
                       )}
                     </div>
@@ -606,7 +656,7 @@ export default function AdminDashboardPage() {
                     {isPending && (
                       <button
                         onClick={() => updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS', `✓ Order #${order.id} Confirmed!`)}
-                        className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[180px]"
+                        className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
                       >
                         <Check className="w-4 h-4" />
                         <span>Confirm Order</span>
@@ -617,7 +667,7 @@ export default function AdminDashboardPage() {
                     {isConfirmed && !isInTransit && !isDelivered && (
                       <button
                         onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `🚚 Order #${order.id} Handed Over to TCS!`)}
-                        className="flex-1 py-3 px-4 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[180px]"
+                        className="flex-1 py-3 px-4 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
                       >
                         <Truck className="w-4 h-4" />
                         <span>Handover to TCS (In Transit)</span>
@@ -628,7 +678,7 @@ export default function AdminDashboardPage() {
                     {isInTransit && !isDelivered && (
                       <button
                         onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected', `🎁 Order #${order.id} Delivered Successfully!`)}
-                        className="flex-1 py-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[180px]"
+                        className="flex-1 py-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
                       >
                         <PackageCheck className="w-4 h-4" />
                         <span>Mark Order as Delivered</span>
@@ -646,7 +696,7 @@ export default function AdminDashboardPage() {
                     {/* IF CANCELLED -> SHOW REOPEN OPTION */}
                     {isCancelled && (
                       <button
-                        onClick={() => updateOrderStatus(order.id, 'Pending Confirmation', `🔄 Order #${order.id} Reopened.`)}
+                        onClick={() => updateOrderStatus(order.id, 'Pending Verification', `🔄 Order #${order.id} Reopened.`)}
                         className="flex-1 py-2.5 px-4 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                       >
                         <RefreshCw className="w-4 h-4" />
@@ -654,25 +704,42 @@ export default function AdminDashboardPage() {
                       </button>
                     )}
 
-                    {/* OPTIONAL WHATSAPP BUTTON (ALWAYS AVAILABLE ON DEMAND) */}
-                    <button
-                      onClick={() => handleSendWhatsAppNotification(order)}
-                      className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                      title="Send WhatsApp confirmation update to customer"
-                    >
-                      <MessageSquare className="w-4 h-4" />
-                      <span className="hidden sm:inline">WhatsApp</span>
-                    </button>
+                    {/* WHATSAPP ACTION 1: ASK CUSTOMER TO CONFIRM ON WHATSAPP */}
+                    {isPending && (
+                      <button
+                        onClick={() => handleAskCustomerToConfirm(order)}
+                        className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        title="Send WhatsApp message asking customer to confirm order"
+                      >
+                        <HelpCircle className="w-4 h-4" />
+                        <span>Ask WhatsApp</span>
+                      </button>
+                    )}
 
-                    {/* CANCEL BUTTON (ONLY SHOWN IF NOT ALREADY DELIVERED OR CANCELLED) */}
+                    {/* WHATSAPP ACTION 2: SEND TCS DISPATCH NOTIFICATION */}
+                    {isConfirmed && (
+                      <button
+                        onClick={() => handleSendDispatchWhatsApp(order)}
+                        className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        title="Send WhatsApp dispatch tracking alert to customer"
+                      >
+                        <Send className="w-4 h-4" />
+                        <span>Notify Dispatch</span>
+                      </button>
+                    )}
+
+                    {/* CANCEL BUTTON */}
                     {!isDelivered && !isCancelled && (
                       <button
-                        onClick={() => updateOrderStatus(order.id, 'Cancelled', `Order #${order.id} Cancelled.`)}
+                        onClick={() => {
+                          updateOrderStatus(order.id, 'Cancelled', `Order #${order.id} Cancelled.`);
+                          handleSendCancelWhatsApp(order);
+                        }}
                         className="py-2.5 px-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
-                        title="Cancel Order"
+                        title="Cancel Order and Notify Customer via WhatsApp"
                       >
                         <X className="w-4 h-4" />
-                        <span className="hidden sm:inline">Cancel</span>
+                        <span>Cancel</span>
                       </button>
                     )}
 

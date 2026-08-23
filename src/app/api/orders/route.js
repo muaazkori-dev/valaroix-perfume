@@ -1,10 +1,39 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 // Central in-memory cloud database for live orders across all devices
 let globalOrders = [
+  {
+    id: 'VLX-81416',
+    customerName: 'JSJSJ',
+    name: 'JSJSJ',
+    phone: '03183931685',
+    whatsapp: '03183931685',
+    city: 'Other City',
+    address: 'Mandi din Bahawalpur, Other City',
+    item: 'VALAROIX DIOR SAUVAGE',
+    size: '50ml',
+    pricePkr: 2699,
+    total: 2699,
+    cogsPkr: 950,
+    profitPkr: 1749,
+    status: 'Pending Verification',
+    paymentMethod: 'Advance Payment (SadaPay)',
+    tcsTrackingNumber: '7780863721',
+    date: new Date().toISOString().split('T')[0],
+    time: '3:00 AM',
+    items: [
+      {
+        id: 'valaroix-sauvage-imperial',
+        name: 'VALAROIX DIOR SAUVAGE',
+        quantity: 1,
+        price: 2699,
+        image: '/products/sauvage.jpg?v=2'
+      }
+    ]
+  },
   {
     id: 'VLX-24705',
     customerName: 'WALEED',
@@ -20,7 +49,7 @@ let globalOrders = [
     cogsPkr: 950,
     profitPkr: 1749,
     status: 'Pending Confirmation',
-    paymentMethod: 'Advance SadaPay / Bank Transfer',
+    paymentMethod: 'Advance Payment (SadaPay)',
     tcsTrackingNumber: '7780863721',
     date: new Date().toISOString().split('T')[0],
     time: '2:47 AM',
