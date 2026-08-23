@@ -6,7 +6,7 @@ import {
   ShieldCheck, Lock, Check, X, Eye, Printer, Filter, 
   MessageSquare, Trash2, Split, TrendingUp, Sparkles, ExternalLink,
   ShoppingBag, ArrowLeft, Truck, PackageCheck, Bell, Volume2, VolumeX,
-  Phone, MapPin, Clock, AlertCircle, RefreshCw
+  Phone, MapPin, Clock, AlertCircle, CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -18,9 +18,9 @@ export default function AdminDashboardPage() {
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [orderFilter, setOrderFilter] = useState('all');
   const [isPrintingSlips, setIsPrintingSlips] = useState(false);
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'partners'
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [newOrderToast, setNewOrderToast] = useState(null);
+  const [statusToast, setStatusToast] = useState(null);
 
   const initialSampleOrders = [
     {
@@ -35,7 +35,7 @@ export default function AdminDashboardPage() {
       pricePkr: 3300,
       cogsPkr: 1100,
       profitPkr: 2200,
-      status: 'Pending Confirmation',
+      status: 'Confirmed & Dispatched via TCS',
       tcsTrackingNumber: '7748291048',
       paymentMethod: 'Advance Payment (SadaPay)',
       receiptImage: null
@@ -80,6 +80,26 @@ export default function AdminDashboardPage() {
       osc.start();
       osc.stop(ctx.currentTime + 0.8);
     } catch (e) {}
+  };
+
+  // Helper calculation for Price & Profit
+  const getOrderPrice = (o) => {
+    if (o.pricePkr && o.pricePkr > 0) return o.pricePkr;
+    if (o.total && o.total > 0) return o.total;
+    if (o.items && o.items.length > 0) {
+      return o.items.reduce((sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1), 0);
+    }
+    const itemStr = (o.item || o.items?.[0]?.name || '').toLowerCase();
+    if (itemStr.includes('ysl')) return 3300;
+    if (itemStr.includes('cedrat')) return 2999;
+    return 2699;
+  };
+
+  const getOrderProfit = (o) => {
+    const price = getOrderPrice(o);
+    if (o.profitPkr && o.profitPkr > 0) return o.profitPkr;
+    const cogs = o.cogsPkr || Math.round(price * 0.35);
+    return price - cogs;
   };
 
   // Load and auto-repair orders on mount
@@ -151,34 +171,14 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Price & Profit Helper calculations
-  const getOrderPrice = (o) => {
-    if (o.pricePkr && o.pricePkr > 0) return o.pricePkr;
-    if (o.total && o.total > 0) return o.total;
-    if (o.items && o.items.length > 0) {
-      return o.items.reduce((sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1), 0);
-    }
-    const itemStr = (o.item || o.items?.[0]?.name || '').toLowerCase();
-    if (itemStr.includes('ysl')) return 3300;
-    if (itemStr.includes('cedrat')) return 2999;
-    return 2699;
-  };
-
-  const getOrderProfit = (o) => {
-    const price = getOrderPrice(o);
-    if (o.profitPkr && o.profitPkr > 0) return o.profitPkr;
-    const cogs = o.cogsPkr || Math.round(price * 0.35);
-    return price - cogs;
-  };
-
   // Combine and deduplicate orders
   const combinedList = [...localOrders, ...userOrders, ...initialSampleOrders];
   const allOrders = combinedList.filter(
     (order, index, self) => index === self.findIndex((o) => o.id === order.id)
   );
 
-  // Update order status everywhere
-  const updateOrderStatus = (orderId, newStatus) => {
+  // Update order status everywhere with toast
+  const updateOrderStatus = (orderId, newStatus, message) => {
     const updated = allOrders.map((o) =>
       o.id === orderId ? { ...o, status: newStatus } : o
     );
@@ -189,6 +189,10 @@ export default function AdminDashboardPage() {
     try {
       localStorage.setItem('valaroix_orders', JSON.stringify(updated));
     } catch (e) {}
+
+    setStatusToast(message || `Order #${orderId} status changed to: ${newStatus}`);
+    setTimeout(() => setStatusToast(null), 3500);
+
     return updated;
   };
 
@@ -203,6 +207,9 @@ export default function AdminDashboardPage() {
     try {
       localStorage.setItem('valaroix_orders', JSON.stringify(updated));
     } catch (e) {}
+
+    setStatusToast(`Order #${orderId} deleted.`);
+    setTimeout(() => setStatusToast(null), 3000);
   };
 
   // Financial Metrics
@@ -222,22 +229,12 @@ export default function AdminDashboardPage() {
     return true;
   });
 
-  // Client WhatsApp Actions
-  const handleConfirmAndNotifyClient = (order) => {
-    updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS');
+  // Client WhatsApp Action (Separate dedicated button)
+  const handleSendWhatsAppNotification = (order) => {
     const price = getOrderPrice(order);
     const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
     const text = encodeURIComponent(
       `Assalam-o-Alaikum ${order.customerName}! ✨\n\nAapka VALAROIX Luxury Perfume order #${order.id} CONFIRM kar diya gaya hai!\n\n📦 Item: ${order.items ? order.items.map(i=>i.name).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n🚚 Delivery via: TCS Express Courier (Tracking: ${order.tcsTrackingNumber || '7748291048'})\n\nParcel 24 hours ke andar deliver ho jayega. Shukriya!`
-    );
-    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
-  };
-
-  const handleCancelAndNotifyClient = (order) => {
-    updateOrderStatus(order.id, 'Cancelled');
-    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
-    const text = encodeURIComponent(
-      `Assalam-o-Alaikum ${order.customerName}! Aapka VALAROIX order #${order.id} cancel kar diya gaya hai.`
     );
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
@@ -299,6 +296,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans flex flex-col pb-16">
       
+      {/* STATUS ACTION TOAST */}
+      {statusToast && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#1A1A1A] border border-[#D4AF37] text-white px-5 py-3 rounded-2xl shadow-[0_10px_40px_rgba(212,175,55,0.4)] flex items-center gap-2 text-xs font-bold animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{statusToast}</span>
+        </div>
+      )}
+
       {/* REAL-TIME NEW ORDER TOAST ALERT */}
       {newOrderToast && (
         <div className="fixed top-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 bg-emerald-950 border-2 border-emerald-400 text-white p-4 rounded-2xl shadow-[0_10px_40px_rgba(16,185,129,0.5)] animate-bounce flex items-center justify-between gap-3">
@@ -451,8 +456,11 @@ export default function AdminDashboardPage() {
               const price = getOrderPrice(order);
               const receiptUrl = order.receiptImage || order.receiptPreview;
               const st = (order.status || '').toLowerCase();
-              const isConfirmed = st.includes('confirmed') || st.includes('dispatched') || st.includes('transit');
+              const isConfirmed = st.includes('confirmed') || st.includes('dispatched');
+              const isInTransit = st.includes('transit');
+              const isDelivered = st.includes('delivered');
               const isCancelled = st.includes('cancel');
+              const isPending = !isConfirmed && !isInTransit && !isDelivered && !isCancelled;
 
               return (
                 <div
@@ -462,11 +470,13 @@ export default function AdminDashboardPage() {
                   {/* Top Order Meta */}
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-2 pb-3 border-b border-white/10">
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono text-sm sm:text-base font-bold text-[#D4AF37]">{order.id}</span>
                         <span className="text-[10px] text-gray-400 font-mono">Date: {order.date || 'Today'}</span>
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                          isConfirmed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                          isDelivered ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                          : isInTransit ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                          : isConfirmed ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                           : isCancelled ? 'bg-red-500/20 text-red-400 border border-red-500/40'
                           : 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
                         }`}>
@@ -531,7 +541,7 @@ export default function AdminDashboardPage() {
                           </div>
                           <button
                             onClick={() => setSelectedReceipt(receiptUrl)}
-                            className="px-3 py-1.5 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-black transition-all flex items-center gap-1.5"
+                            className="px-3 py-1.5 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
                           >
                             <Eye className="w-3.5 h-3.5" /> View SadaPay Slip
                           </button>
@@ -547,47 +557,76 @@ export default function AdminDashboardPage() {
                   {/* ACTION BUTTONS TOOLBAR */}
                   <div className="flex flex-wrap items-center gap-2 pt-1">
                     
-                    {/* 1. Confirm & Send WhatsApp */}
+                    {/* 1. Direct Confirm Order Button (No forced WhatsApp redirect!) */}
+                    {isPending ? (
+                      <button
+                        onClick={() => updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS', `Order #${order.id} Confirmed & Dispatched via TCS!`)}
+                        className="py-2.5 px-4 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-black flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all cursor-pointer"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Confirm Order</span>
+                      </button>
+                    ) : (
+                      <div className="py-2.5 px-4 rounded-xl bg-emerald-950 border border-emerald-500/50 text-emerald-400 text-xs font-bold flex items-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Confirmed ✓</span>
+                      </div>
+                    )}
+
+                    {/* 2. Optional Send WhatsApp Confirmation Button */}
                     <button
-                      onClick={() => handleConfirmAndNotifyClient(order)}
-                      className="flex-1 py-2.5 px-3 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all min-w-[130px]"
+                      onClick={() => handleSendWhatsAppNotification(order)}
+                      className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/50 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      title="Send WhatsApp confirmation message to customer"
                     >
-                      <Check className="w-4 h-4" />
-                      <span>Confirm & Notify</span>
+                      <MessageSquare className="w-4 h-4" />
+                      <span>WhatsApp Client</span>
                     </button>
 
-                    {/* 2. TCS In Transit */}
+                    {/* 3. TCS In Transit Button */}
                     <button
-                      onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express')}
-                      className="py-2.5 px-3 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40 text-xs font-bold flex items-center justify-center gap-1.5"
+                      onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `Order #${order.id} Marked In Transit!`)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                        isInTransit
+                          ? 'bg-cyan-500 text-black font-extrabold shadow-md'
+                          : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40'
+                      }`}
                     >
                       <Truck className="w-4 h-4" />
                       <span>In Transit</span>
                     </button>
 
-                    {/* 3. Delivered */}
+                    {/* 4. Delivered Button */}
                     <button
-                      onClick={() => updateOrderStatus(order.id, 'Delivered')}
-                      className="py-2.5 px-3 rounded-xl bg-blue-500/20 text-blue-300 hover:bg-blue-500 hover:text-white border border-blue-500/40 text-xs font-bold flex items-center justify-center gap-1.5"
+                      onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected', `Order #${order.id} Marked as Delivered!`)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                        isDelivered
+                          ? 'bg-blue-500 text-white font-extrabold shadow-md'
+                          : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500 hover:text-white border border-blue-500/40'
+                      }`}
                     >
                       <PackageCheck className="w-4 h-4" />
                       <span>Delivered</span>
                     </button>
 
-                    {/* 4. Cancel */}
+                    {/* 5. Cancel Button */}
                     <button
-                      onClick={() => handleCancelAndNotifyClient(order)}
-                      className="py-2.5 px-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1.5"
+                      onClick={() => updateOrderStatus(order.id, 'Cancelled', `Order #${order.id} Cancelled.`)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                        isCancelled
+                          ? 'bg-red-600 text-white font-extrabold shadow-md'
+                          : 'bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40'
+                      }`}
                     >
                       <X className="w-4 h-4" />
                       <span>Cancel</span>
                     </button>
 
-                    {/* 5. Delete */}
+                    {/* 6. Delete Button */}
                     <button
                       onClick={() => handleDeleteOrder(order.id)}
-                      className="py-2.5 px-3 rounded-xl bg-gray-800 text-gray-400 hover:bg-red-700 hover:text-white border border-white/10 text-xs font-bold flex items-center justify-center gap-1"
-                      title="Delete Order"
+                      className="py-2.5 px-3 rounded-xl bg-gray-800 text-gray-400 hover:bg-red-700 hover:text-white border border-white/10 text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer ml-auto"
+                      title="Delete Order Permanently"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
