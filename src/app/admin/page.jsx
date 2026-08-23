@@ -83,15 +83,37 @@ export default function AdminDashboardPage() {
     } catch (e) {}
   };
 
-  // Trigger System Push Notification
+  // Trigger Native Mobile & Desktop System Push Notification (Works with Screen Locked & in Background)
   const triggerNativePushNotification = (order) => {
     try {
+      // Haptic Vibration on mobile phone
+      if (typeof window !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate([300, 100, 300, 100, 300]);
+      }
+
       if (typeof window !== 'undefined' && 'Notification' in window) {
         if (Notification.permission === 'granted') {
-          new Notification(`🔔 New Order #${order.id} — Rs. ${getOrderPrice(order).toLocaleString()}`, {
+          const title = `🔔 New Order #${order.id} — Rs. ${getOrderPrice(order).toLocaleString()}`;
+          const options = {
             body: `${order.customerName || 'Customer'} ordered ${order.item || 'Perfume'} (${order.city || 'Pakistan'})`,
-            icon: '/favicon.ico'
-          });
+            icon: '/logo.jpg',
+            badge: '/logo.jpg',
+            vibrate: [300, 100, 300, 100, 300],
+            tag: `valaroix-order-${order.id}`,
+            renotify: true,
+            data: { url: '/admin' }
+          };
+
+          // Try Service Worker registration (Mobile Phone lock-screen support)
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then((registration) => {
+              registration.showNotification(title, options);
+            }).catch(() => {
+              new Notification(title, options);
+            });
+          } else {
+            new Notification(title, options);
+          }
         }
       }
     } catch (e) {}
@@ -102,8 +124,12 @@ export default function AdminDashboardPage() {
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
           setHasNotificationPermission(true);
-          setStatusToast('🔔 System Notifications Enabled! You will receive alerts even when screen is closed.');
-          setTimeout(() => setStatusToast(null), 4000);
+          // Register Service Worker for mobile phone
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+          }
+          setStatusToast('🔔 Mobile & System Notifications Enabled! You will receive alerts even when screen is locked.');
+          setTimeout(() => setStatusToast(null), 4500);
         }
       });
     }
@@ -186,6 +212,11 @@ export default function AdminDashboardPage() {
         setIsAuthenticated(true);
       }
     } catch (e) {}
+
+    // Register Service Worker for mobile notifications
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
 
     // Fetch from server immediately
     fetchServerOrders();

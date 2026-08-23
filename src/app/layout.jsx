@@ -40,7 +40,9 @@ export const metadata = {
     icon: '/logo.jpg',
     shortcut: '/logo.jpg',
     apple: '/logo.jpg',
-  }
+  },
+  manifest: '/manifest.json',
+  themeColor: '#D4AF37'
 };
 
 export default function RootLayout({ children }) {
