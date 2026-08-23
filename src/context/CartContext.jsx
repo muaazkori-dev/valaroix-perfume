@@ -82,17 +82,13 @@ export function CartProvider({ children }) {
       saveCart([...cart, newItem]);
     }
 
-    // Trigger smooth animated feedback toast instead of abruptly opening drawer
+    // Trigger smooth luxury animated feedback toast only (never open drawer automatically)
     setLastAddedProduct({
       id: Date.now(),
       name: product.name,
       image: product.image || '/products/sauvage.jpg',
       price
     });
-
-    if (openDrawer) {
-      setIsCartOpen(true);
-    }
   };
 
   const toggleWishlist = (product) => {
