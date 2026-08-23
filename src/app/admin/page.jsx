@@ -64,7 +64,20 @@ export default function AdminDashboardPage() {
     try {
       const saved = localStorage.getItem('valaroix_orders');
       if (saved) {
-        setLocalOrders(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        const repaired = parsed.map((o) => {
+          const price = getOrderPrice(o);
+          const profit = getOrderProfit(o);
+          return {
+            ...o,
+            pricePkr: price,
+            total: price,
+            profitPkr: profit,
+            status: o.status || 'Pending Verification'
+          };
+        });
+        setLocalOrders(repaired);
+        localStorage.setItem('valaroix_orders', JSON.stringify(repaired));
       } else {
         setLocalOrders(initialSampleOrders);
         localStorage.setItem('valaroix_orders', JSON.stringify(initialSampleOrders));
