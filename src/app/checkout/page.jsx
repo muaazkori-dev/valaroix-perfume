@@ -153,7 +153,16 @@ export default function CheckoutPage() {
       }
     } catch (err) {}
 
-    // Send real-time instant alert to Admin Dashboard
+    // 1. Send to Central Server Cloud Database
+    try {
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newOrder)
+      }).catch(() => {});
+    } catch (e) {}
+
+    // 2. Send real-time instant alert to Admin Dashboard
     try {
       if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
         const channel = new BroadcastChannel('valaroix_orders_channel');

@@ -102,60 +102,87 @@ export default function AdminDashboardPage() {
     return price - cogs;
   };
 
-  // Load and auto-repair orders on mount
+  // Fetch orders from Central Server Cloud Database & Poll every 3.5 seconds
   useEffect(() => {
+    let lastOrderIds = new Set();
+
+    const fetchServerOrders = async () => {
+      try {
+        const res = await fetch('/api/orders', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.orders) && data.orders.length > 0) {
+            const serverOrders = data.orders;
+            
+            // Check for brand new orders not seen before
+            if (lastOrderIds.size > 0) {
+              const newOrders = serverOrders.filter(o => !lastOrderIds.has(o.id));
+              if (newOrders.length > 0) {
+                const latest = newOrders[0];
+                playAlertSound();
+                setNewOrderToast(latest);
+                setTimeout(() => setNewOrderToast(null), 6000);
+              }
+            }
+
+            // Update tracked IDs
+            lastOrderIds = new Set(serverOrders.map(o => o.id));
+
+            // Sync with local state
+            setLocalOrders((prev) => {
+              const merged = [...serverOrders, ...prev];
+              const unique = merged.filter((o, idx, self) => idx === self.findIndex(x => x.id === o.id));
+              return unique;
+            });
+
+            try {
+              localStorage.setItem('valaroix_orders', JSON.stringify(serverOrders));
+            } catch (e) {}
+          }
+        }
+      } catch (err) {}
+    };
+
+    // Initial fetch from LocalStorage first for instant UI
     try {
       const saved = localStorage.getItem('valaroix_orders');
-      let ordersList = initialSampleOrders;
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          ordersList = parsed;
+          setLocalOrders(parsed);
+          lastOrderIds = new Set(parsed.map(o => o.id));
         }
       }
-      
-      // Auto-repair missing prices in all orders
-      const repaired = ordersList.map((o) => {
-        const price = getOrderPrice(o);
-        const profit = getOrderProfit(o);
-        return {
-          ...o,
-          pricePkr: price,
-          total: price,
-          profitPkr: profit,
-          customerName: o.customerName || o.name || 'Valaroix Patron',
-          status: o.status || 'Pending Confirmation'
-        };
-      });
-
-      setLocalOrders(repaired);
-      localStorage.setItem('valaroix_orders', JSON.stringify(repaired));
-
       const authSaved = sessionStorage.getItem('valaroix_admin_auth');
       if (authSaved === 'true') {
         setIsAuthenticated(true);
       }
-    } catch (e) {
-      setLocalOrders(initialSampleOrders);
-    }
+    } catch (e) {}
 
-    // Real-Time BroadcastChannel listener
+    // Fetch from server immediately
+    fetchServerOrders();
+
+    // Poll server every 3.5 seconds for real-time live incoming orders from mobile phones
+    const pollInterval = setInterval(fetchServerOrders, 3500);
+
+    // Real-Time BroadcastChannel listener for same-device tabs
+    let channel;
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
-      const channel = new BroadcastChannel('valaroix_orders_channel');
+      channel = new BroadcastChannel('valaroix_orders_channel');
       channel.onmessage = (event) => {
         if (event.data?.type === 'NEW_ORDER' && event.data.order) {
           playAlertSound();
           setNewOrderToast(event.data.order);
           setTimeout(() => setNewOrderToast(null), 6000);
-          
-          try {
-            const currentSaved = JSON.parse(localStorage.getItem('valaroix_orders') || '[]');
-            setLocalOrders(currentSaved);
-          } catch (err) {}
+          fetchServerOrders();
         }
       };
-      return () => channel.close();
     }
+
+    return () => {
+      clearInterval(pollInterval);
+      if (channel) channel.close();
+    };
   }, []);
 
   const handlePinSubmit = (e) => {
@@ -177,7 +204,7 @@ export default function AdminDashboardPage() {
     (order, index, self) => index === self.findIndex((o) => o.id === order.id)
   );
 
-  // Update order status everywhere with toast
+  // Update order status everywhere with server cloud sync
   const updateOrderStatus = (orderId, newStatus, message) => {
     const updated = allOrders.map((o) =>
       o.id === orderId ? { ...o, status: newStatus } : o
@@ -190,13 +217,22 @@ export default function AdminDashboardPage() {
       localStorage.setItem('valaroix_orders', JSON.stringify(updated));
     } catch (e) {}
 
+    // Sync to cloud server API
+    try {
+      fetch('/api/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status: newStatus })
+      }).catch(() => {});
+    } catch (e) {}
+
     setStatusToast(message || `Order #${orderId} status changed to: ${newStatus}`);
     setTimeout(() => setStatusToast(null), 3500);
 
     return updated;
   };
 
-  // Delete Order
+  // Delete Order with server cloud sync
   const handleDeleteOrder = (orderId) => {
     if (!confirm('Are you sure you want to delete this order?')) return;
     const updated = allOrders.filter((o) => o.id !== orderId);
@@ -206,6 +242,15 @@ export default function AdminDashboardPage() {
     }
     try {
       localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+    } catch (e) {}
+
+    // Sync to cloud server API
+    try {
+      fetch('/api/orders', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId })
+      }).catch(() => {});
     } catch (e) {}
 
     setStatusToast(`Order #${orderId} deleted.`);
