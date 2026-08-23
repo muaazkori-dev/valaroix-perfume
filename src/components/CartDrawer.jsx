@@ -1,20 +1,22 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash2, ShoppingBag, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 
 export default function CartDrawer() {
-  const { isCartOpen, setIsCartOpen, cart, updateQuantity, removeFromCart, total, setIsCheckoutOpen } = useCart();
+  const router = useRouter();
+  const { isCartOpen, setIsCartOpen, cart, updateQuantity, removeFromCart, total } = useCart();
   const { formatPrice } = useCurrency();
 
   if (!isCartOpen) return null;
 
   const handleProceedToCheckout = () => {
     setIsCartOpen(false);
-    setIsCheckoutOpen(true);
+    router.push('/checkout');
   };
 
   return (
