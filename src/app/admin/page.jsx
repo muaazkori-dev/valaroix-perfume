@@ -477,6 +477,15 @@ export default function AdminDashboardPage() {
             <span className="hidden sm:inline">{soundEnabled ? 'Sound ON' : 'Sound OFF'}</span>
           </button>
 
+          <a
+            href="/VALAROIX-Executive-Owner-App.apk"
+            download
+            className="px-3 py-2 rounded-xl bg-[#D4AF37] text-black text-xs font-black flex items-center gap-1.5 shadow-md hover:bg-amber-400 transition-all"
+            title="Download Updated Android APK with Gold Logo & Lock-Screen Alerts"
+          >
+            <span>📱 Download App (Gold Logo)</span>
+          </a>
+
           <Link
             href="/"
             className="px-3 py-2 rounded-xl border border-white/10 text-xs text-gray-300 hover:text-white bg-white/5"
