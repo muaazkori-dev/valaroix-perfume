@@ -1,6 +1,7 @@
 ﻿'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 
 // Official Pixel-Perfect Authentic WhatsApp Vector SVG Logo Icon
 export function WhatsAppIcon({ className = 'w-6 h-6' }) {
@@ -21,120 +22,58 @@ export function TikTokIcon({ className = 'w-5 h-5' }) {
 }
 
 export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [isSnapping, setIsSnapping] = useState(false);
-  const dragStartRef = useRef({ startX: 0, startY: 0, initialPosX: 0, initialPosY: 0 });
-  const hasMovedRef = useRef(false);
+  const controls = useAnimation();
+  const [isDragged, setIsDragged] = useState(false);
 
   const defaultMessage = encodeURIComponent(
     'Hello VALAROIX Haute Parfumerie, I am interested in acquiring your Luxury Perfumes.'
   );
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${defaultMessage}`;
 
-  // Initial placement on screen load (bottom right)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const initialX = Math.max(16, window.innerWidth - 76);
-      const initialY = Math.max(100, window.innerHeight - 90);
-      setPos({ x: initialX, y: initialY });
-    }
-  }, []);
-
-  const handlePointerDown = (e) => {
-    const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
-    const clientY = e.clientY ?? (e.touches && e.touches[0].clientY);
-    if (clientX === undefined || clientY === undefined) return;
-
-    setIsDragging(true);
-    setIsSnapping(false);
-    hasMovedRef.current = false;
-    dragStartRef.current = {
-      startX: clientX,
-      startY: clientY,
-      initialPosX: pos.x,
-      initialPosY: pos.y
-    };
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDragging) return;
-    const clientX = e.clientX ?? (e.touches && e.touches[0].clientX);
-    const clientY = e.clientY ?? (e.touches && e.touches[0].clientY);
-    if (clientX === undefined || clientY === undefined) return;
-
-    const deltaX = clientX - dragStartRef.current.startX;
-    const deltaY = clientY - dragStartRef.current.startY;
-
-    if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
-      hasMovedRef.current = true;
+  const handleDragEnd = (event, info) => {
+    if (Math.abs(info.offset.x) > 10 || Math.abs(info.offset.y) > 10) {
+      setIsDragged(true);
+      setTimeout(() => setIsDragged(false), 200);
     }
 
-    const newX = Math.max(12, Math.min(window.innerWidth - 68, dragStartRef.current.initialPosX + deltaX));
-    const newY = Math.max(80, Math.min(window.innerHeight - 80, dragStartRef.current.initialPosY + deltaY));
-
-    setPos({ x: newX, y: newY });
-  };
-
-  const handlePointerUp = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    setIsSnapping(true);
-
-    // Magnetic Snap to Nearest Screen Edge (Left or Right)
     const screenWidth = typeof window !== 'undefined' ? window.innerWidth : 400;
-    const snapToRight = pos.x > screenWidth / 2;
-    const targetX = snapToRight ? screenWidth - 76 : 16;
+    const finalX = info.point.x;
 
-    setPos((prev) => ({ ...prev, x: targetX }));
-  };
-
-  useEffect(() => {
-    const onMove = (e) => handlePointerMove(e);
-    const onUp = () => handlePointerUp();
-
-    if (isDragging) {
-      window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
-      window.addEventListener('touchmove', onMove, { passive: false });
-      window.addEventListener('touchend', onUp);
-    }
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-      window.removeEventListener('touchmove', onMove);
-      window.removeEventListener('touchend', onUp);
-    };
-  }, [isDragging, pos]);
-
-  const handleClick = (e) => {
-    if (hasMovedRef.current) {
-      e.preventDefault();
-      e.stopPropagation();
+    if (finalX < screenWidth / 2) {
+      controls.start({
+        x: -(screenWidth - 80),
+        transition: { type: 'spring', stiffness: 350, damping: 25 }
+      });
+    } else {
+      controls.start({
+        x: 0,
+        transition: { type: 'spring', stiffness: 350, damping: 25 }
+      });
     }
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        left: `${pos.x}px`,
-        top: `${pos.y}px`,
-        zIndex: 9999,
-        transition: isSnapping ? 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'none',
-        touchAction: 'none'
-      }}
-      onMouseDown={handlePointerDown}
-      onTouchStart={handlePointerDown}
-      className="cursor-grab active:cursor-grabbing select-none"
+    <motion.div
+      drag
+      dragMomentum={false}
+      dragElastic={0.1}
+      animate={controls}
+      onDragEnd={handleDragEnd}
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.95 }}
+      className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing touch-none select-none"
     >
       <a
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        onClick={handleClick}
+        onClick={(e) => {
+          if (isDragged) {
+            e.preventDefault();
+          }
+        }}
         aria-label="Direct WhatsApp Chat with VALAROIX Support"
-        className="group relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.6)] hover:scale-110 hover:shadow-[0_0_35px_rgba(37,211,102,0.9)] transition-transform duration-300 border-2 border-white/40 block"
+        className="group relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,211,102,0.6)] hover:shadow-[0_0_35px_rgba(37,211,102,0.9)] transition-shadow duration-300 border-2 border-white/40 block"
       >
         {/* Glowing Ambient Outer Ring */}
         <span className="absolute inset-0 rounded-full bg-[#25D366]/40 animate-ping pointer-events-none" />
@@ -142,6 +81,6 @@ export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
         {/* Authentic Official WhatsApp Icon */}
         <WhatsAppIcon className="w-7 h-7 text-white group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
       </a>
-    </div>
+    </motion.div>
   );
 }
