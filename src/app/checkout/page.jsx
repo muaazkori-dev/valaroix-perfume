@@ -1,11 +1,11 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   CheckCircle2, Truck, ShieldCheck, ArrowLeft, ShoppingBag, 
-  MapPin, Phone, User, Building, Lock, Sparkles, ChevronRight, Upload, AlertCircle 
+  MapPin, Phone, User, Building, Lock, Sparkles, ChevronRight, Upload, AlertCircle, Copy, Check 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import Navbar from '@/components/Navbar';
@@ -35,6 +35,16 @@ export default function CheckoutPage() {
     address: '',
     notes: ''
   });
+
+  const [copiedField, setCopiedField] = useState(null);
+
+  const handleCopy = (text, fieldName) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedField(fieldName);
+      setTimeout(() => setCopiedField(null), 2000);
+    }
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -389,19 +399,83 @@ export default function CheckoutPage() {
                       <div className="flex items-center gap-2 text-xs text-[#D4AF37] font-bold uppercase tracking-wide">
                         <Building className="w-4 h-4" /> SadaPay Account Details:
                       </div>
-                      <div className="space-y-1.5 text-xs text-gray-300 font-mono">
-                        <div className="flex justify-between py-0.5">
-                          <span className="text-gray-400">Account Title:</span>
-                          <span className="font-bold text-white">Aijaz Ali</span>
+                      <div className="space-y-2 text-xs font-mono">
+                        
+                        {/* Account Title */}
+                        <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
+                          <div>
+                            <span className="text-gray-400 text-[10px] block uppercase font-sans">Account Title:</span>
+                            <span className="font-bold text-white text-xs sm:text-sm">Aijaz Ali</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy('Aijaz Ali', 'title')}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black transition-colors text-[10px] font-bold uppercase"
+                          >
+                            {copiedField === 'title' ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-400" />
+                                <span className="text-emerald-400">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
                         </div>
-                        <div className="flex justify-between py-0.5">
-                          <span className="text-gray-400">SadaPay Mobile #:</span>
-                          <span className="font-bold text-[#D4AF37]">03472818878</span>
+
+                        {/* SadaPay Mobile / Account Number */}
+                        <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
+                          <div>
+                            <span className="text-gray-400 text-[10px] block uppercase font-sans">SadaPay Mobile / Account #:</span>
+                            <span className="font-bold text-[#D4AF37] text-xs sm:text-sm">03472818878</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy('03472818878', 'mobile')}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black transition-colors text-[10px] font-bold uppercase shadow-sm"
+                          >
+                            {copiedField === 'mobile' ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-400" />
+                                <span className="text-emerald-400">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
                         </div>
-                        <div className="flex justify-between py-0.5">
-                          <span className="text-gray-400">IBAN:</span>
-                          <span className="text-[11px] text-gray-300 font-bold">PK58SADA0000003472818878</span>
+
+                        {/* IBAN */}
+                        <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
+                          <div className="min-w-0 pr-2">
+                            <span className="text-gray-400 text-[10px] block uppercase font-sans">IBAN (All Banks):</span>
+                            <span className="text-[11px] sm:text-xs text-gray-200 font-bold break-all">PK58SADA0000003472818878</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy('PK58SADA0000003472818878', 'iban')}
+                            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black transition-colors text-[10px] font-bold uppercase shrink-0 shadow-sm"
+                          >
+                            {copiedField === 'iban' ? (
+                              <>
+                                <Check className="w-3 h-3 text-emerald-400" />
+                                <span className="text-emerald-400">Copied!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3" />
+                                <span>Copy</span>
+                              </>
+                            )}
+                          </button>
                         </div>
+
                       </div>
 
                       {/* Optional Upload Slip */}
