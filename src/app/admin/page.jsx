@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -554,78 +554,87 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  {/* ACTION BUTTONS TOOLBAR */}
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {/* ACTION BUTTONS: STEP-BY-STEP PROGRESSIVE PIPELINE */}
+                  <div className="flex flex-wrap items-center gap-2.5 pt-2">
                     
-                    {/* 1. Direct Confirm Order Button (No forced WhatsApp redirect!) */}
-                    {isPending ? (
+                    {/* STAGE 1: PENDING -> SHOW ONLY CONFIRM BUTTON */}
+                    {isPending && (
                       <button
-                        onClick={() => updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS', `Order #${order.id} Confirmed & Dispatched via TCS!`)}
-                        className="py-2.5 px-4 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-black flex items-center justify-center gap-1.5 shadow-lg active:scale-95 transition-all cursor-pointer"
+                        onClick={() => updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS', `✓ Order #${order.id} Confirmed!`)}
+                        className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[180px]"
                       >
                         <Check className="w-4 h-4" />
                         <span>Confirm Order</span>
                       </button>
-                    ) : (
-                      <div className="py-2.5 px-4 rounded-xl bg-emerald-950 border border-emerald-500/50 text-emerald-400 text-xs font-bold flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Confirmed ✓</span>
+                    )}
+
+                    {/* STAGE 2: CONFIRMED -> CONFIRM IS GONE, NOW SHOW ONLY IN-TRANSIT BUTTON */}
+                    {isConfirmed && !isInTransit && !isDelivered && (
+                      <button
+                        onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `🚚 Order #${order.id} Handed Over to TCS!`)}
+                        className="flex-1 py-3 px-4 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[180px]"
+                      >
+                        <Truck className="w-4 h-4" />
+                        <span>Handover to TCS (In Transit)</span>
+                      </button>
+                    )}
+
+                    {/* STAGE 3: IN TRANSIT -> IN-TRANSIT IS GONE, NOW SHOW ONLY DELIVERED BUTTON */}
+                    {isInTransit && !isDelivered && (
+                      <button
+                        onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected', `🎁 Order #${order.id} Delivered Successfully!`)}
+                        className="flex-1 py-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[180px]"
+                      >
+                        <PackageCheck className="w-4 h-4" />
+                        <span>Mark Order as Delivered</span>
+                      </button>
+                    )}
+
+                    {/* STAGE 4: DELIVERED -> SHOW COMPLETED BADGE */}
+                    {isDelivered && (
+                      <div className="flex-1 py-2.5 px-4 rounded-xl bg-blue-950/60 border border-blue-500/50 text-blue-400 text-xs font-bold flex items-center justify-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-blue-400" />
+                        <span>Order Completed & Delivered ✓</span>
                       </div>
                     )}
 
-                    {/* 2. Optional Send WhatsApp Confirmation Button */}
+                    {/* IF CANCELLED -> SHOW REOPEN OPTION */}
+                    {isCancelled && (
+                      <button
+                        onClick={() => updateOrderStatus(order.id, 'Pending Confirmation', `🔄 Order #${order.id} Reopened.`)}
+                        className="flex-1 py-2.5 px-4 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        <span>Reopen Order</span>
+                      </button>
+                    )}
+
+                    {/* OPTIONAL WHATSAPP BUTTON (ALWAYS AVAILABLE ON DEMAND) */}
                     <button
                       onClick={() => handleSendWhatsAppNotification(order)}
-                      className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/50 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                      title="Send WhatsApp confirmation message to customer"
+                      className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                      title="Send WhatsApp confirmation update to customer"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      <span>WhatsApp Client</span>
+                      <span className="hidden sm:inline">WhatsApp</span>
                     </button>
 
-                    {/* 3. TCS In Transit Button */}
-                    <button
-                      onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `Order #${order.id} Marked In Transit!`)}
-                      className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        isInTransit
-                          ? 'bg-cyan-500 text-black font-extrabold shadow-md'
-                          : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40'
-                      }`}
-                    >
-                      <Truck className="w-4 h-4" />
-                      <span>In Transit</span>
-                    </button>
+                    {/* CANCEL BUTTON (ONLY SHOWN IF NOT ALREADY DELIVERED OR CANCELLED) */}
+                    {!isDelivered && !isCancelled && (
+                      <button
+                        onClick={() => updateOrderStatus(order.id, 'Cancelled', `Order #${order.id} Cancelled.`)}
+                        className="py-2.5 px-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                        title="Cancel Order"
+                      >
+                        <X className="w-4 h-4" />
+                        <span className="hidden sm:inline">Cancel</span>
+                      </button>
+                    )}
 
-                    {/* 4. Delivered Button */}
-                    <button
-                      onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected', `Order #${order.id} Marked as Delivered!`)}
-                      className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        isDelivered
-                          ? 'bg-blue-500 text-white font-extrabold shadow-md'
-                          : 'bg-blue-500/20 text-blue-300 hover:bg-blue-500 hover:text-white border border-blue-500/40'
-                      }`}
-                    >
-                      <PackageCheck className="w-4 h-4" />
-                      <span>Delivered</span>
-                    </button>
-
-                    {/* 5. Cancel Button */}
-                    <button
-                      onClick={() => updateOrderStatus(order.id, 'Cancelled', `Order #${order.id} Cancelled.`)}
-                      className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                        isCancelled
-                          ? 'bg-red-600 text-white font-extrabold shadow-md'
-                          : 'bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40'
-                      }`}
-                    >
-                      <X className="w-4 h-4" />
-                      <span>Cancel</span>
-                    </button>
-
-                    {/* 6. Delete Button */}
+                    {/* DELETE BUTTON */}
                     <button
                       onClick={() => handleDeleteOrder(order.id)}
-                      className="py-2.5 px-3 rounded-xl bg-gray-800 text-gray-400 hover:bg-red-700 hover:text-white border border-white/10 text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer ml-auto"
+                      className="py-2.5 px-3 rounded-xl bg-gray-800 text-gray-400 hover:bg-red-700 hover:text-white border border-white/10 text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer"
                       title="Delete Order Permanently"
                     >
                       <Trash2 className="w-4 h-4" />
