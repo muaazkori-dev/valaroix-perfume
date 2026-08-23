@@ -153,6 +153,15 @@ export default function CheckoutPage() {
       }
     } catch (err) {}
 
+    // Send real-time instant alert to Admin Dashboard
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('valaroix_orders_channel');
+        channel.postMessage({ type: 'NEW_ORDER', order: newOrder });
+        channel.close();
+      }
+    } catch (e) {}
+
     // Trigger celebration confetti
     try {
       confetti({
