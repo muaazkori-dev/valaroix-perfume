@@ -79,6 +79,21 @@ export default function CheckoutPage() {
     const orderId = `VLX-${Math.floor(10000 + Math.random() * 90000)}`;
     const tcsTrackingNumber = `77${Math.floor(10000000 + Math.random() * 90000000)}`;
 
+    const effectiveItems = cart.length > 0 ? cart : [
+      {
+        id: 'valaroix-sauvage-imperial',
+        name: 'VALAROIX DIOR SAUVAGE',
+        quantity: 1,
+        price: 2699,
+        image: '/products/sauvage.jpg?v=2'
+      }
+    ];
+
+    const finalAmount = effectiveItems.reduce(
+      (sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1),
+      0
+    );
+
     const newOrder = {
       id: orderId,
       customerName: formData.name,
@@ -89,19 +104,16 @@ export default function CheckoutPage() {
       address: formData.address,
       notes: formData.notes,
       paymentMethod,
-      receiptPreview,
-      items: cart.length > 0 ? cart : [
-        {
-          name: 'VALAROIX DIOR SAUVAGE',
-          quantity: 1,
-          price: 2699,
-          image: '/products/sauvage.jpg?v=2'
-        }
-      ],
-      total: total > 0 ? total : 2699,
+      receiptImage: receiptPreview,
+      receiptPreview: receiptPreview,
+      items: effectiveItems,
+      total: finalAmount,
+      pricePkr: finalAmount,
+      cogsPkr: Math.round(finalAmount * 0.35),
+      profitPkr: Math.round(finalAmount * 0.65),
       date: new Date().toISOString().split('T')[0],
       time: new Date().toLocaleTimeString(),
-      status: 'Confirmed & Processing',
+      status: 'Pending Verification',
       tcsTrackingNumber,
       courier: 'TCS Express Courier'
     };

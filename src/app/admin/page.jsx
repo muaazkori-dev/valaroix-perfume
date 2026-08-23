@@ -43,26 +43,18 @@ export default function AdminDashboardPage() {
       paymentMethod: 'Advance Payment (SadaPay)',
       receiptImage: null,
       settled: false
-    },
-    {
-      id: 'VLX-98242',
-      customerName: 'Shahzaib Ahmed',
-      phone: '03001234567',
-      city: 'Lahore',
-      address: 'Gulberg III, Near MM Alam Road',
-      date: '2026-07-28',
-      item: 'Valaroix Sauvage Imperial (50ml • 10 Hours+ Lasting)',
+      address: 'House 42, Street 7, Phase 5 DHA',
+      date: '2026-08-23',
+      item: 'Valaroix Dior Sauvage (50ml • 30% Pure Oil)',
       size: '50ml',
       lasting: '10 Hours+ Lasting',
-      pricePkr: 2499,
-      cogsPkr: 850,
-      profitPkr: 1649,
-      status: 'Pending Admin Confirmation',
-      trackingCode: 'DHL-VAL-88922',
-      engraving: 'S.A. VIP',
+      pricePkr: 2699,
+      cogsPkr: 950,
+      profitPkr: 1749,
+      status: 'In Transit with TCS Express',
+      tcsTrackingNumber: '7748291048',
       paymentMethod: 'Cash On Delivery',
-      receiptImage: null,
-      settled: false
+      receiptImage: null
     }
   ];
 
@@ -105,13 +97,34 @@ export default function AdminDashboardPage() {
     (order, index, self) => index === self.findIndex((o) => o.id === order.id)
   );
 
+  const getOrderPrice = (o) => {
+    if (o.pricePkr && o.pricePkr > 0) return o.pricePkr;
+    if (o.total && o.total > 0) return o.total;
+    if (o.items && o.items.length > 0) {
+      return o.items.reduce((sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1), 0);
+    }
+    const itemStr = (o.item || o.items?.[0]?.name || '').toLowerCase();
+    if (itemStr.includes('ysl')) return 3300;
+    if (itemStr.includes('cedrat')) return 2999;
+    return 2699;
+  };
+
+  const getOrderProfit = (o) => {
+    const price = getOrderPrice(o);
+    if (o.profitPkr && o.profitPkr > 0) return o.profitPkr;
+    const cogs = o.cogsPkr || Math.round(price * 0.35);
+    return price - cogs;
+  };
+
   // Helper to update status everywhere and trigger instant UI re-render
   const updateOrderStatus = (orderId, newStatus) => {
     const updated = allOrders.map((o) =>
       o.id === orderId ? { ...o, status: newStatus } : o
     );
     setLocalOrders(updated);
-    setUserOrders(updated);
+    if (setUserOrders) {
+      setUserOrders(updated);
+    }
     try {
       localStorage.setItem('valaroix_orders', JSON.stringify(updated));
     } catch (e) {}
@@ -120,19 +133,22 @@ export default function AdminDashboardPage() {
 
   // Delete Order Handler
   const handleDeleteOrder = (orderId) => {
+    if (!confirm('Are you sure you want to delete this order?')) return;
     const updated = allOrders.filter((o) => o.id !== orderId);
     setLocalOrders(updated);
-    setUserOrders(updated);
+    if (setUserOrders) {
+      setUserOrders(updated);
+    }
     try {
       localStorage.setItem('valaroix_orders', JSON.stringify(updated));
     } catch (e) {}
   };
 
   // Financial Metrics Calculation
-  const totalRevenue = allOrders.reduce((sum, o) => sum + (o.pricePkr || 0), 0);
-  const totalCogs = allOrders.reduce((sum, o) => sum + (o.cogsPkr || 0), 0);
-  const totalNetProfit = totalRevenue - totalCogs;
-  const pendingOrdersCount = allOrders.filter((o) => (o.status || '').includes('Pending')).length;
+  const totalRevenue = allOrders.reduce((sum, o) => sum + getOrderPrice(o), 0);
+  const totalNetProfit = allOrders.reduce((sum, o) => sum + getOrderProfit(o), 0);
+  const totalCogs = totalRevenue - totalNetProfit;
+  const pendingOrdersCount = allOrders.filter((o) => (o.status || '').toLowerCase().includes('pending')).length;
 
   // 50/50 Partner Profit Shares
   const muaazShare = Math.round(totalNetProfit / 2);
@@ -140,10 +156,11 @@ export default function AdminDashboardPage() {
 
   // Filtered Orders
   const filteredOrders = allOrders.filter((order) => {
-    const st = order.status || '';
-    if (orderFilter === 'pending') return st.includes('Pending');
-    if (orderFilter === 'confirmed') return st.includes('Confirmed');
-    if (orderFilter === 'cancelled') return st.includes('Cancelled');
+    const st = (order.status || '').toLowerCase();
+    if (orderFilter === 'pending') return st.includes('pending');
+    if (orderFilter === 'confirmed') return st.includes('confirmed') || st.includes('transit');
+    if (orderFilter === 'delivered') return st.includes('delivered');
+    if (orderFilter === 'cancelled') return st.includes('cancel');
     return true;
   });
 
@@ -155,41 +172,43 @@ export default function AdminDashboardPage() {
     }, 300);
   };
 
-  // Direct WhatsApp Inquiry to Client (Ask to Confirm or Cancel Order)
+  // Direct WhatsApp Inquiry to Client
   const handleAskClientOnWhatsApp = (order) => {
-    const itemName = order.items ? order.items.map(i => i.name).join(', ') : order.item;
-    const message = `Assalam-o-Alaikum ${order.customerName}! 👋
+    const itemName = order.items ? order.items.map(i => i.name).join(', ') : (order.item || 'VALAROIX Fragrance');
+    const price = getOrderPrice(order);
+    const message = `Assalam-o-Alaikum ${order.customerName || 'Valaroix Patron'}! 👋
 
 Aapka VALAROIX Haute Parfumerie Order #${order.id} receive ho chuka hai!
 
 📦 Item: ${itemName}
-💰 Total Amount: Rs. ${(order.pricePkr || 0).toLocaleString()}
+💰 Total Amount: Rs. ${price.toLocaleString()}
 🚚 Delivery Address: ${order.address}, ${order.city}
 💳 Payment Method: ${order.paymentMethod}
 
 Kya aap is order ko CONFIRM karte hain? 
-Khabar dein taaki hum aapka luxury parcel aaj hi dispatch kar sakein!
+Khabar dein taaki hum aapka luxury parcel TCS Express se aaj hi dispatch kar sakein!
 
 Reply:
 1. CONFIRM ORDER
 2. CANCEL ORDER`;
 
     const text = encodeURIComponent(message);
-    const cleanPhone = (order.phone || '').replace(/^0/, '');
+    const cleanPhone = (order.phone || order.whatsapp || '03141397378').replace(/^0/, '');
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
-  const handleConfirmOrder = (orderId, customerName, phone, pricePkr) => {
-    updateOrderStatus(orderId, 'Confirmed & Processing');
-    const cleanPhone = (phone || '').replace(/^0/, '');
-    const text = encodeURIComponent(`Assalam-o-Alaikum ${customerName}! Your VALAROIX order #${orderId} has been CONFIRMED. Total: Rs. ${(pricePkr || 0).toLocaleString()}. We are preparing your luxury perfume package for courier dispatch!`);
+  const handleConfirmOrder = (order) => {
+    updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS');
+    const price = getOrderPrice(order);
+    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
+    const text = encodeURIComponent(`Assalam-o-Alaikum ${order.customerName}! Your VALAROIX order #${order.id} has been CONFIRMED. Total: Rs. ${price.toLocaleString()}. Your parcel is booked with TCS Express Courier!`);
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
-  const handleCancelOrder = (orderId, customerName, phone) => {
-    updateOrderStatus(orderId, 'Cancelled');
-    const cleanPhone = (phone || '').replace(/^0/, '');
-    const text = encodeURIComponent(`Assalam-o-Alaikum ${customerName}! Your VALAROIX order #${orderId} has been CANCELLED as requested.`);
+  const handleCancelOrder = (order) => {
+    updateOrderStatus(order.id, 'Cancelled');
+    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
+    const text = encodeURIComponent(`Assalam-o-Alaikum ${order.customerName}! Your VALAROIX order #${order.id} has been CANCELLED as requested.`);
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
@@ -210,8 +229,8 @@ Reply:
             <h1 className="font-serif-mockup text-xl sm:text-2xl font-extrabold text-white mt-1">
               VALAROIX Executive App
             </h1>
-            <p className="text-xs text-[#6B6B6B] mt-2">
-              Enter Owner Passcode (PIN: 9824) to access live orders, SadaPay receipts & 50/50 profit metrics.
+            <p className="text-xs text-gray-400 mt-2">
+              Enter Owner Passcode (PIN: 9824) to manage live orders, SadaPay slips & 50/50 profit splits.
             </p>
           </div>
 
@@ -219,32 +238,36 @@ Reply:
             <div className="relative">
               <input
                 type="password"
-                maxLength={6}
-                required
+                inputMode="numeric"
+                maxLength={4}
                 value={pinInput}
                 onChange={(e) => {
                   setPinInput(e.target.value);
                   setPinError(false);
                 }}
-                placeholder="Enter PIN (9824)"
-                className="w-full bg-[#0D0D0D] border border-[#D4AF37]/30 rounded-2xl py-3.5 px-4 text-center text-xl font-mono text-[#D4AF37] tracking-[0.4em] focus:outline-none focus:border-[#D4AF37]"
+                placeholder="••••"
+                className="w-full bg-black/80 border border-[#D4AF37]/40 rounded-2xl py-3.5 text-center text-2xl tracking-[0.5em] font-mono text-[#D4AF37] focus:outline-none focus:border-[#D4AF37] placeholder:text-gray-600"
+                autoFocus
               />
-              <Key className="w-4 h-4 text-[#D4AF37]/60 absolute right-4 top-4" />
             </div>
 
             {pinError && (
-              <p className="text-xs text-red-400 font-mono font-bold animate-shake">
-                ❌ Invalid Passcode! Enter 9824.
+              <p className="text-xs text-red-400 font-mono">
+                Incorrect Master PIN. Please try again.
               </p>
             )}
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-2xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-xl flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-2xl btn-mockup-gold text-xs font-bold uppercase tracking-wider shadow-xl hover:scale-[1.02] transition-transform cursor-pointer"
             >
-              <ShieldCheck className="w-4 h-4 text-[#0D0D0D]" /> Unlock Owner Portal
+              Access Executive Dashboard
             </button>
           </form>
+
+          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#D4AF37] transition-colors">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Store
+          </Link>
 
         </div>
       </div>
@@ -252,123 +275,58 @@ Reply:
   }
 
   return (
-    <div className="min-h-screen bg-black text-gray-100 font-sans flex flex-col pb-20 w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans selection:bg-[#D4AF37] selection:text-black flex flex-col w-full max-w-full overflow-x-hidden">
       
-      {/* PHOTO-STATE PRINTABLE COURIER SHIPPING SLIPS VIEW (Appears only during window.print()) */}
-      <div className={`${isPrintingSlips ? 'block' : 'hidden'} print:block print:fixed print:inset-0 print:bg-white print:text-black print:z-50 p-6`}>
-        <div className="text-center pb-4 border-b-2 border-black mb-6">
-          <h1 className="text-xl font-bold uppercase tracking-wider">VALAROIX HAUTE PARFUMERIE</h1>
-          <p className="text-xs font-bold">DAILY COURIER DISPATCH SHIPPING PARCHI SLIPS</p>
-          <p className="text-[10px]">Generated for Photo-State Printing • Date: {new Date().toLocaleDateString()}</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {filteredOrders.map((order) => (
-            <div key={order.id} className="border-2 border-black rounded-lg p-4 space-y-3 bg-white text-black text-xs font-mono relative">
-              
-              {/* Slip Header */}
-              <div className="flex justify-between items-center border-b-2 border-black pb-2">
-                <span className="font-bold text-xs">VALAROIX DISPATCH SLIP</span>
-                <span className="font-bold text-xs bg-black text-white px-2 py-0.5 rounded">{order.id}</span>
-              </div>
-
-              {/* Consignee Shipping Address */}
-              <div className="space-y-1">
-                <span className="font-bold underline uppercase text-[10px] block">SHIP TO (CUSTOMER DETAILS):</span>
-                <p className="text-xs font-bold">{order.customerName}</p>
-                <p className="font-bold text-xs">Phone / WhatsApp: {order.phone}</p>
-                <p className="font-semibold">{order.city}</p>
-                <p className="text-[11px]">{order.address}</p>
-              </div>
-
-              {/* Order Contents */}
-              <div className="border-t border-b border-black py-2 space-y-1">
-                <span className="font-bold text-[10px] uppercase block">PARCEL CONTENTS:</span>
-                {order.items ? (
-                  order.items.map((i, idx) => (
-                    <span key={idx} className="block font-bold">• {i.name}</span>
-                  ))
-                ) : (
-                  <span className="block font-bold">• {order.item}</span>
-                )}
-                {order.engraving && (
-                  <span className="block text-[10px] italic">Engraving: "{order.engraving}"</span>
-                )}
-              </div>
-
-              {/* Payment Box */}
-              <div className="flex justify-between items-center bg-gray-100 p-2 border border-black rounded">
-                <div>
-                  <span className="text-[9px] block font-bold">PAYMENT TYPE:</span>
-                  <span className="font-bold uppercase text-[11px]">{order.paymentMethod}</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-[9px] block font-bold">COLLECT AMOUNT:</span>
-                  <span className="text-sm font-extrabold">Rs. {(order.pricePkr || 0).toLocaleString()}</span>
-                </div>
-              </div>
-
-              {/* Sender Return Address */}
-              <div className="pt-2 text-[9px] text-gray-700 flex justify-between items-center border-t border-gray-300">
-                <span>From: VALAROIX Parfums, Karachi</span>
-                <span>Helpline: 03141397378</span>
-              </div>
-
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 text-center print:hidden">
-          <button
-            onClick={() => setIsPrintingSlips(false)}
-            className="px-6 py-3 rounded-xl bg-black text-white font-bold text-xs uppercase"
-          >
-            Close Print View
-          </button>
-        </div>
-      </div>
-
       {/* DASHBOARD MAIN APP UI */}
       <div className="print:hidden flex flex-col flex-1 w-full max-w-full">
         
-        {/* CLEAN NO-OVERFLOW MOBILE HEADER */}
-        <header className="sticky top-0 z-40 bg-black/95 border-b border-valaroix-gold/30 backdrop-blur-md px-3 py-2.5 flex items-center justify-between shadow-2xl w-full">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 rounded-full border border-valaroix-gold/60 p-0.5 bg-valaroix-dark overflow-hidden shrink-0">
-              <img src="/logo.jpg" alt="VALAROIX Logo" className="w-full h-full object-cover rounded-full" />
+        {/* HEADER */}
+        <header className="sticky top-0 z-40 bg-black/95 border-b border-[#D4AF37]/30 backdrop-blur-md px-4 py-3 flex items-center justify-between shadow-2xl w-full">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-9 h-9 rounded-full border border-[#D4AF37]/60 p-0.5 bg-black overflow-hidden shrink-0">
+              <img src="/logo.jpg" alt="VALAROIX" className="w-full h-full object-cover rounded-full" />
             </div>
             <div className="truncate">
-              <span className="font-serif font-bold text-sm text-white leading-tight flex items-center gap-1 truncate">
-                VALAROIX Executive <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="font-serif-mockup font-bold text-sm sm:text-base text-white leading-tight flex items-center gap-1.5 truncate">
+                VALAROIX Executive <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
               </span>
-              <span className="text-[8px] text-valaroix-gold uppercase font-mono tracking-wider block truncate">Muaaz & Fahad</span>
+              <span className="text-[9px] text-[#D4AF37] uppercase font-mono tracking-wider block truncate">
+                Muaaz & Fahad Admin Panel
+              </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/"
+              className="px-3 py-1.5 rounded-xl border border-white/10 text-xs text-gray-300 hover:text-white hover:bg-white/5 transition-all flex items-center gap-1"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" /> View Store
+            </Link>
+
             <button
               onClick={() => {
                 sessionStorage.removeItem('valaroix_admin_auth');
                 setIsAuthenticated(false);
               }}
-              className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-red-500/20 text-red-400 border border-red-500/40 text-[10px] font-bold hover:bg-red-500 hover:text-white transition-all shrink-0"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-red-500/20 text-red-400 border border-red-500/40 text-xs font-bold hover:bg-red-500 hover:text-white transition-all"
             >
-              <Lock className="w-3 h-3" />
+              <Lock className="w-3.5 h-3.5" />
               <span>Lock</span>
             </button>
           </div>
         </header>
 
         {/* NAVIGATION TABS */}
-        <div className="bg-valaroix-dark border-b border-valaroix-gold/20 px-3 py-2 sticky top-[51px] z-30 overflow-x-auto no-scrollbar w-full">
+        <div className="bg-[#141414] border-b border-[#D4AF37]/20 px-4 py-2.5 sticky top-[57px] z-30 overflow-x-auto no-scrollbar w-full">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider min-w-max">
             <button
               onClick={() => setActiveTab('orders')}
-              className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all relative ${
-                activeTab === 'orders' ? 'bg-valaroix-gold text-valaroix-dark shadow-lg' : 'text-gray-400 hover:text-white'
+              className={`px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all relative ${
+                activeTab === 'orders' ? 'bg-[#D4AF37] text-black shadow-lg' : 'text-gray-400 hover:text-white'
               }`}
             >
-              <ShoppingBag className="w-3.5 h-3.5" /> Orders ({allOrders.length})
+              <ShoppingBag className="w-3.5 h-3.5" /> Live Orders ({allOrders.length})
               {pendingOrdersCount > 0 && (
                 <span className="w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-bold">
                   {pendingOrdersCount}
@@ -378,63 +336,71 @@ Reply:
 
             <button
               onClick={() => setActiveTab('partners')}
-              className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all ${
-                activeTab === 'partners' ? 'bg-valaroix-gold text-valaroix-dark shadow-lg' : 'text-gray-400 hover:text-white'
+              className={`px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all ${
+                activeTab === 'partners' ? 'bg-[#D4AF37] text-black shadow-lg' : 'text-gray-400 hover:text-white'
               }`}
             >
-              <Split className="w-3.5 h-3.5" /> 50/50 Share
+              <Split className="w-3.5 h-3.5" /> 50/50 Profit Split
             </button>
 
             <button
               onClick={() => setActiveTab('overview')}
-              className={`px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-all ${
-                activeTab === 'overview' ? 'bg-valaroix-gold text-valaroix-dark shadow-lg' : 'text-gray-400 hover:text-white'
+              className={`px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition-all ${
+                activeTab === 'overview' ? 'bg-[#D4AF37] text-black shadow-lg' : 'text-gray-400 hover:text-white'
               }`}
             >
-              <TrendingUp className="w-3.5 h-3.5" /> Profit Overview
+              <TrendingUp className="w-3.5 h-3.5" /> Financial Metrics
             </button>
           </div>
         </div>
 
         {/* MAIN CONTENT AREA */}
-        <main className="max-w-7xl mx-auto px-3 sm:px-8 py-4 space-y-5 flex-1 w-full max-w-full">
+        <main className="max-w-7xl mx-auto px-4 sm:px-8 py-6 space-y-6 flex-1 w-full max-w-full">
           
           {/* TAB 1: LIVE ORDERS MANAGEMENT */}
           {activeTab === 'orders' && (
-            <div className="space-y-4 w-full">
+            <div className="space-y-5 w-full">
               
-              {/* Clean Compact Action Bar */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 glass-panel rounded-2xl border-valaroix-gold/20 w-full">
-                <div className="flex items-center gap-1.5 text-xs font-bold flex-wrap">
-                  <Filter className="w-3.5 h-3.5 text-valaroix-gold" /> Filter:
+              {/* Filter Bar */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 bg-[#141414] rounded-2xl border border-white/10 w-full shadow-lg">
+                <div className="flex items-center gap-2 text-xs font-bold flex-wrap">
+                  <Filter className="w-3.5 h-3.5 text-[#D4AF37]" /> Filter:
                   <button
                     onClick={() => setOrderFilter('all')}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                      orderFilter === 'all' ? 'bg-valaroix-gold text-valaroix-dark font-bold' : 'text-gray-400 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all ${
+                      orderFilter === 'all' ? 'bg-[#D4AF37] text-black font-bold' : 'text-gray-400 hover:text-white bg-white/5'
                     }`}
                   >
                     All ({allOrders.length})
                   </button>
                   <button
                     onClick={() => setOrderFilter('pending')}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                      orderFilter === 'pending' ? 'bg-amber-500 text-black font-bold' : 'text-gray-400 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all ${
+                      orderFilter === 'pending' ? 'bg-amber-500 text-black font-bold' : 'text-gray-400 hover:text-white bg-white/5'
                     }`}
                   >
                     Pending ({pendingOrdersCount})
                   </button>
                   <button
                     onClick={() => setOrderFilter('confirmed')}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                      orderFilter === 'confirmed' ? 'bg-emerald-500 text-black font-bold' : 'text-gray-400 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all ${
+                      orderFilter === 'confirmed' ? 'bg-emerald-500 text-black font-bold' : 'text-gray-400 hover:text-white bg-white/5'
                     }`}
                   >
-                    Confirmed
+                    Confirmed / Dispatched
+                  </button>
+                  <button
+                    onClick={() => setOrderFilter('delivered')}
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all ${
+                      orderFilter === 'delivered' ? 'bg-blue-500 text-white font-bold' : 'text-gray-400 hover:text-white bg-white/5'
+                    }`}
+                  >
+                    Delivered
                   </button>
                   <button
                     onClick={() => setOrderFilter('cancelled')}
-                    className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
-                      orderFilter === 'cancelled' ? 'bg-red-500 text-white font-bold' : 'text-gray-400 hover:text-white'
+                    className={`px-3 py-1.5 rounded-xl text-xs transition-all ${
+                      orderFilter === 'cancelled' ? 'bg-red-500 text-white font-bold' : 'text-gray-400 hover:text-white bg-white/5'
                     }`}
                   >
                     Cancelled
@@ -443,148 +409,194 @@ Reply:
 
                 <button
                   onClick={handlePrintDailySlips}
-                  className="w-full sm:w-auto px-3 py-2 rounded-xl bg-emerald-500 text-black text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-500 text-black text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
                 >
-                  <Printer className="w-4 h-4" /> Print Daily Slips (PDF)
+                  <Printer className="w-4 h-4" /> Print TCS Delivery Slips
                 </button>
               </div>
 
               {/* Orders List */}
               <div className="space-y-4 w-full">
-                {filteredOrders.map((order) => {
-                  const isConfirmed = (order.status || '').includes('Confirmed');
-                  const isCancelled = (order.status || '').includes('Cancelled');
-                  const isPending = !isConfirmed && !isCancelled;
+                {filteredOrders.length === 0 ? (
+                  <div className="p-8 text-center bg-[#141414] rounded-2xl border border-white/10 text-gray-400 text-xs">
+                    No orders found matching this filter.
+                  </div>
+                ) : (
+                  filteredOrders.map((order) => {
+                    const price = getOrderPrice(order);
+                    const profit = getOrderProfit(order);
+                    const receiptUrl = order.receiptImage || order.receiptPreview;
+                    const st = (order.status || '').toLowerCase();
+                    const isConfirmed = st.includes('confirmed') || st.includes('dispatched') || st.includes('transit');
+                    const isCancelled = st.includes('cancel');
+                    const isDelivered = st.includes('delivered');
 
-                  return (
-                    <div
-                      key={order.id}
-                      className="glass-panel p-4 rounded-2xl border-valaroix-gold/30 space-y-3 shadow-xl relative w-full overflow-hidden"
-                    >
-                      {/* Order Header Meta */}
-                      <div className="flex flex-col sm:flex-row justify-between items-start gap-2 border-b border-valaroix-gold/20 pb-3">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-valaroix-gold font-bold text-sm">{order.id}</span>
-                            <span className="text-[11px] text-gray-400 font-mono">Date: {order.date}</span>
+                    return (
+                      <div
+                        key={order.id}
+                        className="p-5 sm:p-6 rounded-3xl bg-[#141414] border border-[#D4AF37]/30 space-y-4 shadow-xl relative w-full overflow-hidden"
+                      >
+                        {/* Order Header */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 border-b border-white/10 pb-4">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-[#D4AF37] font-bold text-sm sm:text-base">{order.id}</span>
+                              <span className="text-[11px] text-gray-400 font-mono">Date: {order.date || 'Today'}</span>
+                            </div>
+                            <h4 className="font-serif-mockup text-lg sm:text-xl font-bold text-white mt-1">
+                              {order.customerName || order.name || 'Valaroix Patron'}
+                            </h4>
+                            
+                            {/* WhatsApp Direct */}
+                            <div className="flex items-center gap-2 mt-1.5">
+                              <span className="text-xs text-gray-400">Phone / WhatsApp:</span>
+                              <button
+                                onClick={() => handleAskClientOnWhatsApp(order)}
+                                className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold hover:bg-emerald-500 hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                <span>{order.phone || order.whatsapp}</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </button>
+                            </div>
+
+                            <span className="text-xs text-gray-300 block mt-1.5">
+                              <strong className="text-white font-semibold">{order.city}</strong> — {order.address}
+                            </span>
                           </div>
-                          <h4 className="font-serif text-lg font-bold text-white mt-0.5">{order.customerName}</h4>
+
+                          <div className="flex flex-col sm:items-end gap-1">
+                            <span className="font-serif-mockup text-2xl font-black text-[#D4AF37]">
+                              Rs. {price.toLocaleString()}
+                            </span>
+                            <span className="text-xs text-gray-300">
+                              Payment: <strong className="text-[#D4AF37] uppercase">{order.paymentMethod || 'COD'}</strong>
+                            </span>
+                            <span className="text-xs text-emerald-400 font-mono">
+                              Profit: +Rs. {profit.toLocaleString()}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Items & Payment Slip Preview */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs bg-black/50 p-4 rounded-2xl border border-white/5">
                           
-                          {/* WhatsApp Direct Clickable Link next to phone number */}
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs text-gray-300 font-mono">WhatsApp:</span>
-                            <button
-                              onClick={() => handleAskClientOnWhatsApp(order)}
-                              className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold hover:bg-emerald-500 hover:text-black transition-all flex items-center gap-1"
-                              title="Open Direct WhatsApp Chat with Client"
-                            >
-                              <MessageSquare className="w-3 h-3" />
-                              <span>{order.phone}</span>
-                              <ExternalLink className="w-3 h-3" />
-                            </button>
+                          {/* Items */}
+                          <div className="space-y-1.5">
+                            <span className="text-gray-400 block font-semibold text-[11px] uppercase">Items Ordered:</span>
+                            {order.items && order.items.length > 0 ? (
+                              order.items.map((i, idx) => (
+                                <span key={idx} className="font-bold text-white block">
+                                  • {i.name} {i.quantity > 1 ? `(Qty: ${i.quantity})` : ''}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="font-bold text-white block">• {order.item || 'VALAROIX Luxury Perfume'}</span>
+                            )}
                           </div>
 
-                          <span className="text-xs text-gray-300 block mt-1">{order.city} — {order.address}</span>
-                        </div>
-
-                        <div className="flex flex-col sm:items-end gap-0.5">
-                          <span className="font-serif text-xl font-bold text-gold-gradient">
-                            Rs. {(order.pricePkr || 0).toLocaleString()}
-                          </span>
-                          <span className="text-xs font-mono text-gray-400">Payment: <strong className="text-valaroix-gold">{order.paymentMethod}</strong></span>
-                          <span className="text-xs text-emerald-400 font-mono mt-0.5">
-                            Profit: +Rs. {(order.profitPkr || 0).toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Purchased Item & Receipt Attachment */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <div className="space-y-1">
-                          <span className="text-gray-400 block font-mono text-[11px]">Items Ordered:</span>
-                          {order.items ? (
-                            order.items.map((i, idx) => (
-                              <span key={idx} className="font-bold text-white block">• {i.name}</span>
-                            ))
-                          ) : (
-                            <span className="font-bold text-white block">• {order.item}</span>
-                          )}
-                        </div>
-
-                        {/* Receipt Image Preview if Advance Payment */}
-                        {order.receiptImage && (
-                          <div className="space-y-1">
-                            <span className="text-gray-400 block font-mono text-[11px]">SadaPay Receipt:</span>
-                            <button
-                              onClick={() => setSelectedReceipt(order.receiptImage)}
-                              className="flex items-center gap-1.5 p-1.5 rounded-lg bg-valaroix-gold/10 border border-valaroix-gold/40 text-valaroix-gold text-xs font-bold hover:bg-valaroix-gold hover:text-black transition-all"
-                            >
-                              <Eye className="w-3.5 h-3.5" /> View SadaPay Receipt
-                            </button>
+                          {/* Payment Receipt Slip */}
+                          <div className="space-y-1.5">
+                            <span className="text-gray-400 block font-semibold text-[11px] uppercase">Payment Receipt / Slip:</span>
+                            {receiptUrl ? (
+                              <div className="flex items-center gap-3">
+                                <div
+                                  onClick={() => setSelectedReceipt(receiptUrl)}
+                                  className="w-12 h-12 rounded-xl overflow-hidden border border-[#D4AF37] bg-black shrink-0 cursor-pointer hover:scale-105 transition-transform"
+                                >
+                                  <img src={receiptUrl} alt="Slip" className="w-full h-full object-cover" />
+                                </div>
+                                <button
+                                  onClick={() => setSelectedReceipt(receiptUrl)}
+                                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-black transition-all cursor-pointer"
+                                >
+                                  <Eye className="w-4 h-4" /> View Uploaded Receipt Slip
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-gray-500 italic block py-1">
+                                {order.paymentMethod === 'advance' ? 'No screenshot uploaded (Check Bank app)' : 'Cash on Delivery (No slip needed)'}
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </div>
 
-                      {/* Status Badge & Dynamic Action Buttons */}
-                      <div className="pt-2 border-t border-valaroix-gold/15 space-y-2 text-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="text-gray-400 font-mono text-[11px]">Current Status:</span>
-                          <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
-                            isConfirmed
-                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
-                              : isCancelled
-                              ? 'bg-red-500/20 text-red-400 border border-red-500/40'
-                              : 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
-                          }`}>
-                            {order.status}
-                          </span>
                         </div>
 
-                        {/* Smart Action Buttons:
-                           - If PENDING: Show 'Confirm Order', 'Cancel Order', 'Ask WhatsApp', & 'Delete'
-                           - If CONFIRMED / CANCELLED: Hide Confirm & Cancel buttons! Show only 'Ask WhatsApp' & 'Delete Order'
-                        */}
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
-                          <button
-                            onClick={() => handleAskClientOnWhatsApp(order)}
-                            className="flex-1 py-2 px-3 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40 text-xs font-bold flex items-center justify-center gap-1 transition-all"
-                            title="Send pre-filled WhatsApp message"
-                          >
-                            <MessageSquare className="w-3.5 h-3.5" /> Ask WhatsApp
-                          </button>
+                        {/* Status Badge & Control Buttons */}
+                        <div className="pt-2 border-t border-white/10 space-y-3 text-xs">
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-400 text-xs font-semibold">Current Order Status:</span>
+                            <span className={`px-3 py-1 rounded-full font-bold text-xs ${
+                              isDelivered
+                                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
+                                : isConfirmed
+                                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                                : isCancelled
+                                ? 'bg-red-500/20 text-red-400 border border-red-500/40'
+                                : 'bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse'
+                            }`}>
+                              {order.status || 'Pending Verification'}
+                            </span>
+                          </div>
 
-                          {isPending && (
-                            <>
-                              <button
-                                onClick={() => handleConfirmOrder(order.id, order.customerName, order.phone, order.pricePkr)}
-                                className="flex-1 py-2 px-3 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs uppercase font-bold flex items-center justify-center gap-1 shadow-md active:scale-95 transition-transform"
-                              >
-                                <Check className="w-3.5 h-3.5" /> Confirm
-                              </button>
+                          {/* ACTION BUTTONS TOOLBAR */}
+                          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1">
+                            
+                            {/* 1. Confirm & Dispatch */}
+                            <button
+                              onClick={() => handleConfirmOrder(order)}
+                              className="py-2.5 px-3 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all cursor-pointer"
+                              title="Mark as Confirmed & TCS Dispatched"
+                            >
+                              <Check className="w-4 h-4" />
+                              <span>Confirm Order</span>
+                            </button>
 
-                              <button
-                                onClick={() => handleCancelOrder(order.id, order.customerName, order.phone)}
-                                className="flex-1 py-2 px-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40 text-xs uppercase font-bold flex items-center justify-center gap-1 active:scale-95 transition-transform"
-                              >
-                                <X className="w-3.5 h-3.5" /> Cancel
-                              </button>
-                            </>
-                          )}
+                            {/* 2. In Transit */}
+                            <button
+                              onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express')}
+                              className="py-2.5 px-3 rounded-xl bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500 hover:text-black border border-cyan-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                            >
+                              <Truck className="w-4 h-4" />
+                              <span>In Transit</span>
+                            </button>
 
-                          {/* Delete Order Permanent Action Button */}
-                          <button
-                            onClick={() => handleDeleteOrder(order.id)}
-                            className="py-2 px-3 rounded-xl bg-red-600/30 text-red-400 hover:bg-red-600 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1 transition-all"
-                            title="Permanently Delete Order"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" /> Delete
-                          </button>
+                            {/* 3. Mark Delivered */}
+                            <button
+                              onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected')}
+                              className="py-2.5 px-3 rounded-xl bg-blue-500/20 text-blue-300 hover:bg-blue-500 hover:text-white border border-blue-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                            >
+                              <PackageCheck className="w-4 h-4" />
+                              <span>Delivered</span>
+                            </button>
+
+                            {/* 4. Cancel Order */}
+                            <button
+                              onClick={() => handleCancelOrder(order)}
+                              className="py-2.5 px-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
+                            >
+                              <X className="w-4 h-4" />
+                              <span>Cancel</span>
+                            </button>
+
+                            {/* 5. Delete Order */}
+                            <button
+                              onClick={() => handleDeleteOrder(order.id)}
+                              className="py-2.5 px-3 rounded-xl bg-gray-800 text-gray-300 hover:bg-red-700 hover:text-white border border-white/10 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer col-span-2 sm:col-span-1"
+                              title="Delete Order"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                              <span>Delete</span>
+                            </button>
+
+                          </div>
                         </div>
-                      </div>
 
-                    </div>
-                  );
-                })}
+                      </div>
+                    );
+                  })
+                )}
               </div>
 
             </div>
@@ -592,49 +604,49 @@ Reply:
 
           {/* TAB 2: PARTNERS 50/50 PROFIT SPLITTER */}
           {activeTab === 'partners' && (
-            <div className="space-y-5 w-full">
-              <div className="glass-panel-gold p-5 rounded-3xl border border-valaroix-gold/50 flex flex-col md:flex-row items-center justify-between gap-5 shadow-2xl w-full">
+            <div className="space-y-6 w-full">
+              <div className="p-6 rounded-3xl bg-[#141414] border border-[#D4AF37]/50 flex flex-col md:flex-row items-center justify-between gap-5 shadow-2xl w-full">
                 <div className="space-y-1.5 text-center md:text-left">
-                  <span className="text-xs uppercase font-mono text-valaroix-gold font-bold tracking-widest flex items-center gap-2 justify-center md:justify-start">
+                  <span className="text-xs uppercase font-mono text-[#D4AF37] font-bold tracking-widest flex items-center gap-2 justify-center md:justify-start">
                     <Sparkles className="w-4 h-4" /> Equal Equity Partnership (50% / 50%)
                   </span>
-                  <h2 className="font-serif text-2xl font-bold text-white">MUAAZ & FAHAD Profit Splitter</h2>
-                  <p className="text-xs text-gray-300 max-w-xl font-light">
+                  <h2 className="font-serif-mockup text-2xl sm:text-3xl font-extrabold text-white">MUAAZ & FAHAD Profit Splitter</h2>
+                  <p className="text-xs text-gray-300 max-w-xl">
                     Har sale ka cost price (COGS) nikal kar baqi saara net profit automated 50/50 split hota hai.
                   </p>
                 </div>
 
-                <div className="text-center p-3 rounded-2xl bg-black/80 border border-valaroix-gold/30 min-w-[140px]">
-                  <span className="text-[10px] text-gray-400 font-mono block uppercase">Total Net Profit</span>
-                  <span className="font-serif text-2xl font-bold text-emerald-400">Rs. {totalNetProfit.toLocaleString()}</span>
+                <div className="text-center p-4 rounded-2xl bg-black border border-[#D4AF37]/40 min-w-[160px]">
+                  <span className="text-[10px] text-gray-400 font-mono block uppercase font-bold">Total Net Profit</span>
+                  <span className="font-serif-mockup text-2xl sm:text-3xl font-extrabold text-emerald-400">Rs. {totalNetProfit.toLocaleString()}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                <div className="glass-panel p-5 rounded-3xl border-valaroix-gold/40 space-y-3 shadow-xl">
-                  <div className="flex items-center justify-between border-b border-valaroix-gold/20 pb-3">
+                <div className="p-6 rounded-3xl bg-[#141414] border border-[#D4AF37]/40 space-y-3 shadow-xl">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-valaroix-gold text-valaroix-dark font-serif font-bold text-lg flex items-center justify-center">M</div>
+                      <div className="w-12 h-12 rounded-full bg-[#D4AF37] text-black font-serif-mockup font-bold text-xl flex items-center justify-center shadow-lg">M</div>
                       <div>
-                        <h3 className="font-serif text-xl font-bold text-white">MUAAZ</h3>
-                        <span className="text-xs text-valaroix-gold font-mono">50% Equal Equity Share</span>
+                        <h3 className="font-serif-mockup text-xl font-bold text-white">MUAAZ</h3>
+                        <span className="text-xs text-[#D4AF37] font-mono font-semibold">50% Equal Share</span>
                       </div>
                     </div>
                   </div>
-                  <span className="font-serif text-3xl font-bold text-gold-gradient block">Rs. {muaazShare.toLocaleString()}</span>
+                  <span className="font-serif-mockup text-3xl font-black text-[#D4AF37] block">Rs. {muaazShare.toLocaleString()}</span>
                 </div>
 
-                <div className="glass-panel p-5 rounded-3xl border-valaroix-gold/40 space-y-3 shadow-xl">
-                  <div className="flex items-center justify-between border-b border-valaroix-gold/20 pb-3">
+                <div className="p-6 rounded-3xl bg-[#141414] border border-[#D4AF37]/40 space-y-3 shadow-xl">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-valaroix-gold text-valaroix-dark font-serif font-bold text-lg flex items-center justify-center">F</div>
+                      <div className="w-12 h-12 rounded-full bg-[#D4AF37] text-black font-serif-mockup font-bold text-xl flex items-center justify-center shadow-lg">F</div>
                       <div>
-                        <h3 className="font-serif text-xl font-bold text-white">FAHAD</h3>
-                        <span className="text-xs text-valaroix-gold font-mono">50% Equal Equity Share</span>
+                        <h3 className="font-serif-mockup text-xl font-bold text-white">FAHAD</h3>
+                        <span className="text-xs text-[#D4AF37] font-mono font-semibold">50% Equal Share</span>
                       </div>
                     </div>
                   </div>
-                  <span className="font-serif text-3xl font-bold text-gold-gradient block">Rs. {fahadShare.toLocaleString()}</span>
+                  <span className="font-serif-mockup text-3xl font-black text-[#D4AF37] block">Rs. {fahadShare.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -644,19 +656,19 @@ Reply:
           {activeTab === 'overview' && (
             <div className="space-y-4 w-full">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                <div className="glass-panel p-5 rounded-3xl border-valaroix-gold/30 text-center space-y-1.5">
+                <div className="p-6 rounded-3xl bg-[#141414] border border-white/10 text-center space-y-1.5 shadow-xl">
                   <span className="text-xs text-gray-400 font-mono uppercase">Total Gross Sales</span>
-                  <span className="font-serif text-2xl font-bold text-white block">Rs. {totalRevenue.toLocaleString()}</span>
+                  <span className="font-serif-mockup text-2xl sm:text-3xl font-black text-white block">Rs. {totalRevenue.toLocaleString()}</span>
                 </div>
 
-                <div className="glass-panel p-5 rounded-3xl border-valaroix-gold/30 text-center space-y-1.5">
+                <div className="p-6 rounded-3xl bg-[#141414] border border-white/10 text-center space-y-1.5 shadow-xl">
                   <span className="text-xs text-gray-400 font-mono uppercase">Total Cost of Goods (COGS)</span>
-                  <span className="font-serif text-2xl font-bold text-amber-400 block">Rs. {totalCogs.toLocaleString()}</span>
+                  <span className="font-serif-mockup text-2xl sm:text-3xl font-black text-amber-400 block">Rs. {totalCogs.toLocaleString()}</span>
                 </div>
 
-                <div className="glass-panel p-5 rounded-3xl border-valaroix-gold/30 text-center space-y-1.5">
+                <div className="p-6 rounded-3xl bg-[#141414] border border-[#D4AF37]/40 text-center space-y-1.5 shadow-xl">
                   <span className="text-xs text-gray-400 font-mono uppercase">Net Operating Profit</span>
-                  <span className="font-serif text-2xl font-bold text-emerald-400 block">Rs. {totalNetProfit.toLocaleString()}</span>
+                  <span className="font-serif-mockup text-2xl sm:text-3xl font-black text-emerald-400 block">Rs. {totalNetProfit.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -667,16 +679,18 @@ Reply:
         {/* RECEIPT POPUP MODAL */}
         {selectedReceipt && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-            <div className="relative max-w-lg w-full bg-valaroix-dark border border-valaroix-gold rounded-3xl p-6 space-y-4">
+            <div className="relative max-w-lg w-full bg-[#141414] border border-[#D4AF37] rounded-3xl p-6 space-y-4 shadow-[0_0_80px_rgba(212,175,55,0.4)]">
               <button
                 onClick={() => setSelectedReceipt(null)}
-                className="absolute top-4 right-4 p-2 rounded-full glass-panel text-gray-400 hover:text-valaroix-gold"
+                className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-gray-300 hover:text-[#D4AF37] transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
-              <h4 className="font-serif text-lg font-bold text-white">SadaPay Payment Receipt Screenshot</h4>
-              <div className="w-full max-h-[70vh] rounded-2xl overflow-hidden border border-valaroix-gold/30">
-                <img src={selectedReceipt} alt="Receipt Full" className="w-full h-full object-contain" />
+              <h4 className="font-serif-mockup text-lg font-bold text-white flex items-center gap-2">
+                <Eye className="w-5 h-5 text-[#D4AF37]" /> SadaPay Payment Receipt Screenshot
+              </h4>
+              <div className="w-full max-h-[70vh] rounded-2xl overflow-hidden border border-[#D4AF37]/30 bg-black flex items-center justify-center p-2">
+                <img src={selectedReceipt} alt="Receipt Full" className="w-full max-h-[60vh] object-contain rounded-xl" />
               </div>
             </div>
           </div>
