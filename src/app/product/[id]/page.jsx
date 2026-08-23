@@ -2,362 +2,243 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { 
-  ArrowLeft, Star, ShoppingBag, Clock, Sparkles, ShieldCheck, 
-  Truck, Check, PenTool, Flame, RefreshCw, Award, ChevronRight 
+  Star, ShoppingBag, ShieldCheck, 
+  Truck, CheckCircle2, RotateCcw, Clock, ChevronRight 
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
 import CheckoutModal from '@/components/CheckoutModal';
+import FloatingWhatsApp, { WhatsAppIcon } from '@/components/FloatingWhatsApp';
+import Footer from '@/components/Footer';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { products } from '@/components/ProductCatalog';
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const router = useRouter();
-  const { addToCart, setIsCheckoutOpen } = useCart();
-  const { formatPrice, currency } = useCurrency();
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const { addToCart } = useCart();
+  const { formatPrice } = useCurrency();
+  const [quantity, setQuantity] = useState(1);
 
   // Find product by URL param ID, fallback to Sauvage
   const productId = params?.id || 'valaroix-sauvage-imperial';
   const product = products.find((p) => p.id === productId || p.id.includes(productId)) || products[0];
 
-  // Options State
-  const [selectedSize, setSelectedSize] = useState('50ml');
-  const [selectedEdition, setSelectedEdition] = useState('10h'); // '10h' | '24h'
-  const [activeTab, setActiveTab] = useState('notes');
-
-  // Dynamic Price calculation based on exact pricing matrix
-  const getSelectedPriceObj = (size = selectedSize, edition = selectedEdition) => {
-    if (product.pricing && product.pricing[size] && product.pricing[size][edition]) {
-      return product.pricing[size][edition];
-    }
-    return product.startingPrice || { pkr: 2699, usd: 10 };
-  };
-
-  const finalPriceObj = getSelectedPriceObj();
+  const pricePkr = product.startingPrice?.pkr || product.exactPkr || 2699;
 
   const handleAddToCart = () => {
-    if (product.isSoldOut) {
-      alert('This product is currently Sold Out!');
-      return;
+    if (product.isSoldOut) return;
+    
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product, '50ml', 'None', '10h');
     }
-    if (selectedEdition === '24h' || product.pricing?.[selectedSize]?.['24h']?.soldOut) {
-      alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
-      return;
-    }
-    const customizedProduct = {
-      ...product,
-      name: `${product.name} (${selectedSize} • ${selectedEdition === '24h' ? '24 Hours+ Extrait' : '10 Hours+ EDP'})`,
-      price: currency === 'PKR' ? finalPriceObj.pkr / 280 : finalPriceObj.usd,
-      exactPkr: finalPriceObj.pkr
-    };
-    addToCart(customizedProduct, selectedSize, '');
   };
 
-  const handleBuyNow = () => {
-    if (product.isSoldOut) {
-      alert('This product is currently Sold Out!');
-      return;
-    }
-    if (selectedEdition === '24h' || product.pricing?.[selectedSize]?.['24h']?.soldOut) {
-      alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
-      return;
-    }
-    handleAddToCart();
-  };
+  const whatsappOrderUrl = `https://wa.me/923141397378?text=${encodeURIComponent(
+    `Hello VALAROIX, I want to order: ${product.name} (50ml • Rs. ${pricePkr}). Please confirm my order.`
+  )}`;
 
   return (
-    <main className="min-h-screen bg-valaroix-dark text-gray-100 selection:bg-valaroix-gold selection:text-valaroix-dark font-sans relative overflow-x-hidden">
-      {/* Luxury Navbar */}
-      <Navbar onOpenAdmin={() => setIsAdminOpen(true)} />
+    <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden selection:bg-[#D4AF37] selection:text-black">
+      {/* Navbar */}
+      <Navbar />
 
-      <div className="pt-28 pb-20 max-w-7xl mx-auto px-6">
-        
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center gap-2 text-xs text-gray-400 mb-8 font-mono">
-          <Link href="/" className="hover:text-valaroix-gold transition-colors">Home</Link>
-          <ChevronRight className="w-3.5 h-3.5 text-valaroix-gold/50" />
-          <Link href="/#catalog" className="hover:text-valaroix-gold transition-colors">Fragrances</Link>
-          <ChevronRight className="w-3.5 h-3.5 text-valaroix-gold/50" />
-          <span className="text-valaroix-gold font-bold">{product.name}</span>
+      {/* Breadcrumb & Back Link */}
+      <div className="pt-24 sm:pt-28 pb-4 max-w-7xl mx-auto px-4 sm:px-8">
+        <div className="flex items-center gap-2 text-xs text-gray-400 font-sans">
+          <Link href="/" className="hover:text-[#D4AF37] transition-colors">Home</Link>
+          <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
+          <Link href="/#shop" className="hover:text-[#D4AF37] transition-colors">Collection</Link>
+          <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
+          <span className="text-[#D4AF37] font-semibold truncate">{product.name}</span>
         </div>
+      </div>
 
-        {/* Back Button */}
-        <Link
-          href="/#catalog"
-          className="inline-flex items-center gap-2 text-xs uppercase font-bold tracking-widest text-valaroix-gold hover:underline mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back To Collection
-        </Link>
-
-        {/* Main Product Showcase Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+      {/* Main Product Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
           
-          {/* Left Column: High-Res Luxury Perfume Bottle Showcase */}
-          <div className="lg:col-span-6 h-[460px] sm:h-[540px] lg:h-[620px] relative rounded-3xl overflow-hidden bg-[#1A1A1A] border border-valaroix-gold/30 shadow-[0_0_60px_rgba(212,175,55,0.18)] flex items-center justify-center p-6 group">
-            
-            {/* Ambient Glow */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-valaroix-gold/10" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-valaroix-gold/15 rounded-full blur-[90px] pointer-events-none" />
-
-            {/* Badges */}
-            <div className="absolute top-6 left-6 z-20 flex flex-col gap-2">
-              <span className="px-3.5 py-1.5 rounded-full glass-panel-gold border border-valaroix-gold/50 text-valaroix-gold text-xs font-bold uppercase tracking-wider">
-                50ml Pure Extrait
-              </span>
+          {/* LEFT: Product Photo Showcase */}
+          <div className="lg:col-span-6 space-y-4">
+            <div className="relative w-full h-[360px] sm:h-[480px] lg:h-[540px] rounded-3xl overflow-hidden bg-[#141414] border border-[#D4AF37]/30 shadow-2xl flex items-center justify-center p-4 sm:p-8 group">
+              
+              {/* Sold Out Tag */}
               {product.isSoldOut && (
-                <span className="px-3.5 py-1.5 rounded-full bg-red-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg">
+                <div className="absolute top-4 left-4 z-20 bg-red-600 text-white text-xs font-black uppercase px-4 py-1.5 rounded-full shadow-2xl tracking-wider">
                   SOLD OUT
-                </span>
+                </div>
               )}
-            </div>
 
-            <div className="absolute top-6 right-6 z-20 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md border border-valaroix-gold/30 text-[11px] text-emerald-400 font-mono flex items-center gap-1.5">
-              <Truck className="w-3.5 h-3.5" /> Free Courier Delivery
-            </div>
+              {/* Free Delivery Badge */}
+              <div className="absolute top-4 right-4 z-20 px-3 py-1.5 rounded-full bg-black/80 backdrop-blur-md border border-emerald-500/40 text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                <Truck className="w-3.5 h-3.5 text-emerald-400" /> Free TCS Delivery
+              </div>
 
-            {/* High-Resolution Official Bottle Image */}
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+              {/* Product Bottle Image */}
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-contain rounded-2xl shadow-2xl group-hover:scale-105 transition-transform duration-700 max-h-[520px]"
+                className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-500"
               />
+
+              {/* Bottom Subtle Badge */}
+              <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 flex items-center justify-between text-xs">
+                <span className="text-gray-400">Size & Quality:</span>
+                <span className="text-[#D4AF37] font-bold">50ml • 30% Pure Oil Extrait</span>
+              </div>
             </div>
 
-            {/* Bottom Floating Tag */}
-            <div className="absolute bottom-6 left-6 right-6 z-20 bg-black/90 backdrop-blur-md p-3.5 rounded-2xl border border-valaroix-gold/30 flex items-center justify-between text-xs">
-              <span className="text-gray-300 font-medium">Authentic Formulation:</span>
-              <span className="font-serif text-valaroix-gold font-bold">30% Pure Oil Concentration</span>
+            {/* Quality Mini Badges */}
+            <div className="grid grid-cols-3 gap-2 text-center text-[11px] text-gray-300">
+              <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
+                <Clock className="w-4 h-4 text-[#D4AF37]" />
+                <span className="font-semibold">10-12h+ Lasting</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
+                <Truck className="w-4 h-4 text-[#D4AF37]" />
+                <span className="font-semibold">TCS 2-3 Days</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
+                <RotateCcw className="w-4 h-4 text-[#D4AF37]" />
+                <span className="font-semibold">Easy Returns</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Options & Purchase Customization (6 Cols) */}
-          <div className="lg:col-span-6 space-y-8">
+          {/* RIGHT: Simple, Clean Product Info & Buying Box */}
+          <div className="lg:col-span-6 space-y-6">
             
             {/* Title & Subtitle */}
             <div className="space-y-2">
-              <span className="text-xs uppercase font-mono tracking-widest text-valaroix-gold bg-valaroix-gold/10 px-3 py-1 rounded-full border border-valaroix-gold/30">
-                {selectedEdition === '24h' ? '24 Hours+ Pure Extrait Concentration' : '10 Hours+ Intense Eau De Parfum'}
+              <span className="inline-block text-[11px] font-bold uppercase tracking-widest text-[#D4AF37] bg-[#D4AF37]/10 px-3 py-1 rounded-full border border-[#D4AF37]/30">
+                HAUTE PARFUMERIE
               </span>
-
-              <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight mt-3">
+              <h1 className="font-serif-mockup text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
                 {product.name}
               </h1>
-              
-              <p className="text-sm text-valaroix-gold/90 font-medium">
+              <p className="text-xs sm:text-sm text-gray-400 font-medium">
                 {product.subtitle}
               </p>
-
-              {/* Rating & In Stock */}
-              <div className="flex items-center gap-4 text-xs pt-2">
-                <div className="flex items-center text-valaroix-gold font-bold">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="ml-1 text-sm">{product.rating}</span>
-                </div>
-                <span className="text-gray-400">({product.reviewsCount} Verified Patron Reviews)</span>
-                {product.isSoldOut ? (
-                  <span className="text-red-400 font-bold flex items-center gap-1 bg-red-500/10 border border-red-500/30 px-2.5 py-0.5 rounded-full">
-                    <span className="w-2 h-2 rounded-full bg-red-500" /> Out of Stock (Sold Out)
-                  </span>
-                ) : (
-                  <span className="text-valaroix-emerald font-semibold flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-valaroix-emerald animate-ping" /> In Stock • Free Nationwide Delivery
-                  </span>
-                )}
-              </div>
             </div>
 
-            <p className="text-gray-300 text-sm font-light leading-relaxed">
-              {product.description}
-            </p>
-
-            {/* Dynamic Calculated Price with Exact Currency Formatting */}
-            <div className="p-6 rounded-2xl glass-panel-gold border border-valaroix-gold flex items-center justify-between shadow-2xl">
+            {/* Price Box */}
+            <div className="p-5 rounded-2xl bg-[#141414] border border-[#D4AF37]/40 flex items-center justify-between shadow-xl">
               <div>
-                <span className="block text-xs text-gray-400 uppercase tracking-wider">Total Special Price ({selectedSize} • {selectedEdition === '24h' ? '24 Hours+' : '10 Hours+'})</span>
-                <span className="font-serif text-4xl font-bold text-gold-gradient">
-                  {formatPrice(finalPriceObj)}
+                <span className="text-[10px] uppercase tracking-wider text-gray-400 block font-semibold">Special Price (Free Delivery)</span>
+                <span className="font-serif-mockup text-2xl sm:text-3xl font-extrabold text-[#D4AF37]">
+                  {formatPrice(product.startingPrice)}
                 </span>
               </div>
-
-              <div className="text-right text-xs text-valaroix-gold font-mono">
-                <span className="block">Complimentary Express Courier</span>
-                <span className="text-gray-400">Includes 24k Gold Atomizer</span>
+              <div className="text-right">
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-3 py-1 rounded-full">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Free Delivery
+                </span>
               </div>
             </div>
 
-            {/* BOTTLE VOLUME TAG */}
-            <div className="glass-panel p-4 rounded-2xl border-valaroix-gold/25 flex items-center justify-between">
-              <span className="text-xs uppercase tracking-widest text-valaroix-gold font-bold">Bottle Volume Size</span>
-              <span className="px-3 py-1 rounded-full bg-valaroix-gold text-valaroix-dark font-mono text-xs font-bold uppercase">50 ml Luxury Glass Edition</span>
+            {/* Product Key Specs (Easy to Understand) */}
+            <div className="p-4 rounded-2xl bg-[#141414] border border-white/10 space-y-2.5 text-xs">
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span className="text-gray-400">Bottle Volume:</span>
+                <span className="font-bold text-white">50 ML Glass Bottle</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span className="text-gray-400">Oil Concentration:</span>
+                <span className="font-bold text-[#D4AF37]">30% Pure Fragrance Oil</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span className="text-gray-400">Performance:</span>
+                <span className="font-bold text-white">10 to 12+ Hours Lasting</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span className="text-gray-400">Courier Partner:</span>
+                <span className="font-bold text-white">TCS Express Courier (Free)</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span className="text-gray-400">Payment Options:</span>
+                <span className="font-bold text-emerald-400">Cash on Delivery (COD) / Bank Transfer</span>
+              </div>
             </div>
 
-            {/* OPTION 2: LONGEVITY & LASTING EDITION SELECTOR */}
-            <div className="glass-panel p-6 rounded-2xl border-valaroix-gold/25 space-y-3">
-              <label className="block text-xs uppercase tracking-widest text-valaroix-gold font-bold flex items-center gap-2">
-                <Clock className="w-4 h-4" /> Choose Longevity Lasting Edition ({selectedSize})
-              </label>
+            {/* Fragrance Notes */}
+            <div className="p-4 rounded-2xl bg-[#141414] border border-white/10 space-y-2 text-xs">
+              <h4 className="font-bold uppercase text-[11px] tracking-wider text-[#D4AF37]">
+                Fragrance Scent Notes
+              </h4>
+              <div className="space-y-1.5 text-gray-300 text-[11px]">
+                <p><strong className="text-gray-400">Top Notes:</strong> {product.topNotes || 'Fresh Bergamot & Citrus'}</p>
+                <p><strong className="text-gray-400">Heart Notes:</strong> {product.heartNotes || 'Lavender, Spices & Rose'}</p>
+                <p><strong className="text-gray-400">Base Notes:</strong> {product.baseNotes || 'Amberwood, Leather & Sandalwood'}</p>
+              </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                {/* 10 Hours Lasting Button */}
-                <button
-                  onClick={() => {
-                    if (product.isSoldOut || product.pricing?.[selectedSize]?.['10h']?.soldOut) {
-                      alert('This item is currently Sold Out!');
-                      return;
-                    }
-                    setSelectedEdition('10h');
-                  }}
-                  className={`p-4 rounded-xl border text-left transition-all relative ${
-                    (product.isSoldOut || product.pricing?.[selectedSize]?.['10h']?.soldOut)
-                      ? 'bg-black/40 border-red-500/40 text-gray-400 opacity-80 cursor-not-allowed'
-                      : selectedEdition === '10h'
-                      ? 'bg-valaroix-gold/20 border-valaroix-gold text-white shadow-lg'
-                      : 'bg-black/60 border-valaroix-gold/20 text-gray-400 hover:border-valaroix-gold/50'
-                  }`}
-                >
-                  {(product.isSoldOut || product.pricing?.[selectedSize]?.['10h']?.soldOut) && (
-                    <span className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-bold bg-red-600 text-white uppercase shadow-sm">
-                      SOLD OUT
+            {/* Quantity Selector & Action Buttons */}
+            <div className="space-y-3 pt-2">
+              
+              {!product.isSoldOut && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-gray-300">Quantity:</span>
+                  <div className="flex items-center border border-[#D4AF37]/40 rounded-xl bg-[#141414] overflow-hidden">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-3 py-1.5 text-sm font-bold text-white hover:bg-white/10"
+                    >
+                      -
+                    </button>
+                    <span className="px-4 py-1.5 text-xs font-bold text-[#D4AF37] font-mono">
+                      {quantity}
                     </span>
-                  )}
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold text-sm text-gray-100">10 Hours+ Lasting</span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="px-3 py-1.5 text-sm font-bold text-white hover:bg-white/10"
+                    >
+                      +
+                    </button>
                   </div>
-                  <span className="font-mono text-xs text-valaroix-gold block mb-1">
-                    {formatPrice(getSelectedPriceObj(selectedSize, '10h'))}
-                  </span>
-                  <span className="block text-[11px] text-gray-400">Eau de Parfum Intense (20% Oil)</span>
-                </button>
+                </div>
+              )}
 
-                {/* 24 Hours Lasting Button */}
-                <button
-                  onClick={() => {
-                    alert('24 Hours+ Lasting Edition is currently Sold Out! Please select 10 Hours+ EDP.');
-                  }}
-                  className={`p-4 rounded-xl border text-left transition-all relative ${
-                    selectedEdition === '24h'
-                      ? 'bg-valaroix-gold/30 text-white border-valaroix-gold shadow-xl'
-                      : 'bg-black/60 border-valaroix-gold/20 text-gray-400 hover:border-valaroix-gold/50'
-                  }`}
-                >
-                  <span className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-bold bg-red-600 text-white uppercase shadow-sm">
-                    SOLD OUT
-                  </span>
-                  <div className="flex justify-between items-center mb-1 pr-12">
-                    <span className="font-bold text-sm">24 Hours+ Lasting 🔥</span>
-                  </div>
-                  <span className="font-mono text-xs block mb-1">
-                    {formatPrice(getSelectedPriceObj(selectedSize, '24h'))}
-                  </span>
-                  <span className="block text-[11px] text-gray-400">
-                    Pure Extrait De Parfum (30% Oil)
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* ACTION CTAs: Add to Cart & Buy Now */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              {/* Main Button */}
               {product.isSoldOut ? (
                 <button
                   disabled
-                  className="w-full py-4 rounded-2xl bg-gray-800 text-gray-400 border border-gray-700 text-xs uppercase font-bold tracking-wider cursor-not-allowed text-center shadow-lg"
+                  className="w-full py-4 rounded-2xl bg-gray-800 text-gray-500 font-bold uppercase tracking-wider text-xs cursor-not-allowed text-center border border-gray-700"
                 >
                   CURRENTLY SOLD OUT
                 </button>
               ) : (
                 <button
                   onClick={handleAddToCart}
-                  className="w-full btn-gold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-2xl hover:scale-[1.02] transition-transform"
+                  className="w-full py-4 rounded-2xl btn-mockup-gold text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:scale-[1.02] transition-transform cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4" /> Add to Cart ({formatPrice(finalPriceObj)})
+                  <ShoppingBag className="w-4 h-4" /> ADD TO CART ({formatPrice(pricePkr * quantity)})
                 </button>
+              )}
+
+              {/* Direct WhatsApp Order CTA */}
+              {!product.isSoldOut && (
+                <a
+                  href={whatsappOrderUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-colors text-center block"
+                >
+                  <WhatsAppIcon className="w-4 h-4 text-white" />
+                  <span>Order Directly on WhatsApp</span>
+                </a>
               )}
             </div>
 
-            {/* Trust Guarantee Icons */}
-            <div className="grid grid-cols-3 gap-3 text-center pt-2 text-[10px] text-gray-400">
-              <div className="flex flex-col items-center gap-1">
-                <Truck className="w-4 h-4 text-valaroix-gold" />
-                <span>Express Courier Shipping</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <ShieldCheck className="w-4 h-4 text-valaroix-gold" />
-                <span>100% Authenticity Guarantee</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Award className="w-4 h-4 text-valaroix-gold" />
-                <span>Master Perfumer Certificate</span>
-              </div>
-            </div>
-
-            {/* Accordion Tabs for Scent Details & Ingredients */}
-            <div className="pt-6 border-t border-valaroix-gold/20 space-y-4">
-              <div className="flex gap-4 border-b border-valaroix-gold/20 pb-3 text-xs font-bold uppercase tracking-wider">
-                <button
-                  onClick={() => setActiveTab('notes')}
-                  className={`pb-2 transition-all ${
-                    activeTab === 'notes' ? 'text-valaroix-gold border-b-2 border-valaroix-gold' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Olfactory Notes
-                </button>
-                <button
-                  onClick={() => setActiveTab('craft')}
-                  className={`pb-2 transition-all ${
-                    activeTab === 'craft' ? 'text-valaroix-gold border-b-2 border-valaroix-gold' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Longevity & Craft
-                </button>
-                <button
-                  onClick={() => setActiveTab('shipping')}
-                  className={`pb-2 transition-all ${
-                    activeTab === 'shipping' ? 'text-valaroix-gold border-b-2 border-valaroix-gold' : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  Shipping & Return
-                </button>
-              </div>
-
-              {activeTab === 'notes' && (
-                <div className="space-y-3 text-xs text-gray-300 font-light">
-                  <div className="p-3 rounded-xl glass-panel">
-                    <strong className="text-valaroix-gold font-mono uppercase block mb-1">Top Notes:</strong>
-                    <span>{product.topNotes}</span>
-                  </div>
-                  <div className="p-3 rounded-xl glass-panel">
-                    <strong className="text-valaroix-gold font-mono uppercase block mb-1">Heart Notes:</strong>
-                    <span>{product.heartNotes}</span>
-                  </div>
-                  <div className="p-3 rounded-xl glass-panel">
-                    <strong className="text-valaroix-gold font-mono uppercase block mb-1">Base Notes:</strong>
-                    <span>{product.baseNotes}</span>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'craft' && (
-                <div className="p-4 rounded-xl glass-panel text-xs text-gray-300 space-y-2 leading-relaxed font-light">
-                  <p><strong>Maceration:</strong> Aged for 180 days in French Oak Casks in Grasse, France.</p>
-                  <p><strong>Concentration:</strong> 24 Hours+ Extrait contains 30% pure perfume oil density.</p>
-                  <p><strong>Bottle:</strong> Hand-faceted crystal glass with 24k gold leaf atomizer nozzle.</p>
-                </div>
-              )}
-
-              {activeTab === 'shipping' && (
-                <div className="p-4 rounded-xl glass-panel text-xs text-gray-300 space-y-2 leading-relaxed font-light">
-                  <p><strong>Express Courier:</strong> Dispatched via DHL Express within 24 hours.</p>
-                  <p><strong>Packaging:</strong> Encased in an obsidian velvet gift box with security seal.</p>
-                  <p><strong>Returns:</strong> 30-Day VIP Satisfaction Guarantee.</p>
-                </div>
-              )}
+            {/* Guarantee / Return Policy */}
+            <div className="flex items-center justify-between text-[11px] text-gray-400 pt-3 border-t border-white/10">
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" /> 100% Original Scent
+              </span>
+              <span className="flex items-center gap-1.5">
+                <RotateCcw className="w-3.5 h-3.5 text-[#D4AF37]" /> 7 Days Money-Back Guarantee
+              </span>
             </div>
 
           </div>
@@ -365,7 +246,13 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Drawers and Modals */}
+      {/* Footer */}
+      <Footer />
+
+      {/* Floating WhatsApp */}
+      <FloatingWhatsApp phoneNumber="923141397378" />
+
+      {/* Drawers */}
       <CartDrawer />
       <CheckoutModal />
     </main>
