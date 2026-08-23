@@ -68,7 +68,6 @@ export default function ProductDetailPage() {
       return;
     }
     handleAddToCart();
-    setIsCheckoutOpen(true);
   };
 
   return (
@@ -266,30 +265,19 @@ export default function ProductDetailPage() {
             {/* ACTION CTAs: Add to Cart & Buy Now */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {product.isSoldOut ? (
-                <div className="col-span-full">
-                  <button
-                    disabled
-                    className="w-full py-4 rounded-2xl bg-gray-800 text-gray-400 border border-gray-700 text-xs uppercase font-bold tracking-wider cursor-not-allowed text-center shadow-lg"
-                  >
-                    CURRENTLY SOLD OUT
-                  </button>
-                </div>
+                <button
+                  disabled
+                  className="w-full py-4 rounded-2xl bg-gray-800 text-gray-400 border border-gray-700 text-xs uppercase font-bold tracking-wider cursor-not-allowed text-center shadow-lg"
+                >
+                  CURRENTLY SOLD OUT
+                </button>
               ) : (
-                <>
-                  <button
-                    onClick={handleAddToCart}
-                    className="btn-gold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-2xl"
-                  >
-                    <ShoppingBag className="w-4 h-4" /> Add to Cart ({formatPrice(finalPriceObj)})
-                  </button>
-
-                  <button
-                    onClick={handleBuyNow}
-                    className="py-4 px-6 rounded-2xl glass-panel-gold border border-valaroix-gold text-valaroix-gold text-xs uppercase font-bold tracking-wider hover:bg-valaroix-gold hover:text-valaroix-dark transition-all shadow-2xl"
-                  >
-                    Buy Now ⚡
-                  </button>
-                </>
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full btn-gold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-2xl hover:scale-[1.02] transition-transform"
+                >
+                  <ShoppingBag className="w-4 h-4" /> Add to Cart ({formatPrice(finalPriceObj)})
+                </button>
               )}
             </div>
 

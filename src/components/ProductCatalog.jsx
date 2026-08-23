@@ -85,7 +85,6 @@ export default function ProductCatalog() {
   const handleBuyNow = (product) => {
     if (product.isSoldOut) return;
     addToCart(product, '50ml', 'None', '10h');
-    setIsCheckoutOpen(true);
   };
 
   return (
