@@ -257,7 +257,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between items-center pb-2 border-b border-white/10">
                 <span className="text-gray-400">Payment Method:</span>
-                <span className="font-semibold text-white">{placedOrder.paymentMethod === 'cod' ? 'Cash on Delivery (COD)' : 'Advance SadaPay / Bank Transfer'}</span>
+                <span className="font-semibold text-white">{placedOrder.paymentMethod === 'cod' ? 'Cash on Delivery (COD)' : 'Advance Easypaisa / Bank Transfer'}</span>
               </div>
               <div className="flex justify-between items-center pt-1 font-bold text-sm">
                 <span className="text-white">Total Amount:</span>
@@ -428,7 +428,7 @@ export default function CheckoutPage() {
                       </p>
                     </button>
 
-                    {/* Advance Bank Transfer / SadaPay */}
+                    {/* Advance Bank Transfer / Easypaisa */}
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('advance')}
@@ -439,23 +439,23 @@ export default function CheckoutPage() {
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-xs sm:text-sm text-white">SadaPay / Bank Transfer</span>
+                        <span className="font-bold text-xs sm:text-sm text-white">Easypaisa / Bank Transfer</span>
                         <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#D4AF37] text-black uppercase">
                           Instant
                         </span>
                       </div>
                       <p className="text-[11px] text-gray-400">
-                        Transfer directly via SadaPay, Nayapay, or Bank app.
+                        Transfer directly via Easypaisa, JazzCash, or Bank app.
                       </p>
                     </button>
 
                   </div>
 
-                  {/* Bank / Easypaisa / SadaPay Details (Shown if Advance is selected) */}
+                  {/* Easypaisa / Bank Transfer Details (Shown if Advance is selected) */}
                   {paymentMethod === 'advance' && (
                     <div className="p-4 rounded-2xl bg-black/80 border border-[#D4AF37]/40 space-y-3">
                       <div className="flex items-center gap-2 text-xs text-[#D4AF37] font-bold uppercase tracking-wide">
-                        <Building className="w-4 h-4" /> Bank / Easypaisa Account Details:
+                        <Building className="w-4 h-4" /> Easypaisa / Bank Account Details:
                       </div>
                       <div className="space-y-2 text-xs font-mono">
                         
@@ -484,10 +484,10 @@ export default function CheckoutPage() {
                           </button>
                         </div>
 
-                        {/* Mobile / Account Number */}
+                        {/* Easypaisa Mobile / Account Number */}
                         <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
                           <div>
-                            <span className="text-gray-400 text-[10px] block uppercase font-sans">Mobile / Account #:</span>
+                            <span className="text-gray-400 text-[10px] block uppercase font-sans">Easypaisa Mobile / Account #:</span>
                             <span className="font-bold text-[#D4AF37] text-xs sm:text-sm">03297062027</span>
                           </div>
                           <button

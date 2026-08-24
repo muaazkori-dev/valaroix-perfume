@@ -38,7 +38,7 @@ export default function AdminDashboardPage() {
       profitPkr: 2200,
       status: 'Confirmed & Dispatched via TCS',
       tcsTrackingNumber: '7748291048',
-      paymentMethod: 'Advance Payment (SadaPay)',
+      paymentMethod: 'Advance Payment (Easypaisa)',
       receiptImage: null
     },
     {

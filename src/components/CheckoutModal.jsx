@@ -43,7 +43,7 @@ export default function CheckoutModal() {
     e.preventDefault();
 
     if (paymentMethod === 'advance' && !receiptPreview) {
-      alert('Please upload your SadaPay payment receipt screenshot before confirming!');
+      alert('Please upload your payment receipt screenshot before confirming!');
       return;
     }
 
@@ -66,7 +66,7 @@ export default function CheckoutModal() {
       profitPkr: Math.round(total * 0.65),
       status: paymentMethod === 'advance' ? 'Pending Payment Verification' : 'Pending Admin Confirmation',
       trackingCode: 'DHL-' + orderId,
-      paymentMethod: paymentMethod === 'advance' ? 'Advance Payment (SadaPay)' : 'Cash On Delivery',
+      paymentMethod: paymentMethod === 'advance' ? 'Advance Payment (Easypaisa / Bank)' : 'Cash On Delivery',
       receiptImage: receiptPreview,
       settled: false
     };
@@ -217,9 +217,9 @@ export default function CheckoutModal() {
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-xs">Advance Payment</span>
-                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">SadaPay</span>
+                        <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">Easypaisa</span>
                       </div>
-                      <p className="text-[10px] text-gray-400 mt-1">Instant Bank Transfer via SadaPay App</p>
+                      <p className="text-[10px] text-gray-400 mt-1">Instant Transfer via Easypaisa or Bank App</p>
                     </button>
 
                     {/* CASH ON DELIVERY OPTION */}
@@ -324,7 +324,7 @@ export default function CheckoutModal() {
               <div className="glass-panel p-4 rounded-2xl border-valaroix-gold/30 text-left text-xs font-mono space-y-2 max-w-md mx-auto">
                 <div className="flex justify-between text-gray-400 border-b border-valaroix-gold/20 pb-2">
                   <span>Payment Method:</span>
-                  <span className="text-valaroix-gold font-bold">{paymentMethod === 'advance' ? 'SadaPay Advance' : 'COD'}</span>
+                  <span className="text-valaroix-gold font-bold">{paymentMethod === 'advance' ? 'Easypaisa Advance' : 'COD'}</span>
                 </div>
                 <div className="flex justify-between text-gray-300">
                   <span>WhatsApp: {formData.whatsapp}</span>
