@@ -245,18 +245,18 @@ export default function CheckoutModal() {
                   {paymentMethod === 'advance' && (
                     <div className="p-4 rounded-2xl bg-black border border-valaroix-gold/40 space-y-4 font-mono text-xs">
                       <div className="space-y-1.5 border-b border-valaroix-gold/20 pb-3">
-                        <span className="text-valaroix-gold font-bold block uppercase text-sm">💳 SadaPay Account Details:</span>
+                        <span className="text-valaroix-gold font-bold block uppercase text-sm">💳 Bank / Easypaisa Account Details:</span>
                         <div className="flex justify-between text-gray-300">
                           <span>Account Title:</span>
-                          <strong className="text-white">Aijaz Ali</strong>
+                          <strong className="text-white">Zakir Hussain</strong>
                         </div>
                         <div className="flex justify-between text-gray-300">
-                          <span>SadaPay Mobile:</span>
-                          <strong className="text-valaroix-gold">03472818878</strong>
+                          <span>Mobile / Account #:</span>
+                          <strong className="text-valaroix-gold">03297062027</strong>
                         </div>
                         <div className="flex justify-between text-gray-300 text-[11px]">
                           <span>IBAN:</span>
-                          <strong className="text-white">PK58SADA0000003472818878</strong>
+                          <strong className="text-white">PK19TMFB0000000085233022</strong>
                         </div>
                       </div>
 

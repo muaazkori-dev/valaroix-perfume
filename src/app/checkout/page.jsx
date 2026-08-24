@@ -451,11 +451,11 @@ export default function CheckoutPage() {
 
                   </div>
 
-                  {/* SadaPay Details (Shown if Advance is selected) */}
+                  {/* Bank / Easypaisa / SadaPay Details (Shown if Advance is selected) */}
                   {paymentMethod === 'advance' && (
                     <div className="p-4 rounded-2xl bg-black/80 border border-[#D4AF37]/40 space-y-3">
                       <div className="flex items-center gap-2 text-xs text-[#D4AF37] font-bold uppercase tracking-wide">
-                        <Building className="w-4 h-4" /> SadaPay Account Details:
+                        <Building className="w-4 h-4" /> Bank / Easypaisa Account Details:
                       </div>
                       <div className="space-y-2 text-xs font-mono">
                         
@@ -463,11 +463,11 @@ export default function CheckoutPage() {
                         <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
                           <div>
                             <span className="text-gray-400 text-[10px] block uppercase font-sans">Account Title:</span>
-                            <span className="font-bold text-white text-xs sm:text-sm">Aijaz Ali</span>
+                            <span className="font-bold text-white text-xs sm:text-sm">Zakir Hussain</span>
                           </div>
                           <button
                             type="button"
-                            onClick={() => handleCopy('Aijaz Ali', 'title')}
+                            onClick={() => handleCopy('Zakir Hussain', 'title')}
                             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black transition-colors text-[10px] font-bold uppercase"
                           >
                             {copiedField === 'title' ? (
@@ -484,15 +484,15 @@ export default function CheckoutPage() {
                           </button>
                         </div>
 
-                        {/* SadaPay Mobile / Account Number */}
+                        {/* Mobile / Account Number */}
                         <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
                           <div>
-                            <span className="text-gray-400 text-[10px] block uppercase font-sans">SadaPay Mobile / Account #:</span>
-                            <span className="font-bold text-[#D4AF37] text-xs sm:text-sm">03472818878</span>
+                            <span className="text-gray-400 text-[10px] block uppercase font-sans">Mobile / Account #:</span>
+                            <span className="font-bold text-[#D4AF37] text-xs sm:text-sm">03297062027</span>
                           </div>
                           <button
                             type="button"
-                            onClick={() => handleCopy('03472818878', 'mobile')}
+                            onClick={() => handleCopy('03297062027', 'mobile')}
                             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black transition-colors text-[10px] font-bold uppercase shadow-sm"
                           >
                             {copiedField === 'mobile' ? (
@@ -512,12 +512,12 @@ export default function CheckoutPage() {
                         {/* IBAN */}
                         <div className="flex items-center justify-between py-1 px-2.5 rounded-xl bg-white/5 border border-white/5">
                           <div className="min-w-0 pr-2">
-                            <span className="text-gray-400 text-[10px] block uppercase font-sans">IBAN (All Banks):</span>
-                            <span className="text-[11px] sm:text-xs text-gray-200 font-bold break-all">PK58SADA0000003472818878</span>
+                            <span className="text-gray-400 text-[10px] block uppercase font-sans">IBAN (All Banks / Easypaisa):</span>
+                            <span className="text-[11px] sm:text-xs text-gray-200 font-bold break-all">PK19TMFB0000000085233022</span>
                           </div>
                           <button
                             type="button"
-                            onClick={() => handleCopy('PK58SADA0000003472818878', 'iban')}
+                            onClick={() => handleCopy('PK19TMFB0000000085233022', 'iban')}
                             className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#D4AF37]/20 hover:bg-[#D4AF37] text-[#D4AF37] hover:text-black transition-colors text-[10px] font-bold uppercase shrink-0 shadow-sm"
                           >
                             {copiedField === 'iban' ? (

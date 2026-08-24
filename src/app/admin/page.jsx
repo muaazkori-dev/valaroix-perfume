@@ -676,13 +676,13 @@ export default function AdminDashboardPage() {
                             onClick={() => setSelectedReceipt(receiptUrl)}
                             className="px-3 py-2 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-black transition-all flex items-center gap-1.5 cursor-pointer"
                           >
-                            <Eye className="w-4 h-4" /> View SadaPay Slip
+                            <Eye className="w-4 h-4" /> View Payment Slip
                           </button>
                         </div>
                       ) : (
                         <span className="text-gray-400 text-xs italic block py-1">
-                          {order.paymentMethod?.toLowerCase().includes('advance') || order.paymentMethod?.toLowerCase().includes('sada')
-                            ? '⚠️ SadaPay Screenshot not attached (Verify in SadaPay: 03472818878)'
+                          {order.paymentMethod?.toLowerCase().includes('advance') || order.paymentMethod?.toLowerCase().includes('sada') || order.paymentMethod?.toLowerCase().includes('bank')
+                            ? '⚠️ Payment Screenshot not attached (Verify in Account: 03297062027)'
                             : 'Cash on Delivery (No slip required)'}
                         </span>
                       )}
