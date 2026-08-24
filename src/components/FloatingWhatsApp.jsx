@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
@@ -21,7 +21,7 @@ export function TikTokIcon({ className = 'w-5 h-5' }) {
   );
 }
 
-export default function FloatingWhatsApp({ phoneNumber = '923141397378' }) {
+export default function FloatingWhatsApp({ phoneNumber = '923029111856' }) {
   const controls = useAnimation();
   const [isDragged, setIsDragged] = useState(false);
 

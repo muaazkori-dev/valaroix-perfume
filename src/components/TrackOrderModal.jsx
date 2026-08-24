@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,14 +8,14 @@ import { WhatsAppIcon } from './FloatingWhatsApp';
 
 export default function TrackOrderModal() {
   const { isTrackOrderOpen, setIsTrackOrderOpen } = useCart();
-  const [searchQuery, setSearchQuery] = useState('03141397378');
+  const [searchQuery, setSearchQuery] = useState('03029111856');
   const [trackedOrder, setTrackedOrder] = useState(null);
   const [searched, setSearched] = useState(false);
 
   // Load sample or real order on open
   useEffect(() => {
     if (isTrackOrderOpen) {
-      handleSearch('03141397378');
+      handleSearch('03029111856');
     }
   }, [isTrackOrderOpen]);
 
@@ -42,7 +42,7 @@ export default function TrackOrderModal() {
       setTrackedOrder({
         orderId: found.id,
         customerName: found.name || 'Valaroix Patron',
-        phone: found.whatsapp || found.phone || '03141397378',
+        phone: found.whatsapp || found.phone || '03029111856',
         city: found.city || 'Karachi',
         address: found.address || 'Standard Delivery Address',
         item: found.items?.[0]?.name || 'Valaroix Dior Sauvage (50ml)',
@@ -58,7 +58,7 @@ export default function TrackOrderModal() {
       setTrackedOrder({
         orderId: q.startsWith('vlx') ? q.toUpperCase() : 'VLX-90842',
         customerName: 'Verified Customer',
-        phone: q.length >= 10 ? q : '03141397378',
+        phone: q.length >= 10 ? q : '03029111856',
         city: 'Karachi (Nationwide Delivery)',
         address: 'Direct Delivery to Customer Address',
         item: 'VALAROIX DIOR SAUVAGE (50ml • 30% Oil Extrait)',
@@ -136,7 +136,7 @@ export default function TrackOrderModal() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Enter Phone Number or Order # (e.g. 0314... / VLX-90842)"
+                  placeholder="Enter Phone Number or Order # (e.g. 0302... / VLX-90842)"
                   className="w-full bg-[#1A1A1A] border border-[#D4AF37]/30 rounded-xl px-4 py-3 text-xs font-mono text-white placeholder:text-gray-500 focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
@@ -245,7 +245,7 @@ export default function TrackOrderModal() {
 
                   {/* Direct WhatsApp Query */}
                   <a
-                    href={`https://wa.me/923141397378?text=${encodeURIComponent(
+                    href={`https://wa.me/923029111856?text=${encodeURIComponent(
                       `Hello VALAROIX Support, I want to track my TCS Courier parcel. Order ID: ${trackedOrder.orderId}, TCS CN: ${trackedOrder.tcsCn}, Phone: ${trackedOrder.phone}.`
                     )}`}
                     target="_blank"

@@ -36,7 +36,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  const whatsappOrderUrl = `https://wa.me/923141397378?text=${encodeURIComponent(
+  const whatsappOrderUrl = `https://wa.me/923029111856?text=${encodeURIComponent(
     `Hello VALAROIX, I want to order: ${product.name} (50ml • Rs. ${pricePkr}). Please confirm my order.`
   )}`;
 

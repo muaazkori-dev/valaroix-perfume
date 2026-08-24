@@ -165,7 +165,7 @@ export default function CheckoutModal() {
                           required
                           value={formData.whatsapp}
                           onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                          placeholder="WhatsApp Number (e.g. 03141397378)"
+                          placeholder="WhatsApp Number (e.g. 03029111856)"
                           className="w-full bg-black border border-valaroix-gold/30 rounded-xl pl-11 pr-4 py-3 text-xs text-gray-200 focus:outline-none focus:border-valaroix-gold font-mono"
                         />
                       </div>

@@ -268,7 +268,7 @@ export default function CheckoutPage() {
             {/* Actions */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               <a
-                href={`https://wa.me/923141397378?text=${encodeURIComponent(
+                href={`https://wa.me/923029111856?text=${encodeURIComponent(
                   `Hello VALAROIX, I have placed Order #${placedOrder.id} for Rs. ${placedOrder.total}. Name: ${placedOrder.customerName}, Phone: ${placedOrder.phone}, Address: ${placedOrder.address}, ${placedOrder.city}. Please confirm dispatch.`
                 )}`}
                 target="_blank"
@@ -345,7 +345,7 @@ export default function CheckoutPage() {
                           required
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          placeholder="e.g. 03141397378"
+                          placeholder="e.g. 03029111856"
                           className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#D4AF37]"
                         />
                       </div>

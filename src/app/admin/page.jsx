@@ -44,7 +44,7 @@ export default function AdminDashboardPage() {
     {
       id: 'VLX-90842',
       customerName: 'Taimoor Tariq',
-      phone: '03141397378',
+      phone: '03029111856',
       city: 'Karachi',
       address: 'House 42, Street 7, Phase 5 DHA',
       date: '2026-08-23',

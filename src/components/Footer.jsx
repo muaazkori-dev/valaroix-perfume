@@ -76,11 +76,11 @@ export default function Footer() {
               </a>
 
               <a
-                href="https://wa.me/923141397378"
+                href="https://wa.me/923029111856"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-[#1A1A1A] border border-[#D4AF37]/30 flex items-center justify-center text-gray-300 hover:text-emerald-400 hover:border-emerald-500 transition-all"
-                title="Official WhatsApp Support 03141397378"
+                title="Official WhatsApp Support 03029111856"
               >
                 <WhatsAppIcon className="w-4 h-4" />
               </a>
