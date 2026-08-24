@@ -1,18 +1,20 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 
 export default function FloatingCartButton() {
+  const pathname = usePathname();
   const { cart, setIsCartOpen, total } = useCart();
   const { formatPrice } = useCurrency();
 
   const totalQuantity = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
-  if (!cart || cart.length === 0) return null;
+  if (!cart || cart.length === 0 || pathname === '/checkout' || pathname?.startsWith('/admin')) return null;
 
   return (
     <AnimatePresence>
