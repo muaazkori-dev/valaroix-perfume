@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { WhatsAppIcon, TikTokIcon } from './FloatingWhatsApp';
-import { Instagram } from 'lucide-react';
+import { Instagram, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -35,7 +35,7 @@ export default function Footer() {
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Shop</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Collections</a></li>
               <li><a href="#notes" className="hover:text-[#D4AF37] transition-colors">About Us</a></li>
-              <li><a href="#customizer" className="hover:text-[#D4AF37] transition-colors">Contact</a></li>
+              <li><a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors">Contact Us</a></li>
             </ul>
           </div>
 
@@ -44,14 +44,14 @@ export default function Footer() {
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">CUSTOMER SERVICE</h4>
             <ul className="space-y-2">
               <li><a href="/admin" className="hover:text-[#D4AF37] transition-colors">Track Order</a></li>
+              <li><a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors">Support (support@valaroix.com)</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Shipping Policy</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Returns & Refunds</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Terms & Conditions</a></li>
-              <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Privacy Policy</a></li>
             </ul>
           </div>
 
-          {/* FOLLOW US */}
+          {/* FOLLOW US & CONTACT */}
           <div className="space-y-3">
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">FOLLOW US</h4>
             <div className="flex items-center gap-3 pt-1">
@@ -83,6 +83,25 @@ export default function Footer() {
                 title="Official WhatsApp Support 03029111856"
               >
                 <WhatsAppIcon className="w-4 h-4" />
+              </a>
+
+              <a
+                href="mailto:support@valaroix.com"
+                className="w-9 h-9 rounded-full bg-[#1A1A1A] border border-[#D4AF37]/30 flex items-center justify-center text-gray-300 hover:text-[#D4AF37] hover:border-[#D4AF37] transition-all"
+                title="Official Email: support@valaroix.com"
+              >
+                <Mail className="w-4 h-4" />
+              </a>
+            </div>
+
+            <div className="pt-2">
+              <a
+                href="mailto:support@valaroix.com"
+                className="inline-flex items-center gap-2 text-xs text-gray-300 hover:text-[#D4AF37] transition-colors"
+                title="Send Email to VALAROIX Support"
+              >
+                <Mail className="w-3.5 h-3.5 text-[#D4AF37]" />
+                <span className="font-mono text-[11px]">support@valaroix.com</span>
               </a>
             </div>
           </div>

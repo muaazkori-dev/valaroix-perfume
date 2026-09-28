@@ -78,7 +78,7 @@ export default function Navbar({ onOpenAdmin }) {
             <a href="#shop" className="hover:text-[#D4AF37] transition-colors py-1">SHOP</a>
             <a href="#shop" className="hover:text-[#D4AF37] transition-colors py-1">COLLECTIONS</a>
             <a href="#notes" className="hover:text-[#D4AF37] transition-colors py-1">ABOUT US</a>
-            <a href="#customizer" className="hover:text-[#D4AF37] transition-colors py-1">CONTACT</a>
+            <a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors py-1">CONTACT</a>
           </nav>
 
           {/* RIGHT: CLEAN ICONS (SEARCH, USER, CART, MENU) */}
@@ -268,11 +268,11 @@ export default function Navbar({ onOpenAdmin }) {
                 </a>
 
                 <a
-                  href="#customizer"
+                  href="mailto:support@valaroix.com"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3 rounded-xl hover:bg-[#D4AF37]/15 hover:text-[#D4AF37] transition-all"
                 >
-                  <span>CONTACT</span>
+                  <span>CONTACT US (support@valaroix.com)</span>
                   <ChevronRight className="w-4 h-4 text-[#D4AF37]" />
                 </a>
               </div>
