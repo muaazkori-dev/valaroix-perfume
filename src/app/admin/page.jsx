@@ -7,7 +7,7 @@ import {
   MessageSquare, Trash2, Split, TrendingUp, Sparkles, ExternalLink,
   ShoppingBag, ArrowLeft, Truck, PackageCheck, Bell, Volume2, VolumeX,
   Phone, MapPin, Clock, AlertCircle, CheckCircle2, RefreshCw, Send,
-  HelpCircle, Copy, CheckCheck, Zap, Layers
+  HelpCircle, Copy, CheckCheck, Zap, Layers, Download, FileDown, Loader2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -27,6 +27,8 @@ export default function AdminDashboardPage() {
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
   const [cancelConfirmOrder, setCancelConfirmOrder] = useState(null);
   const [selectedLabelOrder, setSelectedLabelOrder] = useState(null);
+  const [isDownloadingImage, setIsDownloadingImage] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
 
   const initialSampleOrders = [];
@@ -566,14 +568,124 @@ export default function AdminDashboardPage() {
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
-  // Client WhatsApp Action 3: SEND CANCEL ALERT
-  const handleSendCancelWhatsApp = (order) => {
-    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
-    const price = getOrderPrice(order);
-    const text = encodeURIComponent(
-      `Assalam-o-Alaikum ${order.customerName || 'Valued Customer'}! ✨\n\nHum VALAROIX Luxury Fragrance se baat kar rahe hain.\n\nAapka order #${order.id} cancel kar diya gaya hai.\n\n📦 Order: #${order.id}\n🌸 Item: ${order.items ? order.items.map(i => `${i.name} x${i.quantity || 1}`).join(', ') : (order.item || 'VALAROIX Fragrance')}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n\nAgar aap dobara order place karna chahte hain ya koi sawal hai, to hum se isi WhatsApp par rabta kar sakte hain.\n\nShukriya!\nTeam VALAROIX\nhttps://valaroix.com`
-    );
-    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
+  // Direct Download TCS Slip as High-Res PNG Image
+  const downloadSlipAsImage = async (order) => {
+    if (!order) return;
+    setIsDownloadingImage(true);
+    try {
+      const slipEl = document.getElementById('tcs-official-slip');
+      if (!slipEl) throw new Error('Slip element not found');
+
+      if (!window.html2canvas) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      const canvas = await window.html2canvas(slipEl, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+
+      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      const fileName = `TCS_Slip_${order.tcsTrackingNumber || order.id || 'consignment'}.png`;
+      
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setStatusToast(`✅ TCS Slip downloaded: ${fileName}`);
+      setTimeout(() => setStatusToast(null), 4000);
+    } catch (err) {
+      console.error('Download error:', err);
+      window.print();
+    } finally {
+      setIsDownloadingImage(false);
+    }
+  };
+
+  // Direct Download TCS Slip as PDF
+  const downloadSlipAsPdf = async (order) => {
+    if (!order) return;
+    setIsDownloadingPdf(true);
+    try {
+      const slipEl = document.getElementById('tcs-official-slip');
+      if (!slipEl) throw new Error('Slip element not found');
+
+      if (!window.html2canvas) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      if (!window.jspdf) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+
+      const canvas = await window.html2canvas(slipEl, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
+
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: [148, 105]
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 5;
+      const availableWidth = pageWidth - (margin * 2);
+      const availableHeight = pageHeight - (margin * 2);
+      const imgRatio = canvas.width / canvas.height;
+      let finalW = availableWidth;
+      let finalH = availableWidth / imgRatio;
+      
+      if (finalH > availableHeight) {
+        finalH = availableHeight;
+        finalW = availableHeight * imgRatio;
+      }
+      
+      const x = (pageWidth - finalW) / 2;
+      const y = (pageHeight - finalH) / 2;
+
+      pdf.addImage(imgData, 'PNG', x, y, finalW, finalH);
+      const fileName = `TCS_Slip_${order.tcsTrackingNumber || order.id || 'consignment'}.pdf`;
+      pdf.save(fileName);
+
+      setStatusToast(`✅ TCS PDF Slip downloaded: ${fileName}`);
+      setTimeout(() => setStatusToast(null), 4000);
+    } catch (err) {
+      console.error('PDF error:', err);
+      window.print();
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   // IF NOT AUTHENTICATED
@@ -1362,6 +1474,7 @@ export default function AdminDashboardPage() {
                   <img
                     src="/tcs-logo.png"
                     alt="TCS Logo"
+                    crossOrigin="anonymous"
                     className="w-24 sm:w-28 h-auto object-contain mx-auto"
                   />
                   <div className="text-[10px] text-black mt-1 font-sans">TCS (Pvt)Ltd</div>
@@ -1372,6 +1485,7 @@ export default function AdminDashboardPage() {
                   <img
                     src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=12`}
                     alt="CN Barcode"
+                    crossOrigin="anonymous"
                     className="h-8 w-auto max-w-[125px] object-contain mx-auto"
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
@@ -1386,6 +1500,7 @@ export default function AdminDashboardPage() {
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://valaroix.com/track?q=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}`}
                     alt="QR"
+                    crossOrigin="anonymous"
                     className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
                   />
                 </div>
@@ -1458,6 +1573,7 @@ export default function AdminDashboardPage() {
                     <img
                       src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=9`}
                       alt="COD Barcode"
+                      crossOrigin="anonymous"
                       className="h-6 w-auto max-w-[120px] object-contain mx-auto"
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
@@ -1527,11 +1643,51 @@ export default function AdminDashboardPage() {
 
             </div>
 
-            {/* ACTION BUTTONS (DOWNLOAD & SHARE) */}
+            {/* ACTION BUTTONS (DOWNLOAD, PRINT & SHARE) */}
             <div className="space-y-2 pt-2 print:hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 
-                {/* 1. SAVE AS PDF FOR PRINT SHOP */}
+                {/* 1. DIRECT DOWNLOAD AS HIGH-RES IMAGE (PNG) */}
+                <button
+                  onClick={() => downloadSlipAsImage(selectedLabelOrder)}
+                  disabled={isDownloadingImage}
+                  className="py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all disabled:opacity-50"
+                  title="Download slip directly as an HD image file"
+                >
+                  {isDownloadingImage ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Downloading Slip...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      <span>📥 Download Slip (Image)</span>
+                    </>
+                  )}
+                </button>
+
+                {/* 2. DIRECT DOWNLOAD AS PDF */}
+                <button
+                  onClick={() => downloadSlipAsPdf(selectedLabelOrder)}
+                  disabled={isDownloadingPdf}
+                  className="py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:scale-95 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all disabled:opacity-50"
+                  title="Download slip directly as a PDF file"
+                >
+                  {isDownloadingPdf ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Generating PDF...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FileDown className="w-4 h-4" />
+                      <span>📄 Download PDF Slip</span>
+                    </>
+                  )}
+                </button>
+
+                {/* 3. SAVE AS PDF / PRINT (BROWSER DIALOG) */}
                 <button
                   onClick={() => {
                     const printContent = document.getElementById('tcs-official-slip');
@@ -1561,14 +1717,14 @@ export default function AdminDashboardPage() {
                     `);
                     win.document.close();
                   }}
-                  className="py-3.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-95"
-                  title="Download / Save as PDF or Print directly"
+                  className="py-3 px-4 rounded-xl bg-gray-900 hover:bg-black active:scale-95 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all"
+                  title="Open browser print dialog"
                 >
-                  <Printer className="w-4 h-4" />
-                  <span>📥 Save PDF / Print (Shop Copy)</span>
+                  <Printer className="w-4 h-4 text-gray-300" />
+                  <span>🖨️ Print Dialog</span>
                 </button>
 
-                {/* 2. FORWARD DETAILS TO PRINT SHOP VIA WHATSAPP */}
+                {/* 4. FORWARD DETAILS TO PRINT SHOP VIA WHATSAPP */}
                 <button
                   onClick={() => {
                     const cn = selectedLabelOrder.tcsTrackingNumber || '772234300003';
@@ -1578,11 +1734,11 @@ export default function AdminDashboardPage() {
                     );
                     window.open(`https://wa.me/?text=${msg}`, '_blank');
                   }}
-                  className="py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95"
+                  className="py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95"
                   title="Forward to print shop on WhatsApp"
                 >
                   <Send className="w-4 h-4" />
-                  <span>📲 Forward to WhatsApp Print Shop</span>
+                  <span>📲 Forward WhatsApp</span>
                 </button>
 
               </div>
