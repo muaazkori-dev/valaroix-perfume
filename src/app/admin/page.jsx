@@ -1329,100 +1329,98 @@ export default function AdminDashboardPage() {
 
       {/* OFFICIAL 1:1 TCS AIRWAY BILL (CONSIGNEE'S COPY) PRINTABLE MODAL */}
       {selectedLabelOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md overflow-y-auto animate-fadeIn">
-          <div className="relative max-w-2xl w-full bg-white text-black rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/90 backdrop-blur-md overflow-y-auto animate-fadeIn">
+          <div className="relative max-w-2xl w-full bg-white text-black rounded-2xl p-4 sm:p-6 shadow-2xl space-y-4 my-6">
             
             {/* Header Controls (Hidden on Print) */}
-            <div className="flex items-center justify-between border-b border-gray-200 pb-3 print:hidden">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-black text-xs">
+            <div className="flex items-center justify-between border-b border-gray-200 pb-2.5 print:hidden">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded bg-red-600 text-white flex items-center justify-center font-black text-xs">
                   TCS
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-gray-900 leading-tight">Official TCS Consignment Slip (Consignee's Copy)</h4>
-                  <p className="text-[11px] text-gray-500 font-mono">CN #{selectedLabelOrder.tcsTrackingNumber || '772234300003'}</p>
+                  <p className="text-[10px] text-gray-500 font-mono">CN #{selectedLabelOrder.tcsTrackingNumber || '772234300003'}</p>
                 </div>
               </div>
               <button
                 onClick={() => setSelectedLabelOrder(null)}
-                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
+                className="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* THE EXACT 1:1 OFFICIAL TCS SLIP (Consignee's Copy Layout) */}
-            <div id="tcs-official-slip" className="border-[1.5px] border-black bg-white text-black font-sans text-xs select-text overflow-hidden">
+            {/* 100% EXACT 1:1 REPLICA OF OFFICIAL TCS CONSIGNEE'S COPY SLIP */}
+            <div id="tcs-official-slip" className="border border-black bg-white text-black font-sans text-[11px] leading-tight select-text">
               
-              {/* ROW 1: 4 COLUMNS (LOGO, BARCODE+CN, QR CODE, META TABLE) */}
-              <div className="flex border-b-[1.5px] border-black">
+              {/* ROW 1: 4 BLOCKS (LOGO, BARCODE+CN, QR CODE, META TABLE) */}
+              <div className="grid grid-cols-12 border-b border-black">
                 
-                {/* COL 1: TCS FLYING LOGO */}
-                <div className="w-[24%] p-2 border-r-[1.5px] border-black flex flex-col items-center justify-center text-center">
-                  <svg viewBox="0 0 160 55" className="w-24 sm:w-28 h-auto">
+                {/* 1. TCS LOGO (3 Cols) */}
+                <div className="col-span-3 p-2 border-r border-black flex flex-col items-center justify-center text-center">
+                  <svg viewBox="0 0 160 55" className="w-24 h-auto">
                     <path d="M12 36 L30 12 L46 28 L32 46 Z" fill="#E60000" />
                     <path d="M36 34 L52 10 L68 22 L54 42 Z" fill="#E60000" />
                     <text x="70" y="38" fill="#E60000" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic" fontSize="34">TCS</text>
                   </svg>
-                  <div className="text-[11px] font-bold mt-1 text-black">TCS (Pvt)Ltd</div>
+                  <div className="text-[10px] text-black mt-1">TCS (Pvt)Ltd</div>
                 </div>
 
-                {/* COL 2: BARCODE & CN */}
-                <div className="w-[28%] p-2 border-r-[1.5px] border-black flex flex-col items-center justify-center text-center">
+                {/* 2. BARCODE & CN (3 Cols) */}
+                <div className="col-span-3 p-1.5 border-r border-black flex flex-col items-center justify-center text-center">
                   <img
                     src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=12`}
-                    alt="TCS CN Barcode"
-                    className="h-9 w-auto max-w-[140px] object-contain mx-auto"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
+                    alt="CN Barcode"
+                    className="h-8 w-auto max-w-[125px] object-contain mx-auto"
+                    onError={(e) => { e.target.style.display = 'none'; }}
                   />
-                  <div className="text-[12px] sm:text-[13px] font-bold font-mono mt-0.5 tracking-wider text-black">
+                  <div className="text-[11px] font-bold font-mono mt-0.5 tracking-wider text-black">
                     {selectedLabelOrder.tcsTrackingNumber || '772234300003'}
                   </div>
-                  <div className="text-[10px] text-gray-700">Consignee's Copy</div>
+                  <div className="text-[10px] text-black">Consignee's Copy</div>
                 </div>
 
-                {/* COL 3: QR CODE */}
-                <div className="w-[20%] p-1.5 border-r-[1.5px] border-black flex items-center justify-center">
+                {/* 3. GIANT CENTERED QR CODE (3 Cols) */}
+                <div className="col-span-3 p-1.5 border-r border-black flex items-center justify-center bg-white">
                   <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://valaroix.com/track?q=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}`}
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://valaroix.com/track?q=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}`}
                     alt="QR"
-                    className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-contain"
                   />
                 </div>
 
-                {/* COL 4: META TABLE */}
-                <div className="w-[28%] text-[10px] sm:text-[11px]">
-                  <table className="w-full border-collapse h-full">
+                {/* 4. META TABLE WITH GREY LABELS / WHITE VALUES (3 Cols) */}
+                <div className="col-span-3 text-[10px]">
+                  <table className="w-full h-full border-collapse">
                     <tbody>
                       <tr className="border-b border-black">
-                        <td className="p-1 font-bold border-r border-black w-[45%]">Date/Time:</td>
-                        <td className="p-1 leading-tight">{selectedLabelOrder.date || '28/09/2026'}<br/><span className="text-[9px]">{selectedLabelOrder.time || '22:20:32'}</span></td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black w-[45%]">Date/Time:</td>
+                        <td className="bg-white p-1 text-[9.5px] leading-none">{selectedLabelOrder.date || '28/09/2026'}<br/>{selectedLabelOrder.time || '22:20:32'}</td>
                       </tr>
                       <tr className="border-b border-black">
-                        <td className="p-1 font-bold border-r border-black">Service:</td>
-                        <td className="p-1 font-medium">Express</td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black">Service:</td>
+                        <td className="bg-white p-1 font-medium">Express</td>
                       </tr>
                       <tr className="border-b border-black">
-                        <td className="p-1 font-bold border-r border-black">Origin:</td>
-                        <td className="p-1 font-bold uppercase">TANDO ADAM</td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black">Origin:</td>
+                        <td className="bg-white p-1 font-bold uppercase">TANDO ADAM</td>
                       </tr>
                       <tr className="border-b border-black">
-                        <td className="p-1 font-bold border-r border-black">Destination:</td>
-                        <td className="p-1 font-bold uppercase text-red-600">{selectedLabelOrder.city?.toUpperCase() || 'KARACHI'}</td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black">Destination:</td>
+                        <td className="bg-white p-1 font-bold uppercase">{selectedLabelOrder.city?.toUpperCase() || 'KARACHI'}</td>
                       </tr>
                       <tr className="border-b border-black">
-                        <td className="p-1 font-bold border-r border-black">Pieces:</td>
-                        <td className="p-1">1</td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black">Pieces:</td>
+                        <td className="bg-white p-1">1</td>
                       </tr>
                       <tr className="border-b border-black">
-                        <td className="p-1 font-bold border-r border-black">Weight:</td>
-                        <td className="p-1">0.5</td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black">Weight:</td>
+                        <td className="bg-white p-1">0.5</td>
                       </tr>
                       <tr>
-                        <td className="p-1 font-bold border-r border-black">Fragile:</td>
-                        <td className="p-1 font-bold text-red-600">YES</td>
+                        <td className="bg-[#C4C4C4] p-1 font-bold border-r border-black">Fragile:</td>
+                        <td className="bg-white p-1 font-bold">YES</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1430,120 +1428,130 @@ export default function AdminDashboardPage() {
 
               </div>
 
-              {/* ROW 2: SHIPPER'S DETAILS HEADER */}
-              <div className="bg-[#D3D3D3] py-1 px-2 font-bold text-center text-xs border-b-[1.5px] border-black text-black">
+              {/* ROW 2: SHIPPER'S DETAILS (GREY HEADER) */}
+              <div className="bg-[#B0B0B0] py-0.5 px-2 font-bold text-center text-xs border-b border-black text-black">
                 Shipper's Details
               </div>
 
-              {/* ROW 3: SHIPPER ADDRESS & COD AMOUNT SPLIT */}
-              <div className="flex border-b-[1.5px] border-black">
+              {/* ROW 3: SHIPPER ADDRESS & COD AMOUNT BLOCK */}
+              <div className="flex border-b border-black">
                 {/* LEFT: SHIPPER ADDRESS */}
-                <div className="w-[55%] p-2 text-[11px] leading-snug border-r-[1.5px] border-black space-y-0.5">
-                  <div className="font-bold text-black">Valaroix - Valaroix</div>
-                  <div>Main Hyderabad Road Toor Colony 2nd Street Tando Adam</div>
-                  <div className="font-bold pt-0.5">03029111856</div>
-                  <div className="text-gray-700">muaazkori@gmail.com</div>
+                <div className="flex-1 p-2 text-[10.5px] leading-snug border-r border-black flex flex-col justify-between min-h-[75px]">
+                  <div>
+                    <div className="font-bold text-black">Valaroix - Valaroix</div>
+                    <div className="text-black">Main Hyderabad Road Toor Colony 2nd Street Tando Adam</div>
+                  </div>
+                  <div className="mt-2 text-black">
+                    <div>03029111856</div>
+                    <div>muaazkori@gmail.com</div>
+                  </div>
                 </div>
 
                 {/* RIGHT: COD AMOUNT BLOCK */}
-                <div className="w-[45%] flex">
-                  <div className="w-[38%] bg-[#EAEAEA] flex flex-col items-center justify-center border-r-[1.5px] border-black font-bold text-center p-1 text-xs">
+                <div className="w-[240px] sm:w-[260px] flex">
+                  <div className="w-[85px] bg-[#C4C4C4] flex flex-col items-center justify-center border-r border-black font-bold text-center p-1 text-xs text-black">
                     <div>COD</div>
                     <div>Amount</div>
                   </div>
-                  <div className="w-[62%] flex flex-col items-center justify-center p-2 text-center">
+                  <div className="flex-1 flex flex-col items-center justify-center p-2 text-center bg-white">
                     {/* COD Barcode */}
                     <img
-                      src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=7`}
+                      src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=9`}
                       alt="COD Barcode"
-                      className="h-5 w-auto max-w-[100px] object-contain mx-auto"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
+                      className="h-6 w-auto max-w-[120px] object-contain mx-auto"
+                      onError={(e) => { e.target.style.display = 'none'; }}
                     />
-                    <div className="font-black text-base sm:text-lg mt-0.5 tracking-tight text-black">
+                    <div className="font-bold text-sm sm:text-base mt-0.5 tracking-tight text-black">
                       {selectedLabelOrder.paymentMethod?.toLowerCase().includes('advance')
-                        ? 'RS0 (PAID)'
+                        ? 'RS0'
                         : `RS${getOrderPrice(selectedLabelOrder)}`}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* ROW 4: CONSIGNEE'S DETAILS HEADER */}
-              <div className="bg-[#D3D3D3] py-1 px-2 font-bold text-center text-xs border-b-[1.5px] border-black text-black">
+              {/* ROW 4: CONSIGNEE'S DETAILS (GREY HEADER) */}
+              <div className="bg-[#B0B0B0] py-0.5 px-2 font-bold text-center text-xs border-b border-black text-black">
                 Consignee's Details
               </div>
 
-              {/* ROW 5: CONSIGNEE FIELDS TABLE */}
-              <div className="text-[11px] leading-normal">
-                {/* NAME & CUST REF */}
-                <div className="flex border-b border-black">
-                  <div className="w-[65%] p-1.5 sm:p-2 border-r border-black flex items-center">
-                    <span className="font-bold w-20 shrink-0">Name:</span>
-                    <span className="font-bold uppercase text-black">{selectedLabelOrder.customerName}</span>
-                  </div>
-                  <div className="w-[35%] p-1.5 sm:p-2 flex items-center">
-                    <span className="font-bold w-20 shrink-0">Cust. Ref.#:</span>
-                    <span className="font-bold font-mono text-black">#{selectedLabelOrder.id}</span>
-                  </div>
-                </div>
+              {/* ROW 5: CONSIGNEE TABLE (GREY LABELS / WHITE VALUES) */}
+              <table className="w-full border-collapse text-[10.5px]">
+                <tbody>
+                  {/* NAME & CUST REF */}
+                  <tr className="border-b border-black">
+                    <td className="bg-[#C4C4C4] p-1 sm:p-1.5 font-bold border-r border-black w-[110px] text-black">Name:</td>
+                    <td className="bg-white p-1 sm:p-1.5 border-r border-black font-medium text-black">{selectedLabelOrder.customerName}</td>
+                    <td className="bg-[#C4C4C4] p-1 sm:p-1.5 font-bold border-r border-black w-[90px] text-black">Cust. Ref.#:</td>
+                    <td className="bg-white p-1 sm:p-1.5 w-[130px] font-mono text-black">#{selectedLabelOrder.id}</td>
+                  </tr>
 
-                {/* ADDRESS */}
-                <div className="flex border-b border-black p-1.5 sm:p-2">
-                  <span className="font-bold w-20 shrink-0">Address:</span>
-                  <span className="font-medium text-black">{selectedLabelOrder.address}, {selectedLabelOrder.city}</span>
-                </div>
+                  {/* ADDRESS */}
+                  <tr className="border-b border-black">
+                    <td className="bg-[#C4C4C4] p-2 font-bold border-r border-black align-top text-black">Address:</td>
+                    <td colSpan={3} className="bg-white p-2 align-top font-bold text-black leading-snug">
+                      {selectedLabelOrder.address}, {selectedLabelOrder.city}
+                    </td>
+                  </tr>
 
-                {/* CONTACT # */}
-                <div className="flex border-b border-black p-1.5 sm:p-2">
-                  <span className="font-bold w-20 shrink-0">Contact #:</span>
-                  <span className="font-bold font-mono text-xs sm:text-sm text-black">{selectedLabelOrder.phone || selectedLabelOrder.whatsapp}</span>
-                </div>
+                  {/* CONTACT # */}
+                  <tr className="border-b border-black">
+                    <td className="bg-[#C4C4C4] p-1 sm:p-1.5 font-bold border-r border-black text-black">Contact #</td>
+                    <td colSpan={3} className="bg-white p-1 sm:p-1.5 font-bold text-black">
+                      {selectedLabelOrder.phone || selectedLabelOrder.whatsapp}
+                    </td>
+                  </tr>
 
-                {/* PRODUCT DETAILS */}
-                <div className="flex border-b border-black p-1.5 sm:p-2">
-                  <span className="font-bold w-20 shrink-0">Product Details:</span>
-                  <span className="text-black">
-                    Perfume Bottle (Cosmetics) {selectedLabelOrder.items ? `— ${selectedLabelOrder.items.map(i=>`${i.name} (x${i.quantity||1})`).join(', ')}` : `— ${selectedLabelOrder.item || 'VALAROIX Fragrance'}`}
-                  </span>
-                </div>
+                  {/* PRODUCT DETAILS */}
+                  <tr className="border-b border-black">
+                    <td className="bg-[#C4C4C4] p-2 font-bold border-r border-black align-top text-black">Product Details:</td>
+                    <td colSpan={3} className="bg-white p-2 min-h-[35px] align-top text-black">
+                      Perfume Bottle (Cosmetics)
+                    </td>
+                  </tr>
 
-                {/* REMARKS */}
-                <div className="flex border-b-[1.5px] border-black p-1.5 sm:p-2">
-                  <span className="font-bold w-20 shrink-0">Remarks:</span>
-                  <span className="text-black">Please call customer before delivery</span>
-                </div>
-              </div>
+                  {/* REMARKS */}
+                  <tr className="border-b border-black">
+                    <td className="bg-[#C4C4C4] p-1 sm:p-1.5 font-bold border-r border-black text-black">Remarks:</td>
+                    <td colSpan={3} className="bg-white p-1 sm:p-1.5 text-black">
+                      Please call customer before delivery
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
 
               {/* ROW 6: BOTTOM DISCLAIMER */}
-              <div className="p-2 text-[9px] sm:text-[10px] text-center text-gray-900 leading-tight">
+              <div className="p-1 text-[8.5px] sm:text-[9.5px] text-center text-black leading-tight">
                 Please don't accept if shipment is not intact. Before paying the COD amount, shipment cannot be opened.In case of complaints, pleae contact Muaaz at 03029111856.
               </div>
 
             </div>
 
-            {/* ACTION BUTTONS (FOR OUTSIDE PRINT SHOP & DOWNLOAD) */}
+            {/* ACTION BUTTONS (DOWNLOAD & SHARE) */}
             <div className="space-y-2 pt-2 print:hidden">
-              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {/* 1. SAVE AS PDF / PRINT FOR SHOP */}
+                
+                {/* 1. SAVE AS PDF FOR PRINT SHOP */}
                 <button
                   onClick={() => {
                     const printContent = document.getElementById('tcs-official-slip');
-                    const win = window.open('', '', 'width=800,height=900');
+                    const win = window.open('', '', 'width=850,height=900');
                     win.document.write(`
                       <!DOCTYPE html>
                       <html>
                         <head>
-                          <title>TCS_Consignment_Slip_${selectedLabelOrder.tcsTrackingNumber || selectedLabelOrder.id}</title>
+                          <title>TCS_Consignment_${selectedLabelOrder.tcsTrackingNumber || selectedLabelOrder.id}</title>
                           <style>
-                            @page { size: auto; margin: 8mm; }
-                            body { font-family: Arial, Helvetica, sans-serif; padding: 10px; margin: 0; background: #fff; color: #000; }
-                            table { border-collapse: collapse; }
-                            .border-black { border-color: #000 !important; }
-                            .bg-D3D3D3 { background-color: #d3d3d3 !important; -webkit-print-color-adjust: exact; }
-                            .bg-EAEAEA { background-color: #eaeaea !important; -webkit-print-color-adjust: exact; }
+                            @page { size: auto; margin: 6mm; }
+                            body { font-family: Arial, Helvetica, sans-serif; padding: 10px; margin: 0; background: #fff; color: #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                            table { border-collapse: collapse; width: 100%; }
+                            td, th { border-color: #000 !important; }
+                            .border { border: 1px solid #000 !important; }
+                            .border-b { border-bottom: 1px solid #000 !important; }
+                            .border-r { border-right: 1px solid #000 !important; }
+                            .bg-C4C4C4 { background-color: #c4c4c4 !important; }
+                            .bg-B0B0B0 { background-color: #b0b0b0 !important; }
+                            .bg-white { background-color: #ffffff !important; }
                           </style>
                         </head>
                         <body onload="window.print();window.close();">
@@ -1560,23 +1568,23 @@ export default function AdminDashboardPage() {
                   <span>📥 Save PDF / Print (Shop Copy)</span>
                 </button>
 
-                {/* 2. FORWARD TO SHOP VIA WHATSAPP */}
+                {/* 2. FORWARD DETAILS TO PRINT SHOP VIA WHATSAPP */}
                 <button
                   onClick={() => {
-                    const cleanPhone = (selectedLabelOrder.phone || selectedLabelOrder.whatsapp || '').replace(/^0/, '');
                     const cn = selectedLabelOrder.tcsTrackingNumber || '772234300003';
                     const price = getOrderPrice(selectedLabelOrder);
                     const msg = encodeURIComponent(
-                      `*TCS CONSIGNMENT SLIP — VALAROIX*\n\n🏷️ *CN Number:* ${cn}\n📦 *Order ID:* #${selectedLabelOrder.id}\n👤 *Customer:* ${selectedLabelOrder.customerName}\n📱 *Phone:* ${selectedLabelOrder.phone}\n📍 *Address:* ${selectedLabelOrder.address}, ${selectedLabelOrder.city}\n💰 *COD Amount:* Rs. ${price.toLocaleString()}\n\n🔗 *Live Tracking Link:* https://valaroix.com/track?q=${cn}`
+                      `*TCS OFFICIAL CONSIGNMENT SLIP — VALAROIX*\n\n🏷️ *TCS CN:* ${cn}\n📦 *Order ID:* #${selectedLabelOrder.id}\n👤 *Customer:* ${selectedLabelOrder.customerName}\n📱 *Contact:* ${selectedLabelOrder.phone}\n📍 *Address:* ${selectedLabelOrder.address}, ${selectedLabelOrder.city}\n💰 *COD Bill:* Rs. ${price.toLocaleString()}\n\n🔗 *Track / View Online:* https://valaroix.com/track?q=${cn}`
                     );
                     window.open(`https://wa.me/?text=${msg}`, '_blank');
                   }}
                   className="py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95"
-                  title="Share Slip details on WhatsApp to send to print shop"
+                  title="Forward to print shop on WhatsApp"
                 >
                   <Send className="w-4 h-4" />
                   <span>📲 Forward to WhatsApp Print Shop</span>
                 </button>
+
               </div>
 
               <button
