@@ -1369,16 +1369,15 @@ export default function AdminDashboardPage() {
 
                 {/* COL 2: BARCODE & CN */}
                 <div className="w-[28%] p-2 border-r-[1.5px] border-black flex flex-col items-center justify-center text-center">
-                  {/* Authentic Barcode Graphic */}
-                  <div className="flex justify-center items-center gap-[2px] h-9 py-0.5 px-2">
-                    {Array.from({ length: 36 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-full bg-black ${i % 3 === 0 ? 'w-[2.5px]' : i % 5 === 0 ? 'w-[3px]' : 'w-[1px]'}`}
-                      />
-                    ))}
-                  </div>
-                  <div className="text-[12px] sm:text-[13px] font-bold font-mono mt-1 tracking-wider text-black">
+                  <img
+                    src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=12`}
+                    alt="TCS CN Barcode"
+                    className="h-9 w-auto max-w-[140px] object-contain mx-auto"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="text-[12px] sm:text-[13px] font-bold font-mono mt-0.5 tracking-wider text-black">
                     {selectedLabelOrder.tcsTrackingNumber || '772234300003'}
                   </div>
                   <div className="text-[10px] text-gray-700">Consignee's Copy</div>
@@ -1454,14 +1453,14 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="w-[62%] flex flex-col items-center justify-center p-2 text-center">
                     {/* COD Barcode */}
-                    <div className="flex justify-center items-center gap-[1.5px] h-6 py-0.5 px-2">
-                      {Array.from({ length: 26 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`h-full bg-black ${i % 2 === 0 ? 'w-[2px]' : 'w-[1px]'}`}
-                        />
-                      ))}
-                    </div>
+                    <img
+                      src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}&scale=2&height=7`}
+                      alt="COD Barcode"
+                      className="h-5 w-auto max-w-[100px] object-contain mx-auto"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
                     <div className="font-black text-base sm:text-lg mt-0.5 tracking-tight text-black">
                       {selectedLabelOrder.paymentMethod?.toLowerCase().includes('advance')
                         ? 'RS0 (PAID)'
