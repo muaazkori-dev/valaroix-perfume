@@ -1359,12 +1359,24 @@ export default function AdminDashboardPage() {
                 
                 {/* 1. TCS LOGO (3 Cols) */}
                 <div className="col-span-3 p-2 border-r border-black flex flex-col items-center justify-center text-center">
-                  <svg viewBox="0 0 160 55" className="w-24 h-auto">
-                    <path d="M12 36 L30 12 L46 28 L32 46 Z" fill="#E60000" />
-                    <path d="M36 34 L52 10 L68 22 L54 42 Z" fill="#E60000" />
-                    <text x="70" y="38" fill="#E60000" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic" fontSize="34">TCS</text>
+                  <svg viewBox="0 0 170 50" className="w-24 sm:w-28 h-auto mx-auto" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#ED1C24">
+                      {/* Left Wing 1 (Outer chevron) */}
+                      <path d="M 8 38 L 24 10 L 36 24 L 20 44 Z" />
+                      {/* Left Wing 2 (Inner chevron) */}
+                      <path d="M 27 38 L 43 10 L 53 20 L 39 42 Z" />
+                      
+                      {/* Italic Bold TCS Lettering */}
+                      <polygon points="53,10 77,10 74,16 67,16 59,38 52,38 60,16 52,16" />
+                      <path d="M 87 10 C 80 10 73 15 71 23 C 69 31 73 38 82 38 C 88 38 93 34 94 30 L 87 30 C 86 32 84 33 81 33 C 76 33 74 29 76 23 C 77 18 81 15 86 15 C 89 15 91 16 92 18 L 97 14 C 95 11 91 10 87 10 Z" />
+                      <path d="M 104 10 C 98 10 95 13 94 17 C 93 21 96 23 100 24.5 L 102 25.5 C 104 26.5 105 27.5 104 29.5 C 103 32 100 33 97 33 C 93 33 90 31 89 28 L 83 29 C 85 34 89 38 96 38 C 103 38 109 34 110 29 C 111 24 107 22 103 21 L 100.5 20 C 98 19 97 18 97.5 16.5 C 98 15 100 14 103 14 C 106 14 108 15 109 17 L 114 14 C 112 11 108 10 104 10 Z" />
+                      
+                      {/* Registered Circle (R) */}
+                      <circle cx="119" cy="11" r="3" fill="none" stroke="#ED1C24" strokeWidth="0.8" />
+                      <text x="119" y="13.2" fontSize="4" fontFamily="Arial, sans-serif" fontWeight="bold" textAnchor="middle" fill="#ED1C24">R</text>
+                    </g>
                   </svg>
-                  <div className="text-[10px] text-black mt-1">TCS (Pvt)Ltd</div>
+                  <div className="text-[10px] text-black mt-1 font-sans">TCS (Pvt)Ltd</div>
                 </div>
 
                 {/* 2. BARCODE & CN (3 Cols) */}

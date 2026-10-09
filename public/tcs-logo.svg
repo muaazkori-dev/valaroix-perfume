@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 50" width="100%" height="100%">
+  <g fill="#ED1C24">
+    <!-- Left Wing 1 (Outer chevron) -->
+    <path d="M 8 38 L 24 10 L 36 24 L 20 44 Z" />
+    <!-- Left Wing 2 (Inner chevron) -->
+    <path d="M 27 38 L 43 10 L 53 20 L 39 42 Z" />
+    
+    <!-- Italic Bold TCS Lettering -->
+    <!-- T -->
+    <polygon points="53,10 77,10 74,16 67,16 59,38 52,38 60,16 52,16" />
+    <!-- C -->
+    <path d="M 87 10 C 80 10 73 15 71 23 C 69 31 73 38 82 38 C 88 38 93 34 94 30 L 87 30 C 86 32 84 33 81 33 C 76 33 74 29 76 23 C 77 18 81 15 86 15 C 89 15 91 16 92 18 L 97 14 C 95 11 91 10 87 10 Z" />
+    <!-- S -->
+    <path d="M 104 10 C 98 10 95 13 94 17 C 93 21 96 23 100 24.5 L 102 25.5 C 104 26.5 105 27.5 104 29.5 C 103 32 100 33 97 33 C 93 33 90 31 89 28 L 83 29 C 85 34 89 38 96 38 C 103 38 109 34 110 29 C 111 24 107 22 103 21 L 100.5 20 C 98 19 97 18 97.5 16.5 C 98 15 100 14 103 14 C 106 14 108 15 109 17 L 114 14 C 112 11 108 10 104 10 Z" />
+    
+    <!-- Registered Circle (R) -->
+    <circle cx="119" cy="11" r="3" fill="none" stroke="#ED1C24" stroke-width="0.8" />
+    <text x="119" y="13.2" font-size="4" font-family="Arial, sans-serif" font-weight="bold" text-anchor="middle" fill="#ED1C24">R</text>
+  </g>
+</svg>
