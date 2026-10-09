@@ -28,42 +28,7 @@ export default function AdminDashboardPage() {
   const [cancelConfirmOrder, setCancelConfirmOrder] = useState(null);
   const [isTestMode, setIsTestMode] = useState(false);
 
-  const initialSampleOrders = [
-    {
-      id: 'VLX-12630',
-      customerName: 'Ali Hamza',
-      phone: '03337155323',
-      city: 'Larkana',
-      address: 'wahid chowk green road rehbar model school larkana',
-      date: '2026-08-23',
-      item: 'VALAROIX YSL Y (50ml • 30% Pure Oil)',
-      size: '50ml',
-      pricePkr: 3300,
-      cogsPkr: 1100,
-      profitPkr: 2200,
-      status: 'Confirmed & Dispatched via TCS',
-      tcsTrackingNumber: '7748291048',
-      paymentMethod: 'Advance Payment (Easypaisa)',
-      receiptImage: null
-    },
-    {
-      id: 'VLX-90842',
-      customerName: 'Taimoor Tariq',
-      phone: '03029111856',
-      city: 'Karachi',
-      address: 'House 42, Street 7, Phase 5 DHA',
-      date: '2026-08-23',
-      item: 'VALAROIX DIOR SAUVAGE (50ml • 30% Pure Oil)',
-      size: '50ml',
-      pricePkr: 2699,
-      cogsPkr: 950,
-      profitPkr: 1749,
-      status: 'In Transit with TCS Express',
-      tcsTrackingNumber: '7729841029',
-      paymentMethod: 'Cash On Delivery',
-      receiptImage: null
-    }
-  ];
+  const initialSampleOrders = [];
 
   const [localOrders, setLocalOrders] = useState([]);
 
@@ -189,6 +154,9 @@ export default function AdminDashboardPage() {
 
             // Sync with local state intelligently without overwriting recent user actions
             setLocalOrders((prev) => {
+              if (serverOrders.length === 0) {
+                return [];
+              }
               const merged = serverOrders.map((so) => {
                 const local = prev.find((p) => p.id === so.id);
                 if (!local) return so;
@@ -198,8 +166,7 @@ export default function AdminDashboardPage() {
                 }
                 return { ...local, ...so };
               });
-              const localOnly = prev.filter((p) => !serverOrders.some((so) => so.id === p.id));
-              return [...merged, ...localOnly];
+              return merged;
             });
 
             try {
@@ -216,8 +183,9 @@ export default function AdminDashboardPage() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setLocalOrders(parsed);
-          lastOrderIds = new Set(parsed.map(o => o.id));
+          const clean = parsed.filter(o => o.id !== 'VLX-12630' && o.id !== 'VLX-90842' && o.id !== 'VLX-81416' && o.id !== 'VLX-24705');
+          setLocalOrders(clean);
+          lastOrderIds = new Set(clean.map(o => o.id));
         }
       }
       const authSaved = sessionStorage.getItem('valaroix_admin_auth');
@@ -328,6 +296,29 @@ export default function AdminDashboardPage() {
 
     setStatusToast(`Order #${orderId} deleted.`);
     setTimeout(() => setStatusToast(null), 3000);
+  };
+
+  // Clear All Orders completely
+  const handleClearAllOrders = async () => {
+    if (!confirm('⚠️ Are you sure you want to delete ALL previous orders? This will reset all orders.')) return;
+    setLocalOrders([]);
+    if (setUserOrders) {
+      setUserOrders([]);
+    }
+    try {
+      localStorage.removeItem('valaroix_orders');
+    } catch (e) {}
+
+    try {
+      await fetch('/api/orders', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clearAll: true })
+      });
+    } catch (e) {}
+
+    setStatusToast('🗑️ All previous orders deleted successfully.');
+    setTimeout(() => setStatusToast(null), 3500);
   };
 
   // Financial Metrics
@@ -816,6 +807,17 @@ export default function AdminDashboardPage() {
               Cancelled
             </button>
           </div>
+
+          {allOrders.length > 0 && (
+            <button
+              onClick={handleClearAllOrders}
+              className="px-3.5 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-sm"
+              title="Delete all orders completely"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Clear All Orders</span>
+            </button>
+          )}
         </div>
 
         {/* ORDER CARDS LIST */}
