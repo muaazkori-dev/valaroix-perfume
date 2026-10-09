@@ -26,6 +26,7 @@ export default function AdminDashboardPage() {
   const [bookingOrderId, setBookingOrderId] = useState(null);
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
   const [cancelConfirmOrder, setCancelConfirmOrder] = useState(null);
+  const [selectedLabelOrder, setSelectedLabelOrder] = useState(null);
   const [isTestMode, setIsTestMode] = useState(false);
 
   const initialSampleOrders = [];
@@ -1039,6 +1040,15 @@ export default function AdminDashboardPage() {
 
                       <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
                         <button
+                          onClick={() => setSelectedLabelOrder(order)}
+                          className="py-2 px-3 rounded-xl bg-white/10 hover:bg-[#D4AF37]/20 text-gray-200 hover:text-[#D4AF37] border border-white/20 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                          title="Print official TCS Shipping Label Sticker (4x6 / A4)"
+                        >
+                          <Printer className="w-3.5 h-3.5 text-[#D4AF37]" />
+                          <span>Print Label</span>
+                        </button>
+
+                        <button
                           onClick={() => handleSendDispatchWhatsApp(order)}
                           className="flex-1 sm:flex-none py-2 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shrink-0 cursor-pointer"
                           title="Send TCS tracking link to customer on WhatsApp"
@@ -1108,15 +1118,26 @@ export default function AdminDashboardPage() {
                       </button>
                     )}
 
-                    {/* STAGE 2: CONFIRMED -> HANDOVER IN-TRANSIT */}
+                    {/* STAGE 2: CONFIRMED -> HANDOVER IN-TRANSIT & PRINT LABEL */}
                     {isConfirmed && !isInTransit && !isDelivered && (
-                      <button
-                        onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `🚚 Order #${order.id} Handed Over to TCS!`)}
-                        className="flex-1 py-3 px-4 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
-                      >
-                        <Truck className="w-4 h-4" />
-                        <span>Handover to TCS (In Transit)</span>
-                      </button>
+                      <>
+                        <button
+                          onClick={() => setSelectedLabelOrder(order)}
+                          className="py-3 px-3.5 rounded-xl bg-white/10 hover:bg-[#D4AF37]/20 text-gray-200 hover:text-[#D4AF37] border border-white/20 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
+                          title="Print official TCS Shipping Label Sticker"
+                        >
+                          <Printer className="w-4 h-4 text-[#D4AF37]" />
+                          <span>Print TCS Label</span>
+                        </button>
+
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `🚚 Order #${order.id} Handed Over to TCS!`)}
+                          className="flex-1 py-3 px-4 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
+                        >
+                          <Truck className="w-4 h-4" />
+                          <span>Handover to TCS (In Transit)</span>
+                        </button>
+                      </>
                     )}
 
                     {/* STAGE 3: IN TRANSIT -> MARK DELIVERED */}
@@ -1300,6 +1321,182 @@ export default function AdminDashboardPage() {
                 className="w-full py-2 text-center text-xs text-gray-400 hover:text-white cursor-pointer"
               >
                 Don't Cancel (Wapis Chalein)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* OFFICIAL TCS THERMAL SHIPPING LABEL (AWB) PRINTABLE MODAL */}
+      {selectedLabelOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto animate-fadeIn">
+          <div className="relative max-w-lg w-full bg-white text-black rounded-3xl p-6 shadow-2xl space-y-4 my-8">
+            {/* Header controls (hidden on print) */}
+            <div className="flex items-center justify-between border-b border-gray-200 pb-3 print:hidden">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-black text-xs">
+                  TCS
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-gray-900 leading-tight">Official TCS Shipping Label (AWB)</h4>
+                  <p className="text-[11px] text-gray-500 font-mono">CN #{selectedLabelOrder.tcsTrackingNumber || '7780863721'}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedLabelOrder(null)}
+                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* THE ACTUAL PRINTABLE STICKER (4x6 / A4 Standard Courier Label) */}
+            <div id="tcs-shipping-label" className="border-2 border-black p-4 bg-white text-black font-sans space-y-3 rounded-lg shadow-inner">
+              
+              {/* TOP HEADER: TCS BRAND & DESTINATION */}
+              <div className="flex items-center justify-between border-b-2 border-black pb-2.5">
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-red-600 text-white font-black text-2xl px-2.5 py-0.5 tracking-wider rounded">
+                    TCS
+                  </div>
+                  <div>
+                    <span className="text-[11px] font-black uppercase tracking-wider block text-red-600 leading-none">EXPRESS &amp; LOGISTICS</span>
+                    <span className="text-[10px] text-gray-700 font-mono font-bold">Client ID: 215637503</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] font-bold text-gray-500 uppercase block">DESTINATION CITY</span>
+                  <span className="text-base font-black uppercase text-gray-900">{selectedLabelOrder.city || 'KARACHI'}</span>
+                </div>
+              </div>
+
+              {/* BARCODE SECTION */}
+              <div className="text-center py-2.5 border-b-2 border-black space-y-1 bg-gray-50 rounded">
+                <div className="font-mono tracking-[0.35em] text-xs font-bold text-gray-600">
+                  *{(selectedLabelOrder.tcsTrackingNumber || '7780863721')}*
+                </div>
+                {/* Authentic Barcode Graphic */}
+                <div className="flex justify-center items-center gap-[3px] h-12 py-1 px-4">
+                  {Array.from({ length: 42 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-full bg-black ${i % 4 === 0 ? 'w-[3px]' : i % 2 === 0 ? 'w-[1.5px]' : 'w-[2px]'}`}
+                    />
+                  ))}
+                </div>
+                <div className="font-mono font-black text-lg tracking-widest text-black">
+                  CN: {selectedLabelOrder.tcsTrackingNumber || '7780863721'}
+                </div>
+              </div>
+
+              {/* SHIPPER & CONSIGNEE DETAILS */}
+              <div className="grid grid-cols-2 gap-3 text-xs border-b-2 border-black pb-3">
+                {/* SHIPPER */}
+                <div className="border-r border-gray-300 pr-2 space-y-1">
+                  <span className="text-[9px] font-black uppercase text-gray-500 block">SHIPPER (FROM):</span>
+                  <p className="font-bold text-gray-900 text-xs">VALAROIX LUXURY FRAGRANCE</p>
+                  <p className="text-[11px] text-gray-700 font-medium">Helpline: 0329-7062027</p>
+                  <p className="text-[10px] text-gray-600">Origin Hub: Karachi Central</p>
+                  <p className="text-[10px] text-gray-500 font-mono">valaroix.com</p>
+                </div>
+
+                {/* CONSIGNEE (RECEIVER) */}
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black uppercase text-gray-500 block">CONSIGNEE (DELIVER TO):</span>
+                  <p className="font-bold text-gray-900 text-sm">{selectedLabelOrder.customerName}</p>
+                  <p className="font-bold text-red-600 font-mono text-xs">📱 {selectedLabelOrder.phone || selectedLabelOrder.whatsapp}</p>
+                  <p className="text-[11px] text-gray-800 font-medium leading-tight">{selectedLabelOrder.address}, {selectedLabelOrder.city}</p>
+                </div>
+              </div>
+
+              {/* PRODUCT & CASH ON DELIVERY (COD) DETAILS */}
+              <div className="flex items-center justify-between text-xs pt-1">
+                <div className="space-y-1 flex-1 pr-2">
+                  <div>
+                    <span className="text-[9px] text-gray-500 uppercase block font-bold">Package Contents:</span>
+                    <span className="font-bold text-gray-900 text-xs line-clamp-2">
+                      {selectedLabelOrder.items ? selectedLabelOrder.items.map(i=>`${i.name} (x${i.quantity || 1})`).join(', ') : (selectedLabelOrder.item || 'VALAROIX Fragrance')}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-gray-600 font-mono pt-1">
+                    <span>Wt: 0.5 KG</span>
+                    <span>•</span>
+                    <span>Pcs: 1</span>
+                    <span>•</span>
+                    <span className="text-red-600 font-bold">⚠️ Fragile Glass</span>
+                  </div>
+                </div>
+
+                {/* COD BADGE */}
+                <div className="border-2 border-red-600 bg-red-50 p-2.5 rounded-xl text-center min-w-[130px] shrink-0">
+                  <span className="text-[9px] font-black uppercase text-red-700 block">
+                    {selectedLabelOrder.paymentMethod?.toLowerCase().includes('advance') ? 'PAID / PREPAID' : 'COLLECT CASH (COD)'}
+                  </span>
+                  <span className="text-lg font-black text-red-600 font-mono">
+                    Rs. {getOrderPrice(selectedLabelOrder).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* FOOTER BAR */}
+              <div className="text-[9px] text-gray-500 text-center border-t border-gray-300 pt-1.5 flex justify-between items-center font-mono">
+                <span>TCS Overnight Express COD</span>
+                <span>Order #{selectedLabelOrder.id} • {selectedLabelOrder.date || 'Today'}</span>
+              </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="space-y-2 pt-2 print:hidden">
+              <button
+                onClick={() => {
+                  const printContent = document.getElementById('tcs-shipping-label');
+                  const win = window.open('', '', 'width=650,height=800');
+                  win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <title>TCS Shipping Label - Order #${selectedLabelOrder.id}</title>
+                        <style>
+                          @page { size: auto; margin: 10mm; }
+                          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 10px; margin: 0; background: #fff; }
+                          .border-2 { border: 2px solid #000; }
+                          .border-b-2 { border-bottom: 2px solid #000; }
+                          .border-t { border-top: 1px solid #ccc; }
+                          .p-4 { padding: 16px; }
+                          .bg-red-600 { background-color: #dc2626 !important; color: #fff !important; -webkit-print-color-adjust: exact; }
+                          .text-red-600 { color: #dc2626 !important; }
+                          .text-red-700 { color: #b91c1c !important; }
+                          .bg-red-50 { background-color: #fef2f2 !important; -webkit-print-color-adjust: exact; }
+                          .bg-gray-50 { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; }
+                          .font-black { font-weight: 900; }
+                          .font-bold { font-weight: 700; }
+                          .font-mono { font-family: monospace; }
+                          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+                          .flex { display: flex; }
+                          .justify-between { justify-content: space-between; }
+                          .items-center { align-items: center; }
+                          .text-center { text-align: center; }
+                          .text-right { text-align: right; }
+                        </style>
+                      </head>
+                      <body onload="window.print();window.close();">
+                        ${printContent.innerHTML}
+                      </body>
+                    </html>
+                  `);
+                  win.document.close();
+                }}
+                className="w-full py-3.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-95"
+              >
+                <Printer className="w-4 h-4" />
+                <span>🖨️ Print TCS Shipping Label Sticker (4x6 / A4)</span>
+              </button>
+
+              <button
+                onClick={() => setSelectedLabelOrder(null)}
+                className="w-full py-2 text-center text-xs text-gray-500 hover:text-gray-900 font-semibold cursor-pointer"
+              >
+                Close Window
               </button>
             </div>
           </div>
