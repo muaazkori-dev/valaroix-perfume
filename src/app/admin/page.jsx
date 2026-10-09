@@ -1439,11 +1439,11 @@ export default function AdminDashboardPage() {
                 <div className="flex-1 p-2 text-[10.5px] leading-snug border-r border-black flex flex-col justify-between min-h-[75px]">
                   <div>
                     <div className="font-bold text-black">Valaroix - Valaroix</div>
-                    <div className="text-black">Main Hyderabad Road Toor Colony 2nd Street Tando Adam</div>
+                    <div className="text-black">Valaroix (Toor colony) Tando Adam</div>
                   </div>
                   <div className="mt-2 text-black">
-                    <div>03029111856</div>
-                    <div>muaazkori@gmail.com</div>
+                    <div>+92 3029111856</div>
+                    <div>support@valaroix.com</div>
                   </div>
                 </div>
 
