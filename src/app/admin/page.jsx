@@ -1327,19 +1327,20 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* OFFICIAL TCS THERMAL SHIPPING LABEL (AWB) PRINTABLE MODAL */}
+      {/* OFFICIAL 1:1 TCS AIRWAY BILL (CONSIGNEE'S COPY) PRINTABLE MODAL */}
       {selectedLabelOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md overflow-y-auto animate-fadeIn">
-          <div className="relative max-w-lg w-full bg-white text-black rounded-3xl p-6 shadow-2xl space-y-4 my-8">
-            {/* Header controls (hidden on print) */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-md overflow-y-auto animate-fadeIn">
+          <div className="relative max-w-2xl w-full bg-white text-black rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 my-8">
+            
+            {/* Header Controls (Hidden on Print) */}
             <div className="flex items-center justify-between border-b border-gray-200 pb-3 print:hidden">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-black text-xs">
                   TCS
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm text-gray-900 leading-tight">Official TCS Shipping Label (AWB)</h4>
-                  <p className="text-[11px] text-gray-500 font-mono">CN #{selectedLabelOrder.tcsTrackingNumber || '7780863721'}</p>
+                  <h4 className="font-bold text-sm text-gray-900 leading-tight">Official TCS Consignment Slip (Consignee's Copy)</h4>
+                  <p className="text-[11px] text-gray-500 font-mono">CN #{selectedLabelOrder.tcsTrackingNumber || '772234300003'}</p>
                 </div>
               </div>
               <button
@@ -1350,147 +1351,234 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            {/* THE ACTUAL PRINTABLE STICKER (4x6 / A4 Standard Courier Label) */}
-            <div id="tcs-shipping-label" className="border-2 border-black p-4 bg-white text-black font-sans space-y-3 rounded-lg shadow-inner">
+            {/* THE EXACT 1:1 OFFICIAL TCS SLIP (Consignee's Copy Layout) */}
+            <div id="tcs-official-slip" className="border-[1.5px] border-black bg-white text-black font-sans text-xs select-text overflow-hidden">
               
-              {/* TOP HEADER: TCS BRAND & DESTINATION */}
-              <div className="flex items-center justify-between border-b-2 border-black pb-2.5">
-                <div className="flex items-center gap-2.5">
-                  <div className="bg-red-600 text-white font-black text-2xl px-2.5 py-0.5 tracking-wider rounded">
-                    TCS
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-black uppercase tracking-wider block text-red-600 leading-none">EXPRESS &amp; LOGISTICS</span>
-                    <span className="text-[10px] text-gray-700 font-mono font-bold">Client ID: 215637503</span>
-                  </div>
+              {/* ROW 1: 4 COLUMNS (LOGO, BARCODE+CN, QR CODE, META TABLE) */}
+              <div className="flex border-b-[1.5px] border-black">
+                
+                {/* COL 1: TCS FLYING LOGO */}
+                <div className="w-[24%] p-2 border-r-[1.5px] border-black flex flex-col items-center justify-center text-center">
+                  <svg viewBox="0 0 160 55" className="w-24 sm:w-28 h-auto">
+                    <path d="M12 36 L30 12 L46 28 L32 46 Z" fill="#E60000" />
+                    <path d="M36 34 L52 10 L68 22 L54 42 Z" fill="#E60000" />
+                    <text x="70" y="38" fill="#E60000" fontFamily="Arial, sans-serif" fontWeight="900" fontStyle="italic" fontSize="34">TCS</text>
+                  </svg>
+                  <div className="text-[11px] font-bold mt-1 text-black">TCS (Pvt)Ltd</div>
                 </div>
-                <div className="text-right">
-                  <span className="text-[9px] font-bold text-gray-500 uppercase block">DESTINATION CITY</span>
-                  <span className="text-base font-black uppercase text-gray-900">{selectedLabelOrder.city || 'KARACHI'}</span>
+
+                {/* COL 2: BARCODE & CN */}
+                <div className="w-[28%] p-2 border-r-[1.5px] border-black flex flex-col items-center justify-center text-center">
+                  {/* Authentic Barcode Graphic */}
+                  <div className="flex justify-center items-center gap-[2px] h-9 py-0.5 px-2">
+                    {Array.from({ length: 36 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-full bg-black ${i % 3 === 0 ? 'w-[2.5px]' : i % 5 === 0 ? 'w-[3px]' : 'w-[1px]'}`}
+                      />
+                    ))}
+                  </div>
+                  <div className="text-[12px] sm:text-[13px] font-bold font-mono mt-1 tracking-wider text-black">
+                    {selectedLabelOrder.tcsTrackingNumber || '772234300003'}
+                  </div>
+                  <div className="text-[10px] text-gray-700">Consignee's Copy</div>
+                </div>
+
+                {/* COL 3: QR CODE */}
+                <div className="w-[20%] p-1.5 border-r-[1.5px] border-black flex items-center justify-center">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://valaroix.com/track?q=${selectedLabelOrder.tcsTrackingNumber || '772234300003'}`}
+                    alt="QR"
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                  />
+                </div>
+
+                {/* COL 4: META TABLE */}
+                <div className="w-[28%] text-[10px] sm:text-[11px]">
+                  <table className="w-full border-collapse h-full">
+                    <tbody>
+                      <tr className="border-b border-black">
+                        <td className="p-1 font-bold border-r border-black w-[45%]">Date/Time:</td>
+                        <td className="p-1 leading-tight">{selectedLabelOrder.date || '28/09/2026'}<br/><span className="text-[9px]">{selectedLabelOrder.time || '22:20:32'}</span></td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="p-1 font-bold border-r border-black">Service:</td>
+                        <td className="p-1 font-medium">Express</td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="p-1 font-bold border-r border-black">Origin:</td>
+                        <td className="p-1 font-bold uppercase">TANDO ADAM</td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="p-1 font-bold border-r border-black">Destination:</td>
+                        <td className="p-1 font-bold uppercase text-red-600">{selectedLabelOrder.city?.toUpperCase() || 'KARACHI'}</td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="p-1 font-bold border-r border-black">Pieces:</td>
+                        <td className="p-1">1</td>
+                      </tr>
+                      <tr className="border-b border-black">
+                        <td className="p-1 font-bold border-r border-black">Weight:</td>
+                        <td className="p-1">0.5</td>
+                      </tr>
+                      <tr>
+                        <td className="p-1 font-bold border-r border-black">Fragile:</td>
+                        <td className="p-1 font-bold text-red-600">YES</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
+              {/* ROW 2: SHIPPER'S DETAILS HEADER */}
+              <div className="bg-[#D3D3D3] py-1 px-2 font-bold text-center text-xs border-b-[1.5px] border-black text-black">
+                Shipper's Details
+              </div>
+
+              {/* ROW 3: SHIPPER ADDRESS & COD AMOUNT SPLIT */}
+              <div className="flex border-b-[1.5px] border-black">
+                {/* LEFT: SHIPPER ADDRESS */}
+                <div className="w-[55%] p-2 text-[11px] leading-snug border-r-[1.5px] border-black space-y-0.5">
+                  <div className="font-bold text-black">Valaroix - Valaroix</div>
+                  <div>Main Hyderabad Road Toor Colony 2nd Street Tando Adam</div>
+                  <div className="font-bold pt-0.5">03029111856</div>
+                  <div className="text-gray-700">muaazkori@gmail.com</div>
+                </div>
+
+                {/* RIGHT: COD AMOUNT BLOCK */}
+                <div className="w-[45%] flex">
+                  <div className="w-[38%] bg-[#EAEAEA] flex flex-col items-center justify-center border-r-[1.5px] border-black font-bold text-center p-1 text-xs">
+                    <div>COD</div>
+                    <div>Amount</div>
+                  </div>
+                  <div className="w-[62%] flex flex-col items-center justify-center p-2 text-center">
+                    {/* COD Barcode */}
+                    <div className="flex justify-center items-center gap-[1.5px] h-6 py-0.5 px-2">
+                      {Array.from({ length: 26 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className={`h-full bg-black ${i % 2 === 0 ? 'w-[2px]' : 'w-[1px]'}`}
+                        />
+                      ))}
+                    </div>
+                    <div className="font-black text-base sm:text-lg mt-0.5 tracking-tight text-black">
+                      {selectedLabelOrder.paymentMethod?.toLowerCase().includes('advance')
+                        ? 'RS0 (PAID)'
+                        : `RS${getOrderPrice(selectedLabelOrder)}`}
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* BARCODE SECTION */}
-              <div className="text-center py-2.5 border-b-2 border-black space-y-1 bg-gray-50 rounded">
-                <div className="font-mono tracking-[0.35em] text-xs font-bold text-gray-600">
-                  *{(selectedLabelOrder.tcsTrackingNumber || '7780863721')}*
-                </div>
-                {/* Authentic Barcode Graphic */}
-                <div className="flex justify-center items-center gap-[3px] h-12 py-1 px-4">
-                  {Array.from({ length: 42 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className={`h-full bg-black ${i % 4 === 0 ? 'w-[3px]' : i % 2 === 0 ? 'w-[1.5px]' : 'w-[2px]'}`}
-                    />
-                  ))}
-                </div>
-                <div className="font-mono font-black text-lg tracking-widest text-black">
-                  CN: {selectedLabelOrder.tcsTrackingNumber || '7780863721'}
-                </div>
+              {/* ROW 4: CONSIGNEE'S DETAILS HEADER */}
+              <div className="bg-[#D3D3D3] py-1 px-2 font-bold text-center text-xs border-b-[1.5px] border-black text-black">
+                Consignee's Details
               </div>
 
-              {/* SHIPPER & CONSIGNEE DETAILS */}
-              <div className="grid grid-cols-2 gap-3 text-xs border-b-2 border-black pb-3">
-                {/* SHIPPER */}
-                <div className="border-r border-gray-300 pr-2 space-y-1">
-                  <span className="text-[9px] font-black uppercase text-gray-500 block">SHIPPER (FROM):</span>
-                  <p className="font-bold text-gray-900 text-xs">VALAROIX LUXURY FRAGRANCE</p>
-                  <p className="text-[11px] text-gray-700 font-medium">Helpline: 0329-7062027</p>
-                  <p className="text-[10px] text-gray-600">Origin Hub: Karachi Central</p>
-                  <p className="text-[10px] text-gray-500 font-mono">valaroix.com</p>
-                </div>
-
-                {/* CONSIGNEE (RECEIVER) */}
-                <div className="space-y-1">
-                  <span className="text-[9px] font-black uppercase text-gray-500 block">CONSIGNEE (DELIVER TO):</span>
-                  <p className="font-bold text-gray-900 text-sm">{selectedLabelOrder.customerName}</p>
-                  <p className="font-bold text-red-600 font-mono text-xs">📱 {selectedLabelOrder.phone || selectedLabelOrder.whatsapp}</p>
-                  <p className="text-[11px] text-gray-800 font-medium leading-tight">{selectedLabelOrder.address}, {selectedLabelOrder.city}</p>
-                </div>
-              </div>
-
-              {/* PRODUCT & CASH ON DELIVERY (COD) DETAILS */}
-              <div className="flex items-center justify-between text-xs pt-1">
-                <div className="space-y-1 flex-1 pr-2">
-                  <div>
-                    <span className="text-[9px] text-gray-500 uppercase block font-bold">Package Contents:</span>
-                    <span className="font-bold text-gray-900 text-xs line-clamp-2">
-                      {selectedLabelOrder.items ? selectedLabelOrder.items.map(i=>`${i.name} (x${i.quantity || 1})`).join(', ') : (selectedLabelOrder.item || 'VALAROIX Fragrance')}
-                    </span>
+              {/* ROW 5: CONSIGNEE FIELDS TABLE */}
+              <div className="text-[11px] leading-normal">
+                {/* NAME & CUST REF */}
+                <div className="flex border-b border-black">
+                  <div className="w-[65%] p-1.5 sm:p-2 border-r border-black flex items-center">
+                    <span className="font-bold w-20 shrink-0">Name:</span>
+                    <span className="font-bold uppercase text-black">{selectedLabelOrder.customerName}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] text-gray-600 font-mono pt-1">
-                    <span>Wt: 0.5 KG</span>
-                    <span>•</span>
-                    <span>Pcs: 1</span>
-                    <span>•</span>
-                    <span className="text-red-600 font-bold">⚠️ Fragile Glass</span>
+                  <div className="w-[35%] p-1.5 sm:p-2 flex items-center">
+                    <span className="font-bold w-20 shrink-0">Cust. Ref.#:</span>
+                    <span className="font-bold font-mono text-black">#{selectedLabelOrder.id}</span>
                   </div>
                 </div>
 
-                {/* COD BADGE */}
-                <div className="border-2 border-red-600 bg-red-50 p-2.5 rounded-xl text-center min-w-[130px] shrink-0">
-                  <span className="text-[9px] font-black uppercase text-red-700 block">
-                    {selectedLabelOrder.paymentMethod?.toLowerCase().includes('advance') ? 'PAID / PREPAID' : 'COLLECT CASH (COD)'}
+                {/* ADDRESS */}
+                <div className="flex border-b border-black p-1.5 sm:p-2">
+                  <span className="font-bold w-20 shrink-0">Address:</span>
+                  <span className="font-medium text-black">{selectedLabelOrder.address}, {selectedLabelOrder.city}</span>
+                </div>
+
+                {/* CONTACT # */}
+                <div className="flex border-b border-black p-1.5 sm:p-2">
+                  <span className="font-bold w-20 shrink-0">Contact #:</span>
+                  <span className="font-bold font-mono text-xs sm:text-sm text-black">{selectedLabelOrder.phone || selectedLabelOrder.whatsapp}</span>
+                </div>
+
+                {/* PRODUCT DETAILS */}
+                <div className="flex border-b border-black p-1.5 sm:p-2">
+                  <span className="font-bold w-20 shrink-0">Product Details:</span>
+                  <span className="text-black">
+                    Perfume Bottle (Cosmetics) {selectedLabelOrder.items ? `— ${selectedLabelOrder.items.map(i=>`${i.name} (x${i.quantity||1})`).join(', ')}` : `— ${selectedLabelOrder.item || 'VALAROIX Fragrance'}`}
                   </span>
-                  <span className="text-lg font-black text-red-600 font-mono">
-                    Rs. {getOrderPrice(selectedLabelOrder).toLocaleString()}
-                  </span>
+                </div>
+
+                {/* REMARKS */}
+                <div className="flex border-b-[1.5px] border-black p-1.5 sm:p-2">
+                  <span className="font-bold w-20 shrink-0">Remarks:</span>
+                  <span className="text-black">Please call customer before delivery</span>
                 </div>
               </div>
 
-              {/* FOOTER BAR */}
-              <div className="text-[9px] text-gray-500 text-center border-t border-gray-300 pt-1.5 flex justify-between items-center font-mono">
-                <span>TCS Overnight Express COD</span>
-                <span>Order #{selectedLabelOrder.id} • {selectedLabelOrder.date || 'Today'}</span>
+              {/* ROW 6: BOTTOM DISCLAIMER */}
+              <div className="p-2 text-[9px] sm:text-[10px] text-center text-gray-900 leading-tight">
+                Please don't accept if shipment is not intact. Before paying the COD amount, shipment cannot be opened.In case of complaints, pleae contact Muaaz at 03029111856.
               </div>
+
             </div>
 
-            {/* ACTION BUTTONS */}
+            {/* ACTION BUTTONS (FOR OUTSIDE PRINT SHOP & DOWNLOAD) */}
             <div className="space-y-2 pt-2 print:hidden">
-              <button
-                onClick={() => {
-                  const printContent = document.getElementById('tcs-shipping-label');
-                  const win = window.open('', '', 'width=650,height=800');
-                  win.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                      <head>
-                        <title>TCS Shipping Label - Order #${selectedLabelOrder.id}</title>
-                        <style>
-                          @page { size: auto; margin: 10mm; }
-                          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; padding: 10px; margin: 0; background: #fff; }
-                          .border-2 { border: 2px solid #000; }
-                          .border-b-2 { border-bottom: 2px solid #000; }
-                          .border-t { border-top: 1px solid #ccc; }
-                          .p-4 { padding: 16px; }
-                          .bg-red-600 { background-color: #dc2626 !important; color: #fff !important; -webkit-print-color-adjust: exact; }
-                          .text-red-600 { color: #dc2626 !important; }
-                          .text-red-700 { color: #b91c1c !important; }
-                          .bg-red-50 { background-color: #fef2f2 !important; -webkit-print-color-adjust: exact; }
-                          .bg-gray-50 { background-color: #f9fafb !important; -webkit-print-color-adjust: exact; }
-                          .font-black { font-weight: 900; }
-                          .font-bold { font-weight: 700; }
-                          .font-mono { font-family: monospace; }
-                          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-                          .flex { display: flex; }
-                          .justify-between { justify-content: space-between; }
-                          .items-center { align-items: center; }
-                          .text-center { text-align: center; }
-                          .text-right { text-align: right; }
-                        </style>
-                      </head>
-                      <body onload="window.print();window.close();">
-                        ${printContent.innerHTML}
-                      </body>
-                    </html>
-                  `);
-                  win.document.close();
-                }}
-                className="w-full py-3.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-95"
-              >
-                <Printer className="w-4 h-4" />
-                <span>🖨️ Print TCS Shipping Label Sticker (4x6 / A4)</span>
-              </button>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* 1. SAVE AS PDF / PRINT FOR SHOP */}
+                <button
+                  onClick={() => {
+                    const printContent = document.getElementById('tcs-official-slip');
+                    const win = window.open('', '', 'width=800,height=900');
+                    win.document.write(`
+                      <!DOCTYPE html>
+                      <html>
+                        <head>
+                          <title>TCS_Consignment_Slip_${selectedLabelOrder.tcsTrackingNumber || selectedLabelOrder.id}</title>
+                          <style>
+                            @page { size: auto; margin: 8mm; }
+                            body { font-family: Arial, Helvetica, sans-serif; padding: 10px; margin: 0; background: #fff; color: #000; }
+                            table { border-collapse: collapse; }
+                            .border-black { border-color: #000 !important; }
+                            .bg-D3D3D3 { background-color: #d3d3d3 !important; -webkit-print-color-adjust: exact; }
+                            .bg-EAEAEA { background-color: #eaeaea !important; -webkit-print-color-adjust: exact; }
+                          </style>
+                        </head>
+                        <body onload="window.print();window.close();">
+                          ${printContent.innerHTML}
+                        </body>
+                      </html>
+                    `);
+                    win.document.close();
+                  }}
+                  className="py-3.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-95"
+                  title="Download / Save as PDF or Print directly"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>📥 Save PDF / Print (Shop Copy)</span>
+                </button>
+
+                {/* 2. FORWARD TO SHOP VIA WHATSAPP */}
+                <button
+                  onClick={() => {
+                    const cleanPhone = (selectedLabelOrder.phone || selectedLabelOrder.whatsapp || '').replace(/^0/, '');
+                    const cn = selectedLabelOrder.tcsTrackingNumber || '772234300003';
+                    const price = getOrderPrice(selectedLabelOrder);
+                    const msg = encodeURIComponent(
+                      `*TCS CONSIGNMENT SLIP — VALAROIX*\n\n🏷️ *CN Number:* ${cn}\n📦 *Order ID:* #${selectedLabelOrder.id}\n👤 *Customer:* ${selectedLabelOrder.customerName}\n📱 *Phone:* ${selectedLabelOrder.phone}\n📍 *Address:* ${selectedLabelOrder.address}, ${selectedLabelOrder.city}\n💰 *COD Amount:* Rs. ${price.toLocaleString()}\n\n🔗 *Live Tracking Link:* https://valaroix.com/track?q=${cn}`
+                    );
+                    window.open(`https://wa.me/?text=${msg}`, '_blank');
+                  }}
+                  className="py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-95"
+                  title="Share Slip details on WhatsApp to send to print shop"
+                >
+                  <Send className="w-4 h-4" />
+                  <span>📲 Forward to WhatsApp Print Shop</span>
+                </button>
+              </div>
 
               <button
                 onClick={() => setSelectedLabelOrder(null)}
@@ -1499,6 +1587,7 @@ export default function AdminDashboardPage() {
                 Close Window
               </button>
             </div>
+
           </div>
         </div>
       )}
