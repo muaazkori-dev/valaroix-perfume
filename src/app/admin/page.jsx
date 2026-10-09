@@ -7,7 +7,7 @@ import {
   MessageSquare, Trash2, Split, TrendingUp, Sparkles, ExternalLink,
   ShoppingBag, ArrowLeft, Truck, PackageCheck, Bell, Volume2, VolumeX,
   Phone, MapPin, Clock, AlertCircle, CheckCircle2, RefreshCw, Send,
-  HelpCircle
+  HelpCircle, Copy, CheckCheck, Zap, Layers
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -22,6 +22,8 @@ export default function AdminDashboardPage() {
   const [hasNotificationPermission, setHasNotificationPermission] = useState(false);
   const [newOrderToast, setNewOrderToast] = useState(null);
   const [statusToast, setStatusToast] = useState(null);
+  const [copiedField, setCopiedField] = useState(null);
+  const [bookingOrderId, setBookingOrderId] = useState(null);
 
   const initialSampleOrders = [
     {
@@ -334,22 +336,123 @@ export default function AdminDashboardPage() {
     return true;
   });
 
+  // 1-Tap Copy Helper with visual feedback
+  const handleCopy = (text, fieldId) => {
+    if (!text) return;
+    try {
+      navigator.clipboard.writeText(String(text));
+      setCopiedField(fieldId);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (e) {}
+  };
+
+  // Auto-Book with TCS API in 1-Click
+  const handleAutoBookTCS = async (order) => {
+    setBookingOrderId(order.id);
+    try {
+      const price = getOrderPrice(order);
+      const res = await fetch('/api/tcs/book', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: order.id,
+          customerName: order.customerName || order.name || 'Valaroix Patron',
+          phone: order.phone || order.whatsapp || '',
+          city: order.city || 'Karachi',
+          address: order.address || 'Standard Delivery Address',
+          item: order.items ? order.items.map(i => `${i.name} x${i.quantity || 1}`).join(', ') : (order.item || 'VALAROIX Fragrance'),
+          pieces: order.items ? order.items.reduce((s, i) => s + (i.quantity || 1), 0) : 1,
+          totalAmount: price,
+          paymentMethod: order.paymentMethod || 'COD'
+        })
+      });
+
+      const data = await res.json();
+      if (data.success && data.tcsTrackingNumber) {
+        // Update local order state
+        const updated = allOrders.map((o) =>
+          o.id === order.id
+            ? { ...o, status: 'Confirmed & Dispatched via TCS', tcsTrackingNumber: data.tcsTrackingNumber }
+            : o
+        );
+        setLocalOrders(updated);
+        if (setUserOrders) setUserOrders(updated);
+        try {
+          localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+        } catch (e) {}
+
+        setStatusToast(`🚀 TCS Auto-Booked! CN: #${data.tcsTrackingNumber} assigned to Order #${order.id}`);
+        setTimeout(() => setStatusToast(null), 4500);
+      } else {
+        alert(data.message || 'TCS Booking failed. Please check connection.');
+      }
+    } catch (err) {
+      alert('TCS Booking network error.');
+    } finally {
+      setBookingOrderId(null);
+    }
+  };
+
+  // Combine multiple orders for same customer phone
+  const handleCombineOrders = (phoneToCombine) => {
+    const matching = allOrders.filter(o => (o.phone === phoneToCombine || o.whatsapp === phoneToCombine) && (o.status || '').toLowerCase().includes('pending'));
+    if (matching.length < 2) return;
+
+    const primaryOrder = matching[0];
+    const otherOrders = matching.slice(1);
+    
+    // Combine items & calculate combined price
+    const combinedItems = matching.flatMap(o => o.items || [{ name: o.item, quantity: 1, price: getOrderPrice(o) }]);
+    const combinedPrice = matching.reduce((sum, o) => sum + getOrderPrice(o), 0);
+    const otherIds = otherOrders.map(o => o.id).join(', ');
+
+    const updated = allOrders.map(o => {
+      if (o.id === primaryOrder.id) {
+        return {
+          ...o,
+          items: combinedItems,
+          pricePkr: combinedPrice,
+          total: combinedPrice,
+          remarks: `Combined with ${otherIds}`
+        };
+      }
+      if (otherOrders.some(other => other.id === o.id)) {
+        return {
+          ...o,
+          status: 'Cancelled (Merged into #' + primaryOrder.id + ')'
+        };
+      }
+      return o;
+    });
+
+    setLocalOrders(updated);
+    if (setUserOrders) setUserOrders(updated);
+    try {
+      localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+    } catch (e) {}
+
+    setStatusToast(`📦 Merged ${matching.length} Orders into Order #${primaryOrder.id} (Total: Rs. ${combinedPrice.toLocaleString()})`);
+    setTimeout(() => setStatusToast(null), 4000);
+  };
+
   // Client WhatsApp Action 1: ASK CUSTOMER TO CONFIRM ON WHATSAPP
   const handleAskCustomerToConfirm = (order) => {
     const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
     const price = getOrderPrice(order);
     const text = encodeURIComponent(
-      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nHum VALAROIX Luxury Fragrance se baat kar rahe hain.\n\nAapka order receive hua hai:\n📦 Order: #${order.id}\n🌸 Product: ${order.items ? order.items.map(i=>i.name).join(', ') : order.item}\n💰 Total Amount: Rs. ${price.toLocaleString()}\n📍 Address: ${order.address}, ${order.city}\n\n👉 Kya aap is order ko CONFIRM karte hain taake hum TCS Express se parcel dispatch kar dein? Baraye meharbani 'YES' likh kar reply karein. Shukriya!`
+      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nHum VALAROIX Luxury Fragrance se baat kar rahe hain.\n\nAapka order receive hua hai:\n📦 Order: #${order.id}\n🌸 Product: ${order.items ? order.items.map(i=>`${i.name} (x${i.quantity || 1})`).join(', ') : order.item}\n💰 Total Amount: Rs. ${price.toLocaleString()} (${order.paymentMethod || 'COD'})\n📍 Address: ${order.address}, ${order.city}\n\n👉 Kya aap is order ko CONFIRM karte hain taake hum TCS Express se parcel dispatch kar dein? Baraye meharbani 'YES' likh kar reply karein. Shukriya!\n\nTeam VALAROIX`
     );
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
 
-  // Client WhatsApp Action 2: SEND TCS DISPATCH CONFIRMATION
+  // Client WhatsApp Action 2: SEND TCS DISPATCH CONFIRMATION WITH LIVE TRACKING LINK
   const handleSendDispatchWhatsApp = (order) => {
     const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
     const price = getOrderPrice(order);
+    const cn = order.tcsTrackingNumber || '7780863721';
+    const trackUrl = `https://valaroix.com/track?q=${cn}`;
     const text = encodeURIComponent(
-      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nAapka VALAROIX Luxury Perfume order #${order.id} CONFIRM kar diya gaya hai!\n\n📦 Item: ${order.items ? order.items.map(i=>i.name).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n🚚 Delivery via: TCS Express Courier (Tracking CN: ${order.tcsTrackingNumber || '7780863721'})\n\nParcel 24 hours ke andar deliver ho jayega. Shukriya!`
+      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nVALAROIX Parfums se aapka luxury perfume order #${order.id} CONFIRM aur DISPATCH kar diya gaya hai!\n\n📦 Item: ${order.items ? order.items.map(i=>`${i.name} (x${i.quantity || 1})`).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()} (${order.paymentMethod || 'COD'})\n🏷️ TCS Consignment CN: ${cn}\n📍 Live Parcel Tracking: ${trackUrl}\n\nAapka parcel 1-2 din me TCS delivery rider deliver kar dega. Shukriya!\n\nTeam VALAROIX`
     );
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
@@ -595,16 +698,47 @@ export default function AdminDashboardPage() {
               const isCancelled = st.includes('cancel');
               const isPending = !isConfirmed && !isInTransit && !isDelivered && !isCancelled;
 
+              const samePhonePendingOrders = allOrders.filter(
+                (o) => (o.phone === order.phone || o.whatsapp === order.phone) && (o.status || '').toLowerCase().includes('pending')
+              );
+              const hasMultiplePending = samePhonePendingOrders.length > 1;
+              const isBookingThis = bookingOrderId === order.id;
+
               return (
                 <div
                   key={order.id}
                   className="p-5 sm:p-6 rounded-3xl bg-[#141414] border border-[#D4AF37]/30 space-y-4 shadow-xl relative"
                 >
-                  {/* Top Order Meta */}
+                  {/* MULTIPLE ORDERS FROM SAME CUSTOMER DETECTED BANNER */}
+                  {hasMultiplePending && isPending && (
+                    <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 via-[#D4AF37]/20 to-amber-500/20 border border-[#D4AF37] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-2 text-amber-300">
+                        <Layers className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                        <span><strong>Same Customer Alert:</strong> {samePhonePendingOrders.length} pending orders found for phone <strong>{order.phone}</strong></span>
+                      </div>
+                      <button
+                        onClick={() => handleCombineOrders(order.phone)}
+                        className="px-3 py-1.5 rounded-xl bg-[#D4AF37] text-black font-black uppercase text-[11px] hover:bg-yellow-400 transition-all cursor-pointer shadow-md shrink-0 flex items-center gap-1.5"
+                      >
+                        <Layers className="w-3.5 h-3.5" />
+                        <span>Combine into 1 Parcel (Save Delivery Fee)</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Top Order Meta with 1-Tap Copy Buttons */}
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-2 pb-3 border-b border-white/10">
-                    <div>
+                    <div className="space-y-1.5">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-sm sm:text-base font-bold text-[#D4AF37]">{order.id}</span>
+                        <span className="font-mono text-sm sm:text-base font-bold text-[#D4AF37]">#{order.id}</span>
+                        <button
+                          onClick={() => handleCopy(order.id, `id-${order.id}`)}
+                          className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-[#D4AF37]/20 text-gray-400 hover:text-[#D4AF37] text-[10px] font-mono flex items-center gap-1 border border-white/5"
+                          title="Copy Order ID"
+                        >
+                          {copiedField === `id-${order.id}` ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedField === `id-${order.id}` ? 'Copied' : 'Copy'}</span>
+                        </button>
                         <span className="text-[10px] text-gray-400 font-mono">Date: {order.date || 'Today'}</span>
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                           isDelivered ? 'bg-blue-500/20 text-blue-400 border border-blue-500/40'
@@ -616,11 +750,25 @@ export default function AdminDashboardPage() {
                           {order.status || 'Pending Confirmation'}
                         </span>
                       </div>
-                      <h3 className="font-serif-mockup text-lg sm:text-xl font-bold text-white mt-1">
-                        {order.customerName}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-300 mt-1">
-                        <span className="text-gray-400">WhatsApp:</span>
+
+                      {/* Customer Name & Copy */}
+                      <div className="flex items-center gap-2 pt-0.5">
+                        <h3 className="font-serif-mockup text-lg sm:text-xl font-bold text-white">
+                          {order.customerName}
+                        </h3>
+                        <button
+                          onClick={() => handleCopy(order.customerName, `name-${order.id}`)}
+                          className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-[#D4AF37]/20 text-gray-400 hover:text-[#D4AF37] text-[10px] font-sans flex items-center gap-1 border border-white/5"
+                          title="Copy Customer Name"
+                        >
+                          {copiedField === `name-${order.id}` ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedField === `name-${order.id}` ? 'Copied' : 'Copy'}</span>
+                        </button>
+                      </div>
+
+                      {/* Phone / WhatsApp & Copy */}
+                      <div className="flex items-center gap-2 text-xs text-gray-300">
+                        <span className="text-gray-400">Phone:</span>
                         <a
                           href={`https://wa.me/92${(order.phone || '').replace(/^0/, '')}`}
                           target="_blank"
@@ -629,17 +777,49 @@ export default function AdminDashboardPage() {
                         >
                           <Phone className="w-3 h-3" /> {order.phone}
                         </a>
+                        <button
+                          onClick={() => handleCopy(order.phone, `phone-${order.id}`)}
+                          className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-[#D4AF37]/20 text-gray-400 hover:text-[#D4AF37] text-[10px] font-mono flex items-center gap-1 border border-white/5"
+                          title="Copy Phone Number"
+                        >
+                          {copiedField === `phone-${order.id}` ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedField === `phone-${order.id}` ? 'Copied' : 'Copy'}</span>
+                        </button>
                       </div>
-                      <p className="text-xs text-gray-300 mt-1">
-                        <strong className="text-white">{order.city}</strong> — {order.address}
-                      </p>
+
+                      {/* Delivery Address & Copy */}
+                      <div className="flex items-start gap-2 text-xs text-gray-300 pt-0.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#D4AF37] shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-gray-200">
+                            <strong className="text-white">{order.city}</strong> — {order.address}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleCopy(`${order.address}, ${order.city}`, `addr-${order.id}`)}
+                          className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-[#D4AF37]/20 text-gray-400 hover:text-[#D4AF37] text-[10px] font-sans flex items-center gap-1 border border-white/5 shrink-0"
+                          title="Copy Full Address"
+                        >
+                          {copiedField === `addr-${order.id}` ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedField === `addr-${order.id}` ? 'Copied' : 'Copy Address'}</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="text-left sm:text-right">
+                    <div className="text-left sm:text-right space-y-1">
                       <span className="text-[10px] text-gray-400 uppercase font-bold block">Total Amount</span>
-                      <span className="font-serif-mockup text-2xl font-extrabold text-[#D4AF37]">
-                        Rs. {price.toLocaleString()}
-                      </span>
+                      <div className="flex items-center sm:justify-end gap-2">
+                        <span className="font-serif-mockup text-2xl font-extrabold text-[#D4AF37]">
+                          Rs. {price.toLocaleString()}
+                        </span>
+                        <button
+                          onClick={() => handleCopy(price, `price-${order.id}`)}
+                          className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-[#D4AF37]/20 text-gray-400 hover:text-[#D4AF37] text-[10px] font-mono border border-white/5"
+                          title="Copy Amount"
+                        >
+                          {copiedField === `price-${order.id}` ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        </button>
+                      </div>
                       <span className="text-xs text-gray-400 block mt-0.5">
                         Payment: <strong className="text-white uppercase">{order.paymentMethod || 'COD'}</strong>
                       </span>
@@ -649,7 +829,15 @@ export default function AdminDashboardPage() {
                   {/* Order Items & Receipt Slip */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-black/60 border border-white/5 text-xs">
                     <div>
-                      <span className="text-gray-400 text-[10px] uppercase font-bold block mb-1">Item Details:</span>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-gray-400 text-[10px] uppercase font-bold block">Item Details:</span>
+                        <button
+                          onClick={() => handleCopy(order.items ? order.items.map(i => `${i.name} (Qty: ${i.quantity || 1})`).join(', ') : order.item, `item-${order.id}`)}
+                          className="text-[10px] text-[#D4AF37] hover:underline flex items-center gap-1"
+                        >
+                          <Copy className="w-2.5 h-2.5" /> Copy Item
+                        </button>
+                      </div>
                       <span className="font-bold text-white block">
                         {order.items && order.items.length > 0 ? (
                           order.items.map((i, idx) => (
@@ -689,21 +877,76 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
 
-                  {/* ACTION BUTTONS: STEP-BY-STEP PROGRESSIVE PIPELINE */}
+                  {/* OFFICIAL TCS CONSIGNMENT RECEIPT & TRACKING CARD (IF DISPATCHED) */}
+                  {order.tcsTrackingNumber && (isConfirmed || isInTransit || isDelivered) && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-r from-red-950/30 via-black to-red-950/20 border border-red-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-black uppercase">TCS Envio</span>
+                          <span className="text-gray-400 text-xs">Consignment CN:</span>
+                          <strong className="font-mono text-sm text-white font-bold tracking-wider">{order.tcsTrackingNumber}</strong>
+                          <button
+                            onClick={() => handleCopy(order.tcsTrackingNumber, `cn-${order.id}`)}
+                            className="p-1 rounded bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white"
+                            title="Copy TCS CN"
+                          >
+                            {copiedField === `cn-${order.id}` ? <CheckCheck className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-gray-400">
+                          Live Customer Link: <a href={`https://valaroix.com/track?q=${order.tcsTrackingNumber}`} target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:underline font-mono">valaroix.com/track?q={order.tcsTrackingNumber}</a>
+                        </p>
+                      </div>
+
+                      <button
+                        onClick={() => handleSendDispatchWhatsApp(order)}
+                        className="w-full sm:w-auto py-2 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shrink-0 cursor-pointer"
+                        title="Send TCS tracking link to customer on WhatsApp"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Send WhatsApp Tracking Alert</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* ACTION BUTTONS PIPELINE */}
                   <div className="flex flex-wrap items-center gap-2.5 pt-2">
                     
-                    {/* STAGE 1: PENDING -> SHOW ONLY CONFIRM BUTTON */}
+                    {/* PENDING STAGE 1: ASK WHATSAPP CONFIRMATION */}
                     {isPending && (
                       <button
-                        onClick={() => updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS', `✓ Order #${order.id} Confirmed!`)}
-                        className="flex-1 py-3 px-4 rounded-xl bg-emerald-500 text-black hover:bg-emerald-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
+                        onClick={() => handleAskCustomerToConfirm(order)}
+                        className="py-3 px-4 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md"
+                        title="Send WhatsApp message asking customer to confirm order"
                       >
-                        <Check className="w-4 h-4" />
-                        <span>Confirm Order</span>
+                        <HelpCircle className="w-4 h-4" />
+                        <span>1. Ask WhatsApp</span>
                       </button>
                     )}
 
-                    {/* STAGE 2: CONFIRMED -> CONFIRM IS GONE, NOW SHOW ONLY IN-TRANSIT BUTTON */}
+                    {/* PENDING STAGE 2: 1-CLICK AUTO-BOOK & DISPATCH VIA TCS API */}
+                    {isPending && (
+                      <button
+                        onClick={() => handleAutoBookTCS(order)}
+                        disabled={isBookingThis}
+                        className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[190px]"
+                        title="Auto-book with TCS API and generate tracking CN"
+                      >
+                        {isBookingThis ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span>Booking TCS...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Zap className="w-4 h-4 fill-black" />
+                            <span>2. Auto-Book TCS (Dispatch)</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+
+                    {/* STAGE 2: CONFIRMED -> HANDOVER IN-TRANSIT */}
                     {isConfirmed && !isInTransit && !isDelivered && (
                       <button
                         onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `🚚 Order #${order.id} Handed Over to TCS!`)}
@@ -714,7 +957,7 @@ export default function AdminDashboardPage() {
                       </button>
                     )}
 
-                    {/* STAGE 3: IN TRANSIT -> IN-TRANSIT IS GONE, NOW SHOW ONLY DELIVERED BUTTON */}
+                    {/* STAGE 3: IN TRANSIT -> MARK DELIVERED */}
                     {isInTransit && !isDelivered && (
                       <button
                         onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected', `🎁 Order #${order.id} Delivered Successfully!`)}
@@ -725,7 +968,7 @@ export default function AdminDashboardPage() {
                       </button>
                     )}
 
-                    {/* STAGE 4: DELIVERED -> SHOW COMPLETED BADGE */}
+                    {/* STAGE 4: DELIVERED -> COMPLETED BADGE */}
                     {isDelivered && (
                       <div className="flex-1 py-2.5 px-4 rounded-xl bg-blue-950/60 border border-blue-500/50 text-blue-400 text-xs font-bold flex items-center justify-center gap-2">
                         <CheckCircle2 className="w-4 h-4 text-blue-400" />
@@ -733,7 +976,7 @@ export default function AdminDashboardPage() {
                       </div>
                     )}
 
-                    {/* IF CANCELLED -> SHOW REOPEN OPTION */}
+                    {/* IF CANCELLED -> REOPEN */}
                     {isCancelled && (
                       <button
                         onClick={() => updateOrderStatus(order.id, 'Pending Verification', `🔄 Order #${order.id} Reopened.`)}
@@ -741,30 +984,6 @@ export default function AdminDashboardPage() {
                       >
                         <RefreshCw className="w-4 h-4" />
                         <span>Reopen Order</span>
-                      </button>
-                    )}
-
-                    {/* WHATSAPP ACTION 1: ASK CUSTOMER TO CONFIRM ON WHATSAPP */}
-                    {isPending && (
-                      <button
-                        onClick={() => handleAskCustomerToConfirm(order)}
-                        className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                        title="Send WhatsApp message asking customer to confirm order"
-                      >
-                        <HelpCircle className="w-4 h-4" />
-                        <span>Ask WhatsApp</span>
-                      </button>
-                    )}
-
-                    {/* WHATSAPP ACTION 2: SEND TCS DISPATCH NOTIFICATION */}
-                    {isConfirmed && (
-                      <button
-                        onClick={() => handleSendDispatchWhatsApp(order)}
-                        className="py-2.5 px-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-[#25D366] hover:text-white border border-[#25D366]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                        title="Send WhatsApp dispatch tracking alert to customer"
-                      >
-                        <Send className="w-4 h-4" />
-                        <span>Notify Dispatch</span>
                       </button>
                     )}
 
