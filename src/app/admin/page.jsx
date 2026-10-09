@@ -24,6 +24,8 @@ export default function AdminDashboardPage() {
   const [statusToast, setStatusToast] = useState(null);
   const [copiedField, setCopiedField] = useState(null);
   const [bookingOrderId, setBookingOrderId] = useState(null);
+  const [cancellingOrderId, setCancellingOrderId] = useState(null);
+  const [isTestMode, setIsTestMode] = useState(false);
 
   const initialSampleOrders = [
     {
@@ -393,6 +395,52 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Cancel & Delete Booking from TCS Envio Portal
+  const handleCancelTCSBooking = async (order) => {
+    const cn = order.tcsTrackingNumber;
+    const confirmed = window.confirm(
+      `⚠️ CANCEL TCS BOOKING CONFIRMATION:\n\nAre you sure you want to cancel the TCS booking for:\n• Order ID: #${order.id}\n• TCS CN: ${cn || 'Pending'}\n• Customer: ${order.customerName}\n\nThis will cancel the pickup request on the TCS Envio portal and mark the order cancelled.`
+    );
+    if (!confirmed) return;
+
+    setCancellingOrderId(order.id);
+    try {
+      const res = await fetch('/api/tcs/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: order.id,
+          tcsTrackingNumber: cn
+        })
+      });
+      const data = await res.json();
+
+      const updated = allOrders.map((o) =>
+        o.id === order.id
+          ? { ...o, status: 'Cancelled (TCS Booking Deleted)', tcsTrackingNumber: null }
+          : o
+      );
+      setLocalOrders(updated);
+      if (setUserOrders) setUserOrders(updated);
+      try {
+        localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+      } catch (e) {}
+
+      setStatusToast(`✓ TCS Booking for Order #${order.id} (CN #${cn}) Deleted & Cancelled!`);
+      setTimeout(() => setStatusToast(null), 4500);
+
+      // Optional WhatsApp notification to customer
+      const notifyCust = window.confirm(`Do you want to send a Cancellation Notice to ${order.customerName} on WhatsApp?`);
+      if (notifyCust) {
+        handleSendCancelWhatsApp(order);
+      }
+    } catch (err) {
+      alert('Failed to cancel TCS booking.');
+    } finally {
+      setCancellingOrderId(null);
+    }
+  };
+
   // Combine multiple orders for same customer phone
   const handleCombineOrders = (phoneToCombine) => {
     const matching = allOrders.filter(o => (o.phone === phoneToCombine || o.whatsapp === phoneToCombine) && (o.status || '').toLowerCase().includes('pending'));
@@ -565,6 +613,25 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* TCS Test Mode / Live Mode Switch */}
+          <button
+            onClick={() => {
+              const nextMode = !isTestMode;
+              setIsTestMode(nextMode);
+              setStatusToast(nextMode ? '🧪 TCS Sandbox Test Mode: ON (Safe Simulation)' : '🔴 Live TCS Production API: ACTIVE');
+              setTimeout(() => setStatusToast(null), 3000);
+            }}
+            className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-black uppercase flex items-center gap-1.5 transition-all cursor-pointer ${
+              isTestMode
+                ? 'bg-amber-500/20 text-amber-300 border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/60 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+            }`}
+            title={isTestMode ? 'Test Mode Active: Safe testing without real courier booking' : 'Live Mode Active: Real bookings sent to TCS'}
+          >
+            <span className={`w-2 h-2 rounded-full ${isTestMode ? 'bg-amber-400 animate-ping' : 'bg-emerald-400 animate-pulse'}`} />
+            <span>{isTestMode ? '🧪 TCS Test Mode' : '🟢 Live TCS API'}</span>
+          </button>
+
           {/* Sound Toggle */}
           <button
             onClick={() => {
@@ -881,7 +948,7 @@ export default function AdminDashboardPage() {
                   {order.tcsTrackingNumber && (isConfirmed || isInTransit || isDelivered) && (
                     <div className="p-4 rounded-2xl bg-gradient-to-r from-red-950/30 via-black to-red-950/20 border border-red-500/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                       <div className="space-y-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="px-2 py-0.5 rounded bg-red-600 text-white text-[10px] font-black uppercase">TCS Envio</span>
                           <span className="text-gray-400 text-xs">Consignment CN:</span>
                           <strong className="font-mono text-sm text-white font-bold tracking-wider">{order.tcsTrackingNumber}</strong>
@@ -898,14 +965,37 @@ export default function AdminDashboardPage() {
                         </p>
                       </div>
 
-                      <button
-                        onClick={() => handleSendDispatchWhatsApp(order)}
-                        className="w-full sm:w-auto py-2 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shrink-0 cursor-pointer"
-                        title="Send TCS tracking link to customer on WhatsApp"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Send WhatsApp Tracking Alert</span>
-                      </button>
+                      <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+                        <button
+                          onClick={() => handleSendDispatchWhatsApp(order)}
+                          className="flex-1 sm:flex-none py-2 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shrink-0 cursor-pointer"
+                          title="Send TCS tracking link to customer on WhatsApp"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Send WhatsApp Tracking Alert</span>
+                        </button>
+
+                        {!isDelivered && (
+                          <button
+                            onClick={() => handleCancelTCSBooking(order)}
+                            disabled={cancellingOrderId === order.id}
+                            className="py-2 px-3 rounded-xl bg-red-900/40 hover:bg-red-600 text-red-300 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer shadow-sm"
+                            title="Cancel and delete this booking from TCS Envio portal"
+                          >
+                            {cancellingOrderId === order.id ? (
+                              <>
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                <span>Cancelling...</span>
+                              </>
+                            ) : (
+                              <>
+                                <X className="w-3.5 h-3.5" />
+                                <span>Cancel TCS Booking</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   )}
 
