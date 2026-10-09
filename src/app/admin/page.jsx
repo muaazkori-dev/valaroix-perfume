@@ -186,17 +186,19 @@ export default function AdminDashboardPage() {
             // Update tracked IDs
             lastOrderIds = new Set(serverOrders.map(o => o.id));
 
-            // Sync with local state intelligently
+            // Sync with local state intelligently without overwriting recent user actions
             setLocalOrders((prev) => {
-              const combined = serverOrders.map((so) => {
-                const localMatch = prev.find((p) => p.id === so.id);
-                if (localMatch && localMatch.tcsTrackingNumber && !so.tcsTrackingNumber) {
-                  return { ...so, status: localMatch.status || so.status, tcsTrackingNumber: localMatch.tcsTrackingNumber };
+              const merged = serverOrders.map((so) => {
+                const local = prev.find((p) => p.id === so.id);
+                if (!local) return so;
+                const isLocalModified = (local.status && local.status !== 'Pending Verification') || local.tcsTrackingNumber;
+                if (isLocalModified && (so.status === 'Pending Verification' || !so.status) && !so.tcsTrackingNumber) {
+                  return { ...so, status: local.status, tcsTrackingNumber: local.tcsTrackingNumber };
                 }
-                return { ...(localMatch || {}), ...so };
+                return { ...local, ...so };
               });
-              const uniqueLocal = prev.filter((p) => !serverOrders.some((so) => so.id === p.id));
-              return [...combined, ...uniqueLocal];
+              const localOnly = prev.filter((p) => !serverOrders.some((so) => so.id === p.id));
+              return [...merged, ...localOnly];
             });
 
             try {
@@ -430,47 +432,80 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Cancel & Delete Booking from TCS Envio Portal
-  const handleCancelTCSBooking = async (order) => {
-    const cn = order.tcsTrackingNumber;
-    const confirmed = window.confirm(
-      `⚠️ CANCEL TCS BOOKING CONFIRMATION:\n\nAre you sure you want to cancel the TCS booking for:\n• Order ID: #${order.id}\n• TCS CN: ${cn || 'Pending'}\n• Customer: ${order.customerName}\n\nThis will cancel the pickup request on the TCS Envio portal and mark the order cancelled.`
-    );
+  // Unified Cancel Handler (for both Pending and TCS Dispatched orders)
+  const handleCancelOrder = async (order) => {
+    const isBookedWithTCS = !!order.tcsTrackingNumber;
+    const confirmMessage = isBookedWithTCS
+      ? `⚠️ CANCEL ORDER & DELETE TCS BOOKING:\n\nAre you sure you want to cancel Order #${order.id}?\n• Customer: ${order.customerName}\n• TCS CN #${order.tcsTrackingNumber}\n\nThis will cancel the pickup request on the TCS Envio portal and mark the order Cancelled.`
+      : `⚠️ CANCEL ORDER CONFIRMATION:\n\nAre you sure you want to cancel Order #${order.id} for ${order.customerName}?`;
+
+    const confirmed = window.confirm(confirmMessage);
     if (!confirmed) return;
 
     setCancellingOrderId(order.id);
-    try {
-      const res = await fetch('/api/tcs/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId: order.id,
-          tcsTrackingNumber: cn
-        })
-      });
-      const data = await res.json();
+    const updatedStatus = isBookedWithTCS ? 'Cancelled (TCS Booking Deleted)' : 'Cancelled';
 
-      const updated = allOrders.map((o) =>
-        o.id === order.id
-          ? { ...o, status: 'Cancelled (TCS Booking Deleted)', tcsTrackingNumber: null }
-          : o
+    try {
+      // 1. Immediately update local state
+      setLocalOrders((prev) =>
+        prev.map((o) =>
+          o.id === order.id ? { ...o, status: updatedStatus, tcsTrackingNumber: null } : o
+        )
       );
-      setLocalOrders(updated);
-      if (setUserOrders) setUserOrders(updated);
+      if (setUserOrders) {
+        setUserOrders((prev) =>
+          prev.map((o) =>
+            o.id === order.id ? { ...o, status: updatedStatus, tcsTrackingNumber: null } : o
+          )
+        );
+      }
+
+      // 2. Persist to localStorage
       try {
-        localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+        const saved = JSON.parse(localStorage.getItem('valaroix_orders') || '[]');
+        const updatedSaved = saved.map((o) =>
+          o.id === order.id ? { ...o, status: updatedStatus, tcsTrackingNumber: null } : o
+        );
+        localStorage.setItem('valaroix_orders', JSON.stringify(updatedSaved));
       } catch (e) {}
 
-      setStatusToast(`✓ TCS Booking for Order #${order.id} (CN #${cn}) Deleted & Cancelled!`);
-      setTimeout(() => setStatusToast(null), 4500);
+      // 3. Persist to central cloud database
+      try {
+        await fetch('/api/orders', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: order.id,
+            status: updatedStatus,
+            tcsTrackingNumber: null
+          })
+        });
+      } catch (e) {}
 
-      // Optional WhatsApp notification to customer
+      // 4. If booked with TCS, call TCS cancellation endpoint to delete from TCS Envio portal
+      if (isBookedWithTCS) {
+        try {
+          await fetch('/api/tcs/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: order.id,
+              tcsTrackingNumber: order.tcsTrackingNumber
+            })
+          });
+        } catch (e) {}
+      }
+
+      setStatusToast(`✓ Order #${order.id} Cancelled successfully.`);
+      setTimeout(() => setStatusToast(null), 3500);
+
+      // 5. Ask if user wants to send WhatsApp cancellation notice
       const notifyCust = window.confirm(`Do you want to send a Cancellation Notice to ${order.customerName} on WhatsApp?`);
       if (notifyCust) {
         handleSendCancelWhatsApp(order);
       }
     } catch (err) {
-      alert('Failed to cancel TCS booking.');
+      alert('Failed to cancel order.');
     } finally {
       setCancellingOrderId(null);
     }
@@ -1012,7 +1047,7 @@ export default function AdminDashboardPage() {
 
                         {!isDelivered && (
                           <button
-                            onClick={() => handleCancelTCSBooking(order)}
+                            onClick={() => handleCancelOrder(order)}
                             disabled={cancellingOrderId === order.id}
                             className="py-2 px-3 rounded-xl bg-red-900/40 hover:bg-red-600 text-red-300 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1 transition-all cursor-pointer shadow-sm"
                             title="Cancel and delete this booking from TCS Envio portal"
@@ -1115,14 +1150,16 @@ export default function AdminDashboardPage() {
                     {/* CANCEL BUTTON */}
                     {!isDelivered && !isCancelled && (
                       <button
-                        onClick={() => {
-                          updateOrderStatus(order.id, 'Cancelled', `Order #${order.id} Cancelled.`);
-                          handleSendCancelWhatsApp(order);
-                        }}
+                        onClick={() => handleCancelOrder(order)}
+                        disabled={cancellingOrderId === order.id}
                         className="py-2.5 px-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/40 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition-all cursor-pointer"
-                        title="Cancel Order and Notify Customer via WhatsApp"
+                        title="Cancel Order (with confirmation & TCS deletion)"
                       >
-                        <X className="w-4 h-4" />
+                        {cancellingOrderId === order.id ? (
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <X className="w-4 h-4" />
+                        )}
                         <span>Cancel</span>
                       </button>
                     )}
