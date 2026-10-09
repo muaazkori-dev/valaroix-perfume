@@ -43,7 +43,7 @@ export default function Footer() {
           <div className="space-y-3">
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">CUSTOMER SERVICE</h4>
             <ul className="space-y-2">
-              <li><a href="/admin" className="hover:text-[#D4AF37] transition-colors">Track Order</a></li>
+              <li><Link href="/track" className="hover:text-[#D4AF37] transition-colors">Track Order (TCS Live)</Link></li>
               <li><a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors">Support (support@valaroix.com)</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Shipping Policy</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Returns & Refunds</a></li>

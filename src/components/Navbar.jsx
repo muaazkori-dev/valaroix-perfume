@@ -73,11 +73,13 @@ export default function Navbar({ onOpenAdmin }) {
           </Link>
 
           {/* CENTER: DESKTOP NAVIGATION LINKS (MATCHING MOCKUP) */}
-          <nav className="hidden lg:flex items-center gap-8 text-xs uppercase font-semibold tracking-widest text-gray-300">
-            <a href="#hero" className="hover:text-[#D4AF37] transition-colors py-1">HOME</a>
-            <a href="#shop" className="hover:text-[#D4AF37] transition-colors py-1">SHOP</a>
-            <a href="#shop" className="hover:text-[#D4AF37] transition-colors py-1">COLLECTIONS</a>
-            <a href="#notes" className="hover:text-[#D4AF37] transition-colors py-1">ABOUT US</a>
+          <nav className="hidden lg:flex items-center gap-7 text-xs uppercase font-semibold tracking-widest text-gray-300">
+            <a href="/#hero" className="hover:text-[#D4AF37] transition-colors py-1">HOME</a>
+            <a href="/#shop" className="hover:text-[#D4AF37] transition-colors py-1">SHOP</a>
+            <a href="/#shop" className="hover:text-[#D4AF37] transition-colors py-1">COLLECTIONS</a>
+            <Link href="/track" className="hover:text-[#D4AF37] transition-colors py-1 flex items-center gap-1 text-[#D4AF37]">
+              <Truck className="w-3.5 h-3.5" /> TRACK
+            </Link>
             <a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors py-1">CONTACT</a>
           </nav>
 
