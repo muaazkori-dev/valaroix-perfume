@@ -25,6 +25,7 @@ export default function AdminDashboardPage() {
   const [copiedField, setCopiedField] = useState(null);
   const [bookingOrderId, setBookingOrderId] = useState(null);
   const [cancellingOrderId, setCancellingOrderId] = useState(null);
+  const [cancelConfirmOrder, setCancelConfirmOrder] = useState(null);
   const [isTestMode, setIsTestMode] = useState(false);
 
   const initialSampleOrders = [
@@ -432,17 +433,16 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Unified Cancel Handler (for both Pending and TCS Dispatched orders)
-  const handleCancelOrder = async (order) => {
+  // Trigger Cancellation Confirmation Modal
+  const handleCancelOrder = (order) => {
+    setCancelConfirmOrder(order);
+  };
+
+  // Unified Execute Cancel Handler (for both Pending and TCS Dispatched orders)
+  const executeCancelOrder = async (order, sendWhatsApp = false) => {
     const isBookedWithTCS = !!order.tcsTrackingNumber;
-    const confirmMessage = isBookedWithTCS
-      ? `⚠️ CANCEL ORDER & DELETE TCS BOOKING:\n\nAre you sure you want to cancel Order #${order.id}?\n• Customer: ${order.customerName}\n• TCS CN #${order.tcsTrackingNumber}\n\nThis will cancel the pickup request on the TCS Envio portal and mark the order Cancelled.`
-      : `⚠️ CANCEL ORDER CONFIRMATION:\n\nAre you sure you want to cancel Order #${order.id} for ${order.customerName}?`;
-
-    const confirmed = window.confirm(confirmMessage);
-    if (!confirmed) return;
-
     setCancellingOrderId(order.id);
+    setCancelConfirmOrder(null);
     const updatedStatus = isBookedWithTCS ? 'Cancelled (TCS Booking Deleted)' : 'Cancelled';
 
     try {
@@ -499,9 +499,8 @@ export default function AdminDashboardPage() {
       setStatusToast(`✓ Order #${order.id} Cancelled successfully.`);
       setTimeout(() => setStatusToast(null), 3500);
 
-      // 5. Ask if user wants to send WhatsApp cancellation notice
-      const notifyCust = window.confirm(`Do you want to send a Cancellation Notice to ${order.customerName} on WhatsApp?`);
-      if (notifyCust) {
+      // 5. Optionally open WhatsApp immediately
+      if (sendWhatsApp) {
         handleSendCancelWhatsApp(order);
       }
     } catch (err) {
@@ -578,8 +577,9 @@ export default function AdminDashboardPage() {
   // Client WhatsApp Action 3: SEND CANCEL ALERT
   const handleSendCancelWhatsApp = (order) => {
     const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '');
+    const price = getOrderPrice(order);
     const text = encodeURIComponent(
-      `Assalam-o-Alaikum ${order.customerName}! Aapka VALAROIX order #${order.id} cancel kar diya gaya hai. Mazeed maloomat ke liye hum se rabta karein.`
+      `Assalam-o-Alaikum ${order.customerName || 'Valued Customer'}! ✨\n\nHum VALAROIX Luxury Fragrance se baat kar rahe hain.\n\nAapka order #${order.id} cancel kar diya gaya hai.\n\n📦 Order: #${order.id}\n🌸 Item: ${order.items ? order.items.map(i => `${i.name} x${i.quantity || 1}`).join(', ') : (order.item || 'VALAROIX Fragrance')}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n\nAgar aap dobara order place karna chahte hain ya koi sawal hai, to hum se isi WhatsApp par rabta kar sakte hain.\n\nShukriya!\nTeam VALAROIX\nhttps://valaroix.com`
     );
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
@@ -1136,15 +1136,25 @@ export default function AdminDashboardPage() {
                       </div>
                     )}
 
-                    {/* IF CANCELLED -> REOPEN */}
+                    {/* IF CANCELLED -> WHATSAPP CANCEL NOTICE & REOPEN */}
                     {isCancelled && (
-                      <button
-                        onClick={() => updateOrderStatus(order.id, 'Pending Verification', `🔄 Order #${order.id} Reopened.`)}
-                        className="flex-1 py-2.5 px-4 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                        <span>Reopen Order</span>
-                      </button>
+                      <div className="flex flex-wrap items-center gap-2 flex-1">
+                        <button
+                          onClick={() => handleSendCancelWhatsApp(order)}
+                          className="flex-1 py-2.5 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md min-w-[200px]"
+                          title="Send Cancellation Notification to Customer via WhatsApp"
+                        >
+                          <Send className="w-4 h-4" />
+                          <span>Send WhatsApp Cancellation Alert</span>
+                        </button>
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'Pending Verification', `🔄 Order #${order.id} Reopened.`)}
+                          className="py-2.5 px-4 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-black border border-amber-500/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                          <span>Reopen Order</span>
+                        </button>
+                      </div>
                     )}
 
                     {/* CANCEL BUTTON */}
@@ -1198,6 +1208,97 @@ export default function AdminDashboardPage() {
             </h4>
             <div className="w-full max-h-[70vh] rounded-2xl overflow-hidden border border-white/10 bg-black flex items-center justify-center p-2">
               <img src={selectedReceipt} alt="Receipt Slip" className="w-full max-h-[60vh] object-contain rounded-xl" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* IN-APP CANCEL CONFIRMATION MODAL */}
+      {cancelConfirmOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fadeIn">
+          <div className="relative max-w-md w-full bg-[#141414] border border-red-500/50 rounded-3xl p-6 space-y-5 shadow-2xl">
+            <button
+              onClick={() => setCancelConfirmOrder(null)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-gray-300 hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 text-red-400">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center shrink-0">
+                <AlertCircle className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h4 className="font-serif-mockup text-lg font-bold text-white">
+                  Cancel Order #{cancelConfirmOrder.id}
+                </h4>
+                <p className="text-xs text-gray-400">
+                  Confirmation & WhatsApp Alert
+                </p>
+              </div>
+            </div>
+
+            {/* ORDER BRIEF */}
+            <div className="p-4 rounded-2xl bg-black/60 border border-white/10 space-y-2 text-xs">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Customer:</span>
+                <span className="font-bold text-white">{cancelConfirmOrder.customerName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Phone:</span>
+                <span className="font-mono text-[#D4AF37]">{cancelConfirmOrder.phone || cancelConfirmOrder.whatsapp}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Total Bill:</span>
+                <span className="font-bold text-[#D4AF37]">Rs. {getOrderPrice(cancelConfirmOrder).toLocaleString()}</span>
+              </div>
+              {cancelConfirmOrder.tcsTrackingNumber && (
+                <div className="pt-2 border-t border-white/10 flex items-center justify-between text-cyan-400">
+                  <span className="text-gray-400">TCS Booking:</span>
+                  <span className="font-mono font-bold">CN #{cancelConfirmOrder.tcsTrackingNumber}</span>
+                </div>
+              )}
+            </div>
+
+            {/* NOTICE */}
+            <div className="p-3.5 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 space-y-1.5">
+              <p className="font-bold flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 text-red-400" /> Order Cancel karne par:
+              </p>
+              <ul className="list-disc pl-4 space-y-1 text-[11px] text-gray-300">
+                {cancelConfirmOrder.tcsTrackingNumber ? (
+                  <li>TCS Envio portal se booking <strong>free me automatically cancel & delete</strong> ho jayegi.</li>
+                ) : (
+                  <li>Order status Cancelled me move ho jayega.</li>
+                )}
+                <li>Aap customer ko 1-Click me WhatsApp par cancellation alert bhej sakte hain.</li>
+              </ul>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="space-y-2 pt-2">
+              <button
+                onClick={() => executeCancelOrder(cancelConfirmOrder, true)}
+                className="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-95"
+              >
+                <Send className="w-4 h-4" />
+                <span>Cancel & Send WhatsApp Notice</span>
+              </button>
+
+              <button
+                onClick={() => executeCancelOrder(cancelConfirmOrder, false)}
+                className="w-full py-2.5 px-4 rounded-xl bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-300 text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Cancel Order Only (Without WhatsApp)</span>
+              </button>
+
+              <button
+                onClick={() => setCancelConfirmOrder(null)}
+                className="w-full py-2 text-center text-xs text-gray-400 hover:text-white cursor-pointer"
+              >
+                Don't Cancel (Wapis Chalein)
+              </button>
             </div>
           </div>
         </div>
