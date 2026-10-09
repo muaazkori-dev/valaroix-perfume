@@ -142,8 +142,23 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    const { orderId, status } = await req.json();
-    globalOrders = globalOrders.map(o => o.id === orderId ? { ...o, status } : o);
+    const data = await req.json();
+    const { orderId, id, ...updates } = data;
+    const targetId = orderId || id;
+
+    let found = false;
+    globalOrders = globalOrders.map((o) => {
+      if (o.id === targetId) {
+        found = true;
+        return { ...o, ...updates };
+      }
+      return o;
+    });
+
+    if (!found && targetId) {
+      globalOrders = [{ id: targetId, ...updates }, ...globalOrders];
+    }
+
     return NextResponse.json(
       { success: true, orders: globalOrders },
       {

@@ -186,11 +186,17 @@ export default function AdminDashboardPage() {
             // Update tracked IDs
             lastOrderIds = new Set(serverOrders.map(o => o.id));
 
-            // Sync with local state
+            // Sync with local state intelligently
             setLocalOrders((prev) => {
-              const merged = [...serverOrders, ...prev];
-              const unique = merged.filter((o, idx, self) => idx === self.findIndex(x => x.id === o.id));
-              return unique;
+              const combined = serverOrders.map((so) => {
+                const localMatch = prev.find((p) => p.id === so.id);
+                if (localMatch && localMatch.tcsTrackingNumber && !so.tcsTrackingNumber) {
+                  return { ...so, status: localMatch.status || so.status, tcsTrackingNumber: localMatch.tcsTrackingNumber };
+                }
+                return { ...(localMatch || {}), ...so };
+              });
+              const uniqueLocal = prev.filter((p) => !serverOrders.some((so) => so.id === p.id));
+              return [...combined, ...uniqueLocal];
             });
 
             try {
@@ -371,19 +377,48 @@ export default function AdminDashboardPage() {
 
       const data = await res.json();
       if (data.success && data.tcsTrackingNumber) {
-        // Update local order state
-        const updated = allOrders.map((o) =>
-          o.id === order.id
-            ? { ...o, status: 'Confirmed & Dispatched via TCS', tcsTrackingNumber: data.tcsTrackingNumber }
-            : o
+        const cnNumber = data.tcsTrackingNumber;
+
+        // 1. Update local orders state immediately
+        setLocalOrders((prev) =>
+          prev.map((o) =>
+            o.id === order.id
+              ? { ...o, status: 'Confirmed & Dispatched via TCS', tcsTrackingNumber: cnNumber }
+              : o
+          )
         );
-        setLocalOrders(updated);
-        if (setUserOrders) setUserOrders(updated);
+
+        if (setUserOrders) {
+          setUserOrders((prev) =>
+            prev.map((o) =>
+              o.id === order.id
+                ? { ...o, status: 'Confirmed & Dispatched via TCS', tcsTrackingNumber: cnNumber }
+                : o
+            )
+          );
+        }
+
+        // 2. Persist to localStorage
         try {
-          localStorage.setItem('valaroix_orders', JSON.stringify(updated));
+          const saved = JSON.parse(localStorage.getItem('valaroix_orders') || '[]');
+          const updatedSaved = saved.map(o => o.id === order.id ? { ...o, status: 'Confirmed & Dispatched via TCS', tcsTrackingNumber: cnNumber } : o);
+          localStorage.setItem('valaroix_orders', JSON.stringify(updatedSaved));
         } catch (e) {}
 
-        setStatusToast(`🚀 TCS Auto-Booked! CN: #${data.tcsTrackingNumber} assigned to Order #${order.id}`);
+        // 3. Persist to central cloud database
+        try {
+          await fetch('/api/orders', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: order.id,
+              status: 'Confirmed & Dispatched via TCS',
+              tcsTrackingNumber: cnNumber
+            })
+          });
+        } catch (e) {}
+
+        setStatusToast(`🚀 TCS Auto-Booked! CN: #${cnNumber} assigned to Order #${order.id}`);
         setTimeout(() => setStatusToast(null), 4500);
       } else {
         alert(data.message || 'TCS Booking failed. Please check connection.');
