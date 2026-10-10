@@ -116,9 +116,10 @@ export default function AdminDashboardPage() {
       return o.items.reduce((sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1), 0);
     }
     const itemStr = (o.item || o.items?.[0]?.name || '').toLowerCase();
-    if (itemStr.includes('ysl')) return 3300;
-    if (itemStr.includes('cedrat')) return 2999;
-    return 2699;
+    if (itemStr.includes('vertex')) return 3499;
+    if (itemStr.includes('noir')) return 2999;
+    if (itemStr.includes('sauvage') || itemStr.includes('classic')) return 2499;
+    return 2999;
   };
 
   const getOrderProfit = (o) => {

@@ -11,51 +11,51 @@ export const products = [
   {
     id: 'valaroix-noir-x',
     name: 'VALAROIX NOIR X',
-    subtitle: 'Extrait De Parfum • Crafted For Lasting Impressions',
-    description: 'An intoxicating and magnetic blend of Calabrian Bergamot, spicy aromatic lavender, and deep smoky amber wood crafted for supreme projection.',
-    startingPrice: { pkr: 2699, usd: 10 },
+    subtitle: 'Inspired by Dior Sauvage • 40% Pure Oil • Free Delivery',
+    description: 'An intoxicating and magnetic blend of Calabrian Bergamot, spicy Sichuan Pepper, and French Lavender settling into rich Ambroxan and woody amber. Crafted with 40% pure fragrance oil.',
+    startingPrice: { pkr: 2999, usd: 11 },
     image: '/products/noir-x.jpg',
     color: '#1e3a8a',
     isSoldOut: false,
     freeDelivery: true,
-    oilConcentration: '30% Pure Oil',
-    topNotes: 'Calabrian Bergamot, Spicy Pepper, Elemi',
-    heartNotes: 'Lavender, Pink Pepper, Vetiver, Patchouli',
-    baseNotes: 'Raw Amber Wood, Cedar, Ambroxan',
+    oilConcentration: '40% Pure Oil',
+    topNotes: 'Calabrian Bergamot, Sichuan Pepper, Reggio Citrus',
+    heartNotes: 'Star Anise, Nutmeg, French Lavender, Geranium',
+    baseNotes: 'Ambroxan, Warm Vanilla, Cedarwood, Amber',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2699, usd: 10, soldOut: false },
-        '24h': { pkr: 3699, usd: 14, soldOut: true }
+        '10h': { pkr: 2999, usd: 11, soldOut: false },
+        '24h': { pkr: 3999, usd: 15, soldOut: true }
       }
     }
   },
   {
     id: 'valaroix-vertex',
     name: 'VALAROIX VERTEX',
-    subtitle: 'Extrait De Parfum • Crafted For Lasting Impressions',
-    description: 'An electrifying signature scent engineered for supreme longevity, blending crisp citrus zest with rich aristocratic woods and seductive amber.',
-    startingPrice: { pkr: 2699, usd: 10 },
+    subtitle: 'Inspired by YSL Y EDP • 40% Pure Oil • Free Delivery',
+    description: 'An electrifying and aristocratic signature blend of crisp green apple, zesty ginger, and aromatic sage resting upon dark tonka bean and smoky amberwood. Crafted with 40% pure fragrance oil.',
+    startingPrice: { pkr: 3499, usd: 13 },
     image: '/products/vertex.jpg',
     color: '#1e3a8a',
     isSoldOut: false,
     freeDelivery: true,
-    oilConcentration: '30% Pure Oil',
-    topNotes: 'Sicilian Citrus, Sparkling Grapefruit, Fresh Mint',
-    heartNotes: 'Fresh Ginger, Nutmeg, Jasmine, Cardamom',
-    baseNotes: 'Rich Incense, Vetiver, Cedarwood, Sandalwood',
+    oilConcentration: '40% Pure Oil',
+    topNotes: 'Crisp Green Apple, Fresh Ginger, Calabrian Bergamot',
+    heartNotes: 'Aromatic Sage, Juniper Berries, Bourbon Geranium',
+    baseNotes: 'Amber Wood, Tonka Bean, Cedarwood, Olibanum, Vetiver',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2699, usd: 10, soldOut: false },
-        '24h': { pkr: 3699, usd: 14, soldOut: true }
+        '10h': { pkr: 3499, usd: 13, soldOut: false },
+        '24h': { pkr: 4499, usd: 16, soldOut: true }
       }
     }
   },
   {
     id: 'valaroix-classic-noir',
-    name: 'VALAROIX CLASSIC (BLACK & GOLD)',
-    subtitle: 'Royal Black & Gold Edition • Spicy Bergamot & Wild Lavender',
-    description: 'The iconic Valaroix Black & Gold flagship bottle. Warm oriental amber, French lavender, and rich tonka bean with lasting regal presence.',
-    startingPrice: { pkr: 2699, usd: 10 },
+    name: 'VALAROIX SAUVAGE (CLASSIC)',
+    subtitle: 'Royal Black & Gold Edition • 30% Pure Oil • Free Delivery',
+    description: 'The iconic Valaroix Black & Gold flagship bottle. Calabrian Bergamot, nutmeg, and warm amber wood with 30% pure perfume oil concentration.',
+    startingPrice: { pkr: 2499, usd: 9 },
     image: '/products/sauvage.jpg?v=2',
     color: '#d4af37',
     isSoldOut: false,
@@ -66,8 +66,8 @@ export const products = [
     baseNotes: 'Amber Wood, Sandalwood, Haitian Vetiver',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2699, usd: 10, soldOut: false },
-        '24h': { pkr: 3699, usd: 14, soldOut: true }
+        '10h': { pkr: 2499, usd: 9, soldOut: false },
+        '24h': { pkr: 3499, usd: 13, soldOut: true }
       }
     }
   }
@@ -107,7 +107,7 @@ export default function ProductCatalog() {
               DISCOVER OUR FRAGRANCES
             </h2>
             <p className="text-xs sm:text-sm text-gray-400 font-light max-w-lg mx-auto">
-              30% Pure Extrait De Parfum • Masterfully Blended for Extreme Longevity • Free Nationwide Delivery
+              40% & 30% Pure Extrait De Parfum • Masterfully Blended for Extreme Longevity • Free Nationwide Delivery
             </p>
           </div>
 
@@ -133,11 +133,11 @@ export default function ProductCatalog() {
                   <div className="flex items-center justify-between gap-2 z-20">
                     {isBlueEdition ? (
                       <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-sky-300 bg-sky-950/80 border border-sky-500/40 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        🌊 Azure Signature Edition
+                        🌊 Azure Edition • 40% Oil
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-[#D4AF37] bg-[#D4AF37]/15 border border-[#D4AF37]/40 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                        👑 Royal Gold Edition
+                        👑 Royal Gold • 30% Oil
                       </span>
                     )}
 
@@ -206,7 +206,7 @@ export default function ProductCatalog() {
                         {formatPrice(product.startingPrice)}
                       </span>
                       <span className="text-[10px] text-gray-400 block mt-0.5">
-                        50ml Extrait De Parfum (30% Oil)
+                        50ml Extrait De Parfum • {product.oilConcentration || '30% Pure Oil'}
                       </span>
                     </div>
 

@@ -86,7 +86,7 @@ export default function ProductDetailPage() {
               {/* Bottom Subtle Badge */}
               <div className="absolute bottom-4 left-4 right-4 z-20 bg-black/90 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/10 flex items-center justify-between text-xs">
                 <span className="text-gray-400">Size & Quality:</span>
-                <span className="text-[#D4AF37] font-bold">50ml • 30% Pure Oil Extrait</span>
+                <span className="text-[#D4AF37] font-bold">50ml • {product.oilConcentration || '30% Pure Oil'} Extrait</span>
               </div>
             </div>
 
@@ -94,7 +94,7 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-3 gap-2 text-center text-[11px] text-gray-300">
               <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
                 <Clock className="w-4 h-4 text-[#D4AF37]" />
-                <span className="font-semibold">10-12h+ Lasting</span>
+                <span className="font-semibold">12-14h+ Lasting</span>
               </div>
               <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
                 <Truck className="w-4 h-4 text-[#D4AF37]" />
@@ -146,7 +146,7 @@ export default function ProductDetailPage() {
               </div>
               <div className="flex justify-between py-1 border-b border-white/5">
                 <span className="text-gray-400">Oil Concentration:</span>
-                <span className="font-bold text-[#D4AF37]">30% Pure Fragrance Oil</span>
+                <span className="font-bold text-[#D4AF37]">{product.oilConcentration || '30% Pure Fragrance Oil'}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-white/5">
                 <span className="text-gray-400">Performance:</span>
