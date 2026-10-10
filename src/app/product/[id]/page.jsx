@@ -94,7 +94,7 @@ export default function ProductDetailPage() {
             <div className="grid grid-cols-3 gap-2 text-center text-[11px] text-gray-300">
               <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
                 <Clock className="w-4 h-4 text-[#D4AF37]" />
-                <span className="font-semibold">12-14h+ Lasting</span>
+                <span className="font-semibold">{product.lasting || '8-12 Hours'}</span>
               </div>
               <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
                 <Truck className="w-4 h-4 text-[#D4AF37]" />
@@ -102,7 +102,7 @@ export default function ProductDetailPage() {
               </div>
               <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
                 <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
-                <span className="font-semibold">Pure Fragrance</span>
+                <span className="font-semibold">100% Original</span>
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function ProductDetailPage() {
               </div>
               <div className="flex justify-between py-1 border-b border-white/5">
                 <span className="text-gray-400">Performance:</span>
-                <span className="font-bold text-white">10 to 12+ Hours Lasting</span>
+                <span className="font-bold text-white">{product.lasting || '8 to 12 Hours'} Guaranteed Lasting</span>
               </div>
               <div className="flex justify-between py-1 border-b border-white/5">
                 <span className="text-gray-400">Courier Partner:</span>

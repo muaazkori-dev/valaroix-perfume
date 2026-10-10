@@ -19,6 +19,7 @@ export const products = [
     isSoldOut: false,
     freeDelivery: true,
     oilConcentration: '40% Pure Oil',
+    lasting: '8 to 12 Hours',
     topNotes: 'Calabrian Bergamot, Sichuan Pepper, Reggio Citrus',
     heartNotes: 'Star Anise, Nutmeg, French Lavender, Geranium',
     baseNotes: 'Ambroxan, Warm Vanilla, Cedarwood, Amber',
@@ -40,6 +41,7 @@ export const products = [
     isSoldOut: false,
     freeDelivery: true,
     oilConcentration: '40% Pure Oil',
+    lasting: '8 to 12 Hours',
     topNotes: 'Crisp Green Apple, Fresh Ginger, Calabrian Bergamot',
     heartNotes: 'Aromatic Sage, Juniper Berries, Bourbon Geranium',
     baseNotes: 'Amber Wood, Tonka Bean, Cedarwood, Olibanum, Vetiver',
@@ -61,6 +63,7 @@ export const products = [
     isSoldOut: false,
     freeDelivery: true,
     oilConcentration: '30% Pure Oil',
+    lasting: '6 to 8 Hours',
     topNotes: 'Calabrian Bergamot, Cinnamon, Nutmeg',
     heartNotes: 'Lavender, Damask Rose, Cardamom',
     baseNotes: 'Amber Wood, Sandalwood, Haitian Vetiver',
@@ -206,7 +209,7 @@ export default function ProductCatalog() {
                         {formatPrice(product.startingPrice)}
                       </span>
                       <span className="text-[10px] text-gray-400 block mt-0.5">
-                        50ml Extrait De Parfum • {product.oilConcentration || '30% Pure Oil'}
+                        50ml Extrait • {product.oilConcentration || '30% Pure Oil'} • {product.lasting || '8-12h'} Lasting
                       </span>
                     </div>
 
