@@ -13,7 +13,7 @@ export const metadata = {
     template: "%s | VALAROIX Parfums"
   },
   description: "Official VALAROIX Haute Parfumerie online boutique. Hand-crafted 3D luxury perfumes, Kashmiri Saffron, Damask Rose, and aged Royal Ambergris. Available in 10 Hours+ & 24 Hours+ Lasting Extrait De Parfum.",
-  keywords: ["Valaroix", "Valaroix Perfume", "Valaroix Parfums", "Luxury Perfume Pakistan", "Dior Sauvage Impression", "Cedrat Boise Impression", "YSL Y Impression", "3D Perfume Store"],
+  keywords: ["Valaroix", "Valaroix Perfume", "Valaroix Parfums", "Valaroix NOIR X", "Valaroix VERTEX", "Luxury Perfume Pakistan", "Extrait De Parfum", "3D Perfume Store"],
   authors: [{ name: "VALAROIX Haute Parfumerie" }],
   creator: "VALAROIX",
   publisher: "VALAROIX",

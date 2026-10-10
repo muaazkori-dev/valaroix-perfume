@@ -9,19 +9,19 @@ export default async function sitemap() {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/product/sauvage`,
+      url: `${baseUrl}/product/noir-x`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/product/cedrat-boise`,
+      url: `${baseUrl}/product/vertex`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/product/ysl-y`,
+      url: `${baseUrl}/product/classic`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'weekly',
       priority: 0.9,

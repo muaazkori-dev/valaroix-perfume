@@ -172,7 +172,7 @@ export default function Navbar({ onOpenAdmin }) {
                 autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder='Type perfume name (e.g. Sauvage, Cedrat Boise...)'
+                placeholder='Type perfume name (e.g. NOIR X, VERTEX, Sauvage...)'
                 className="w-full bg-[#0D0D0D] border border-[#D4AF37]/40 rounded-2xl pl-12 pr-4 py-3.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
               />
               <Search className="w-5 h-5 text-[#D4AF37] absolute left-4 top-1/2 -translate-y-1/2" />

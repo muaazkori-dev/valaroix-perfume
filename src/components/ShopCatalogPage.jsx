@@ -16,7 +16,7 @@ export default function ShopCatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [sortBy, setSortBy] = useState('bestseller');
 
-  const categories = ['All', 'Spicy Fresh (Sauvage)', 'Woody Citrus (Cedrat)', 'Aromatic Amber (YSL Y)'];
+  const categories = ['All', 'NOIR X', 'VERTEX', 'Classic Gold'];
 
   // Filter products
   const filteredProducts = products.filter((p) => {
@@ -24,9 +24,9 @@ export default function ShopCatalogPage() {
                           p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           p.topNotes.toLowerCase().includes(searchQuery.toLowerCase());
     
-    if (selectedCategory === 'Spicy Fresh (Sauvage)') return matchesSearch && p.id.includes('sauvage');
-    if (selectedCategory === 'Woody Citrus (Cedrat)') return matchesSearch && p.id.includes('cedrat');
-    if (selectedCategory === 'Aromatic Amber (YSL Y)') return matchesSearch && p.id.includes('ysl');
+    if (selectedCategory === 'NOIR X') return matchesSearch && p.id.includes('noir-x');
+    if (selectedCategory === 'VERTEX') return matchesSearch && p.id.includes('vertex');
+    if (selectedCategory === 'Classic Gold') return matchesSearch && p.id.includes('classic');
     
     return matchesSearch;
   });
@@ -65,7 +65,7 @@ export default function ShopCatalogPage() {
               <Search className="w-4 h-4 text-valaroix-gold absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Search fragrances by notes (Sauvage, Bergamot, Cedrat Boise, YSL Y)..."
+                placeholder="Search fragrances by notes (NOIR X, VERTEX, Bergamot, Amber)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-black border border-valaroix-gold/30 rounded-2xl pl-11 pr-4 py-3 text-xs text-gray-200 focus:outline-none focus:border-valaroix-gold font-sans"

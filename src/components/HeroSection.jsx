@@ -55,17 +55,17 @@ export default function HeroSection() {
             {/* High-Res Master Perfume Image (Full Bottle Uncropped) */}
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pb-12">
               <img
-                src="/products/sauvage.jpg?v=2"
-                alt="Valaroix Dior Sauvage"
-                className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 max-h-[420px]"
+                src="/products/valaroix-noir-vertex-duo.jpg"
+                alt="Valaroix Noir X & Vertex"
+                className="w-full h-full object-cover sm:object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 max-h-[420px]"
               />
             </div>
 
             {/* Bottom Floating Perfume Tag */}
             <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 z-20 bg-black/95 backdrop-blur-md p-3 sm:p-3.5 rounded-2xl border border-[#D4AF37]/50 flex items-center justify-between gap-2 shadow-xl">
               <div className="min-w-0">
-                <span className="font-serif-mockup font-bold text-white text-xs sm:text-sm block truncate">Valaroix Dior Sauvage</span>
-                <span className="text-[9px] sm:text-[10px] text-[#D4AF37] uppercase font-semibold block truncate">Pure Extrait De Parfum (30% Oil) • Free Delivery</span>
+                <span className="font-serif-mockup font-bold text-white text-xs sm:text-sm block truncate">VALAROIX — NOIR X & VERTEX</span>
+                <span className="text-[9px] sm:text-[10px] text-[#D4AF37] uppercase font-semibold block truncate">Signature Extrait De Parfum • 30% Pure Oil • Free Delivery</span>
               </div>
               <span className="font-serif-mockup font-bold text-[#D4AF37] text-xs sm:text-sm shrink-0 ml-2">Rs. 2,699</span>
             </div>

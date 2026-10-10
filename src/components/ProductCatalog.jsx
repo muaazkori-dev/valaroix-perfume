@@ -9,10 +9,52 @@ import { useCurrency } from '@/context/CurrencyContext';
 
 export const products = [
   {
-    id: 'valaroix-sauvage-imperial',
-    name: 'VALAROIX DIOR SAUVAGE',
-    subtitle: 'Inspired by Dior Sauvage • Spicy Bergamot & Wild Lavender',
-    description: 'An intoxicating blend of Calabrian Bergamot, Nutmeg, and French Lavender layered over raw Amber Wood and Haitian Vetiver.',
+    id: 'valaroix-noir-x',
+    name: 'VALAROIX NOIR X',
+    subtitle: 'Extrait De Parfum • Crafted For Lasting Impressions',
+    description: 'An intoxicating and magnetic blend of Calabrian Bergamot, spicy aromatic lavender, and deep smoky amber wood crafted for supreme projection.',
+    startingPrice: { pkr: 2699, usd: 10 },
+    image: '/products/noir-x.jpg',
+    color: '#1e3a8a',
+    isSoldOut: false,
+    freeDelivery: true,
+    oilConcentration: '30% Pure Oil',
+    topNotes: 'Calabrian Bergamot, Spicy Pepper, Elemi',
+    heartNotes: 'Lavender, Pink Pepper, Vetiver, Patchouli',
+    baseNotes: 'Raw Amber Wood, Cedar, Ambroxan',
+    pricing: {
+      '50ml': {
+        '10h': { pkr: 2699, usd: 10, soldOut: false },
+        '24h': { pkr: 3699, usd: 14, soldOut: true }
+      }
+    }
+  },
+  {
+    id: 'valaroix-vertex',
+    name: 'VALAROIX VERTEX',
+    subtitle: 'Extrait De Parfum • Crafted For Lasting Impressions',
+    description: 'An electrifying signature scent engineered for supreme longevity, blending crisp citrus zest with rich aristocratic woods and seductive amber.',
+    startingPrice: { pkr: 2699, usd: 10 },
+    image: '/products/vertex.jpg',
+    color: '#1e3a8a',
+    isSoldOut: false,
+    freeDelivery: true,
+    oilConcentration: '30% Pure Oil',
+    topNotes: 'Sicilian Citrus, Sparkling Grapefruit, Fresh Mint',
+    heartNotes: 'Fresh Ginger, Nutmeg, Jasmine, Cardamom',
+    baseNotes: 'Rich Incense, Vetiver, Cedarwood, Sandalwood',
+    pricing: {
+      '50ml': {
+        '10h': { pkr: 2699, usd: 10, soldOut: false },
+        '24h': { pkr: 3699, usd: 14, soldOut: true }
+      }
+    }
+  },
+  {
+    id: 'valaroix-classic-noir',
+    name: 'VALAROIX CLASSIC (BLACK & GOLD)',
+    subtitle: 'Royal Black & Gold Edition • Spicy Bergamot & Wild Lavender',
+    description: 'The iconic Valaroix Black & Gold flagship bottle. Warm oriental amber, French lavender, and rich tonka bean with lasting regal presence.',
     startingPrice: { pkr: 2699, usd: 10 },
     image: '/products/sauvage.jpg?v=2',
     color: '#d4af37',
@@ -26,48 +68,6 @@ export const products = [
       '50ml': {
         '10h': { pkr: 2699, usd: 10, soldOut: false },
         '24h': { pkr: 3699, usd: 14, soldOut: true }
-      }
-    }
-  },
-  {
-    id: 'valaroix-cedrat-boise-extreme',
-    name: 'VALAROIX CEDRAT BOISE',
-    subtitle: 'Inspired by Mancera Cedrat Boise • Sicilian Citrus & Leather',
-    description: 'Zesty Lemon of Sicily, Blackcurrant, and Cold Spiced Wood melting into a rich Leather and White Musk heart.',
-    startingPrice: { pkr: 2999, usd: 11 },
-    image: '/products/cedrat.jpg?v=2',
-    color: '#e0a96d',
-    isSoldOut: true,
-    freeDelivery: true,
-    oilConcentration: '30% Pure Oil',
-    topNotes: 'Sicilian Lemon, Blackcurrant, Spicy Notes',
-    heartNotes: 'Fruity Notes, Jasmine Leaf, Patchouli',
-    baseNotes: 'Tuscan Leather, Cedarwood, Oakmoss, Vanilla',
-    pricing: {
-      '50ml': {
-        '10h': { pkr: 2999, usd: 11, soldOut: true },
-        '24h': { pkr: 3999, usd: 15, soldOut: true }
-      }
-    }
-  },
-  {
-    id: 'valaroix-ysl-y',
-    name: 'VALAROIX YSL Y',
-    subtitle: 'Inspired by Yves Saint Laurent Y EDP • Crisp Apple & Amber Wood',
-    description: 'Fresh crisp Apple, vibrant Ginger, and aromatic Sage resting upon rich Vetiver, Tonka Bean, and smoky Amberwood.',
-    startingPrice: { pkr: 3300, usd: 12 },
-    image: '/products/ysly.jpg?v=2',
-    color: '#1e3a8a',
-    isSoldOut: false,
-    freeDelivery: true,
-    oilConcentration: '30% Pure Oil',
-    topNotes: 'Crisp Apple, Fresh Ginger, Bergamot',
-    heartNotes: 'Sage, Juniper Berries, Geranium',
-    baseNotes: 'Amberwood, Tonka Bean, Cedarwood, Vetiver',
-    pricing: {
-      '50ml': {
-        '10h': { pkr: 3300, usd: 12, soldOut: false },
-        '24h': { pkr: 4300, usd: 16, soldOut: true }
       }
     }
   }
