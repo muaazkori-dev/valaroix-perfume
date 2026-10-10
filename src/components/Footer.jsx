@@ -46,7 +46,7 @@ export default function Footer() {
               <li><Link href="/track" className="hover:text-[#D4AF37] transition-colors">Track Order (TCS Live)</Link></li>
               <li><a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors">Support (support@valaroix.com)</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Shipping Policy</a></li>
-              <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Returns & Refunds</a></li>
+              <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Quality & Authenticity</a></li>
               <li><a href="#shop" className="hover:text-[#D4AF37] transition-colors">Terms & Conditions</a></li>
             </ul>
           </div>

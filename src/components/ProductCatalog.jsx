@@ -269,10 +269,10 @@ export default function ProductCatalog() {
 
           <div className="space-y-2 flex flex-col items-center">
             <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
-              <RotateCcw className="w-6 h-6" />
+              <ShieldCheck className="w-6 h-6" />
             </div>
-            <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">EASY RETURNS</h4>
-            <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">Hassle free returns within 7 days</p>
+            <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">SECURE PACKAGING</h4>
+            <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">100% Leak-proof cushioned luxury parcel</p>
           </div>
 
         </div>

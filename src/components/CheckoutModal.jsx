@@ -339,7 +339,7 @@ export default function CheckoutModal() {
                 onClick={handleClose}
                 className="btn-gold px-8 py-3 rounded-xl text-xs uppercase font-bold tracking-wider"
               >
-                Return to Storefront
+                Continue Shopping
               </button>
             </div>
           )}

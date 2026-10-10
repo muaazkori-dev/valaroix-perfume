@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { 
   Star, ShoppingBag, ShieldCheck, 
-  Truck, CheckCircle2, RotateCcw, Clock, ChevronRight 
+  Truck, CheckCircle2, RotateCcw, Clock, ChevronRight, Award
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
@@ -101,8 +101,8 @@ export default function ProductDetailPage() {
                 <span className="font-semibold">TCS 2-3 Days</span>
               </div>
               <div className="p-2.5 rounded-xl bg-[#141414] border border-white/5 flex flex-col items-center gap-1">
-                <RotateCcw className="w-4 h-4 text-[#D4AF37]" />
-                <span className="font-semibold">Easy Returns</span>
+                <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+                <span className="font-semibold">Pure Fragrance</span>
               </div>
             </div>
           </div>
@@ -231,13 +231,13 @@ export default function ProductDetailPage() {
               )}
             </div>
 
-            {/* Guarantee / Return Policy */}
+            {/* Guarantee Policy */}
             <div className="flex items-center justify-between text-[11px] text-gray-400 pt-3 border-t border-white/10">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" /> 100% Original Scent
               </span>
               <span className="flex items-center gap-1.5">
-                <RotateCcw className="w-3.5 h-3.5 text-[#D4AF37]" /> 7 Days Money-Back Guarantee
+                <Award className="w-3.5 h-3.5 text-[#D4AF37]" /> Authentic Sealed Bottle
               </span>
             </div>
 
