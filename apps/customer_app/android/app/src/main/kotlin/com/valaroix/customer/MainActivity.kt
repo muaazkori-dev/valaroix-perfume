@@ -81,7 +81,7 @@ class MainActivity: FlutterActivity() {
                 }
             }
             startActivity(intent)
-        } catch (_: Exception) {}
+        } catch (e: Exception) {}
     }
 
     private fun showNativeNotification(title: String, message: String) {
@@ -122,8 +122,12 @@ class MainActivity: FlutterActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val iconId = resources.getIdentifier("ic_launcher", "mipmap", packageName).let {
+            if (it != 0) it else applicationInfo.icon
+        }
+
         val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(iconId)
             .setContentTitle(title)
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
