@@ -15,7 +15,7 @@ class AdminConstants {
   static const String baseUrl = 'https://valaroix.com/api';
 
   // ── Owner WhatsApp ───────────────────────────────────────────────────────────
-  static const String ownerWhatsApp = '923141397378';
+  static const String ownerWhatsApp = '923029111856';
 
   // ── Poll Interval (real-time order checking) ─────────────────────────────────
   static const Duration pollInterval = Duration(seconds: 4);

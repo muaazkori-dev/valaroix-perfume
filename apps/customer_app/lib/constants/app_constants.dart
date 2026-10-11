@@ -14,8 +14,8 @@ class AppConstants {
   static const String baseUrl = 'https://valaroix.com/api';
 
   // ── Support & Social ────────────────────────────────────────────────────────
-  static const String whatsappNumber = '923141397378';
-  static const String storePhone     = '+92 314 1397378';
+  static const String whatsappNumber = '923029111856';
+  static const String storePhone     = '+92 302 9111856';
   static const String instagramUrl   = 'https://instagram.com/valaroix';
 
   // ── Perfume Products (hardcoded – no DB needed for 3 products) ──────────────
