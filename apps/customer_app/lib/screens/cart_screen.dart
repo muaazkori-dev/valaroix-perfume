@@ -176,14 +176,11 @@ class _CartItemTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppConstants.borderGold),
             ),
-            child: const Center(
-              child: Text(
-                'V',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w900,
-                  color: AppConstants.gold,
-                ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(11),
+              child: Image.asset(
+                'assets/images/logo.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),

@@ -75,8 +75,8 @@ class OrderModel {
 
   bool get isDelivered => status.toLowerCase().contains('deliver');
   bool get isDispatched => status.toLowerCase().contains('dispatch') ||
-      status.toLowerCase().contains('transit') ||
-      status.toLowerCase().contains('confirm');
+      status.toLowerCase().contains('transit');
+  bool get isConfirmed => status.toLowerCase().contains('confirm');
   bool get isPending => status.toLowerCase().contains('pending');
   bool get isCancelled => status.toLowerCase().contains('cancel');
 }

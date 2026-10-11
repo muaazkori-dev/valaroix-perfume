@@ -199,29 +199,25 @@ class _ValaroixEmblem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 110,
-      height: 110,
+      width: 140,
+      height: 140,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppConstants.secondaryBg,
-        border: Border.all(color: AppConstants.gold, width: 1.5),
+        border: Border.all(color: AppConstants.gold, width: 2),
         boxShadow: [
           BoxShadow(
-            color: AppConstants.gold.withOpacity(0.3),
-            blurRadius: 30,
-            spreadRadius: 5,
+            color: AppConstants.gold.withOpacity(0.35),
+            blurRadius: 35,
+            spreadRadius: 6,
           ),
         ],
       ),
-      child: Center(
-        child: Text(
-          'V',
-          style: const TextStyle(
-            fontSize: 52,
-            fontWeight: FontWeight.w900,
-            color: AppConstants.gold,
-            letterSpacing: -2,
-          ),
+      child: ClipOval(
+        child: Image.asset(
+          'assets/images/logo.png',
+          width: 140,
+          height: 140,
+          fit: BoxFit.cover,
         ),
       ),
     );

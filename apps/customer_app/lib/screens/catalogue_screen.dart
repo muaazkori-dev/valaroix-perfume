@@ -31,17 +31,14 @@ class CatalogueScreen extends StatelessWidget {
               height: 32,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppConstants.secondaryBg,
                 border: Border.all(color: AppConstants.gold, width: 1.2),
               ),
-              child: const Center(
-                child: Text(
-                  'V',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    color: AppConstants.gold,
-                  ),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 32,
+                  height: 32,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

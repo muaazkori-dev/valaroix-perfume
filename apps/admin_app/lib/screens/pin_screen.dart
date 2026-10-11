@@ -84,28 +84,25 @@ class _PinScreenState extends State<PinScreen> {
 
             // ── V Emblem ─────────────────────────────────────────────────────
             Container(
-              width: 80,
-              height: 80,
+              width: 90,
+              height: 90,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AdminConstants.secondaryBg,
                 border: Border.all(color: AdminConstants.gold, width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: AdminConstants.gold.withOpacity(0.2),
+                    color: AdminConstants.gold.withOpacity(0.3),
                     blurRadius: 25,
-                    spreadRadius: 2,
+                    spreadRadius: 3,
                   ),
                 ],
               ),
-              child: const Center(
-                child: Text(
-                  'V',
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w900,
-                    color: AdminConstants.gold,
-                  ),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

@@ -72,21 +72,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             title: Row(
               children: [
                 Container(
-                  width: 34,
-                  height: 34,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppConstants.secondaryBg,
                     border: Border.all(color: AppConstants.gold, width: 1.2),
                   ),
-                  child: const Center(
-                    child: Text(
-                      'V',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
-                        color: AppConstants.gold,
-                      ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),

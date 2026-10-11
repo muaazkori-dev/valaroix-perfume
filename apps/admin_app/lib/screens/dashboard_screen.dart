@@ -176,14 +176,19 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
         title: Row(
           children: [
             Container(
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AdminConstants.gold,
+                border: Border.all(color: AdminConstants.gold, width: 1.2),
               ),
-              child: const Center(
-                child: Text('V', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 16)),
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  width: 34,
+                  height: 34,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(width: 10),

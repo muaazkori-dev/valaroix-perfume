@@ -221,15 +221,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                               child: Image.asset(
                                 p['image'] ?? 'assets/images/app_logo.jpg',
                                 fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => Center(
-                                  child: Text(
-                                    'V',
-                                    style: TextStyle(
-                                      fontSize: 80,
-                                      fontWeight: FontWeight.w900,
-                                      color: accent,
-                                    ),
-                                  ),
+                                errorBuilder: (_, __, ___) => Image.asset(
+                                  'assets/images/logo.png',
+                                  fit: BoxFit.cover,
                                 ),
                               ),
                             ),
