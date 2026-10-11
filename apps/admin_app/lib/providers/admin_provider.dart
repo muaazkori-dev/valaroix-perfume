@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import '../constants/admin_constants.dart';
 import '../models/admin_models.dart';
@@ -77,6 +78,10 @@ class AdminProvider extends ChangeNotifier {
           final newOnes = fetched.where((o) => !_knownIds.contains(o.id)).toList();
           if (newOnes.isNotEmpty) {
             _newOrderAlert = newOnes.first;
+            if (_soundEnabled) {
+              HapticFeedback.heavyImpact();
+              SystemSound.play(SystemSoundType.alert);
+            }
           }
         }
 

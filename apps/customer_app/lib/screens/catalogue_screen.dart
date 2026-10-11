@@ -198,36 +198,35 @@ class _CatalogueCard extends StatelessWidget {
                     // Emblem
                     Center(
                       child: Container(
-                        width: 100,
-                        height: 100,
+                        width: 110,
+                        height: 110,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: RadialGradient(
-                            colors: [
-                              Color.lerp(baseColor, accentColor, 0.3)!,
-                              baseColor,
-                            ],
-                          ),
                           border: Border.all(
-                            color: accentColor.withOpacity(0.35),
+                            color: accentColor,
                             width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: accentColor.withOpacity(0.2),
+                              color: accentColor.withOpacity(0.3),
                               blurRadius: 24,
                               spreadRadius: 2,
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            'V',
-                            style: TextStyle(
-                              fontSize: 52,
-                              fontWeight: FontWeight.w900,
-                              color: accentColor.withOpacity(0.8),
-                              letterSpacing: -3,
+                        child: ClipOval(
+                          child: Image.asset(
+                            product['image'] ?? 'assets/images/app_logo.jpg',
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                'V',
+                                style: TextStyle(
+                                  fontSize: 52,
+                                  fontWeight: FontWeight.w900,
+                                  color: accentColor.withOpacity(0.8),
+                                ),
+                              ),
                             ),
                           ),
                         ),

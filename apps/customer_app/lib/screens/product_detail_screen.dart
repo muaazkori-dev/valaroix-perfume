@@ -201,37 +201,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         children: [
                           const SizedBox(height: 40),
                           Container(
-                            width: 160,
-                            height: 160,
+                            width: 170,
+                            height: 170,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: [
-                                  Color.lerp(base, accent, 0.3)!,
-                                  base,
-                                ],
-                              ),
                               border: Border.all(
-                                color: accent.withOpacity(0.4),
-                                width: 1.5,
+                                color: accent,
+                                width: 2.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: accent.withOpacity(0.25 + _glowCtrl.value * 0.10),
+                                  color: accent.withOpacity(0.35 + _glowCtrl.value * 0.15),
                                   blurRadius: 40,
                                   spreadRadius: 5,
                                 ),
                               ],
                             ),
-                            child: Center(
-                              child: Text(
-                                'V',
-                                style: TextStyle(
-                                  fontSize: 80,
-                                  fontWeight: FontWeight.w900,
-                                  color: accent.withOpacity(0.85),
-                                  letterSpacing: -4,
-                                  height: 1,
+                            child: ClipOval(
+                              child: Image.asset(
+                                p['image'] ?? 'assets/images/app_logo.jpg',
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Center(
+                                  child: Text(
+                                    'V',
+                                    style: TextStyle(
+                                      fontSize: 80,
+                                      fontWeight: FontWeight.w900,
+                                      color: accent,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

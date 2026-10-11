@@ -358,30 +358,31 @@ class _ProductCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              // Product Visual
+              // Product Visual - Real Perfume Bottle Photo
               Container(
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [baseColor, Color.lerp(baseColor, accentColor, 0.3)!],
-                  ),
                   border: Border.all(
-                    color: accentColor.withOpacity(0.3),
+                    color: accentColor.withOpacity(0.4),
                     width: 1.0,
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'V',
-                    style: TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.w900,
-                      color: accentColor.withOpacity(0.7),
-                      letterSpacing: -2,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.asset(
+                    product['image'] ?? 'assets/images/app_logo.jpg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Text(
+                        'V',
+                        style: TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.w900,
+                          color: accentColor.withOpacity(0.7),
+                        ),
+                      ),
                     ),
                   ),
                 ),
