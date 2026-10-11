@@ -203,3 +203,18 @@ export async function PATCH(req) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req) {
+  try {
+    const data = await req.json().catch(() => ({}));
+    if (data.clearAll) {
+      memoryOrders = [];
+      return NextResponse.json({ success: true, orders: [] });
+    }
+    const targetId = data.orderId || data.id;
+    memoryOrders = memoryOrders.filter((o) => o.id !== targetId);
+    return NextResponse.json({ success: true, orders: memoryOrders });
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
