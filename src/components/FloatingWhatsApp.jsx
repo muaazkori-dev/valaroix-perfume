@@ -61,7 +61,7 @@ export default function FloatingWhatsApp({ phoneNumber = '923029111856' }) {
       onDragEnd={handleDragEnd}
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.95 }}
-      className="fixed bottom-6 right-6 z-50 cursor-grab active:cursor-grabbing touch-none select-none"
+      className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-30 cursor-grab active:cursor-grabbing touch-none select-none"
     >
       <a
         href={whatsappUrl}

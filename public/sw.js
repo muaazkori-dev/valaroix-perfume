@@ -1,4 +1,4 @@
-﻿// VALAROIX Service Worker for Mobile Notifications & Background Sync
+// VALAROIX Service Worker for Mobile Notifications & Background Sync
 const CACHE_NAME = 'valaroix-cache-v1';
 
 self.addEventListener('install', (event) => {
@@ -15,14 +15,24 @@ self.addEventListener('message', (event) => {
     const { title, body, icon, tag, data } = event.data;
     self.registration.showNotification(title, {
       body: body || 'New Order Received at VALAROIX Store',
-      icon: icon || '/icon.jpg',
-      badge: '/icon.jpg',
+      icon: icon || '/logo.jpg',
+      badge: '/logo.jpg',
       vibrate: [300, 100, 300, 100, 300],
       tag: tag || 'valaroix-order',
       renotify: true,
       requireInteraction: true,
       data: data || { url: '/admin' }
     });
+  }
+});
+
+// Fetch event listener required for Chrome PWA installability criteria
+self.addEventListener('fetch', (event) => {
+  // Let network handle request, fallback to cache if available
+  if (event.request.method === 'GET') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
   }
 });
 

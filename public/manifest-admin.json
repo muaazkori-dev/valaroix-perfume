@@ -1,0 +1,25 @@
+{
+  "name": "VALAROIX Admin Hub",
+  "short_name": "Valaroix Admin",
+  "description": "Real-Time Orders, Alerts & TCS Dispatch Hub for VALAROIX",
+  "start_url": "/admin",
+  "id": "valaroix-admin-app",
+  "display": "standalone",
+  "background_color": "#0D0D0D",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

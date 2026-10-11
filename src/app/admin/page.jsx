@@ -30,6 +30,10 @@ export default function AdminDashboardPage() {
   const [isDownloadingImage, setIsDownloadingImage] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isTestMode, setIsTestMode] = useState(false);
+  const [adminDeferredPrompt, setAdminDeferredPrompt] = useState(null);
+  const [isAdminStandalone, setIsAdminStandalone] = useState(false);
+  const [isIosAdmin, setIsIosAdmin] = useState(false);
+  const [showAdminIosPrompt, setShowAdminIosPrompt] = useState(false);
 
   const initialSampleOrders = [];
 
@@ -203,6 +207,25 @@ export default function AdminDashboardPage() {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
+    // Detect Standalone mode & notification status
+    if (typeof window !== 'undefined') {
+      const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      setIsAdminStandalone(standalone);
+
+      if ('Notification' in window) {
+        setHasNotificationPermission(Notification.permission === 'granted');
+      }
+
+      const ua = navigator.userAgent.toLowerCase();
+      setIsIosAdmin(/iphone|ipad|ipod/.test(ua));
+    }
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setAdminDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+
     // Fetch from server immediately
     fetchServerOrders();
 
@@ -227,8 +250,26 @@ export default function AdminDashboardPage() {
     return () => {
       clearInterval(pollInterval);
       if (channel) channel.close();
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
     };
   }, []);
+
+  const handleInstallAdminApp = async () => {
+    if (adminDeferredPrompt) {
+      adminDeferredPrompt.prompt();
+      const choice = await adminDeferredPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setIsAdminStandalone(true);
+        setStatusToast('✅ VALAROIX Admin App added to Home Screen!');
+        setTimeout(() => setStatusToast(null), 4000);
+      }
+      setAdminDeferredPrompt(null);
+    } else if (isIosAdmin) {
+      setShowAdminIosPrompt(true);
+    } else {
+      alert('To install VALAROIX Admin Hub on your phone, open in Chrome or Safari, tap the menu (⋮ or Share ⎋) and select "Install app" or "Add to Home screen".');
+    }
+  };
 
   const handlePinSubmit = (e) => {
     e.preventDefault();
@@ -735,9 +776,30 @@ export default function AdminDashboardPage() {
             </button>
           </form>
 
-          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#D4AF37]">
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Store
-          </Link>
+          <div className="pt-2 border-t border-white/10 space-y-2">
+            {!isAdminStandalone && (
+              <button
+                type="button"
+                onClick={handleInstallAdminApp}
+                className="w-full py-2.5 rounded-xl bg-[#D4AF37]/20 hover:bg-[#D4AF37]/30 text-[#D4AF37] border border-[#D4AF37]/40 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
+              >
+                <span>📲 Install Admin App on Phone</span>
+              </button>
+            )}
+            <a
+              href="/VALAROIX-Executive-Owner-App.apk"
+              download
+              className="inline-flex items-center gap-1.5 text-[11px] text-gray-400 hover:text-[#D4AF37] transition-colors"
+            >
+              <span>📱 Download Android APK</span>
+            </a>
+          </div>
+
+          <div>
+            <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#D4AF37]">
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to Store
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -822,13 +884,24 @@ export default function AdminDashboardPage() {
             <span className="hidden sm:inline">{soundEnabled ? 'Sound ON' : 'Sound OFF'}</span>
           </button>
 
+          {/* 1-Tap Install Admin App on Mobile Device */}
+          {!isAdminStandalone && (
+            <button
+              onClick={handleInstallAdminApp}
+              className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B38728] text-black text-xs font-black flex items-center gap-1.5 shadow-md hover:brightness-110 active:scale-95 transition-all"
+              title="Install Admin App directly onto Phone Home Screen"
+            >
+              <span>📲 Install App</span>
+            </button>
+          )}
+
           <a
             href="/VALAROIX-Executive-Owner-App.apk"
             download
-            className="px-3 py-2 rounded-xl bg-[#D4AF37] text-black text-xs font-black flex items-center gap-1.5 shadow-md hover:bg-amber-400 transition-all"
-            title="Download Updated Android APK with Gold Logo & Lock-Screen Alerts"
+            className="hidden sm:flex px-3 py-2 rounded-xl bg-[#1A1A1A] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold items-center gap-1.5 shadow-md hover:bg-[#D4AF37]/20 transition-all"
+            title="Download Updated Android APK with Gold Logo"
           >
-            <span>📱 Download App (Gold Logo)</span>
+            <span>📱 Download APK</span>
           </a>
 
           <Link
@@ -850,6 +923,52 @@ export default function AdminDashboardPage() {
           </button>
         </div>
       </header>
+
+      {/* REAL-TIME NOTIFICATION PERMISSION BANNER */}
+      {!hasNotificationPermission && (
+        <div className="bg-gradient-to-r from-amber-950 via-[#141414] to-amber-950 border-b border-[#D4AF37]/40 px-4 sm:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-gray-200">
+            <Bell className="w-4 h-4 text-[#D4AF37] animate-bounce shrink-0" />
+            <span>
+              <strong className="text-[#D4AF37]">Enable Real-Time Alerts:</strong> Receive sound & screen push notifications instantly when new orders arrive!
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              requestNotificationPermission();
+              playAlertSound();
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-[#D4AF37] text-black text-xs font-black uppercase tracking-wider hover:brightness-110 shadow"
+          >
+            Turn On Alerts
+          </button>
+        </div>
+      )}
+
+      {/* iOS Safari Admin App Installation Modal */}
+      {showAdminIosPrompt && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+          <div className="bg-[#141414] border border-[#D4AF37] rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl animate-fadeIn">
+            <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/20 border border-[#D4AF37] mx-auto flex items-center justify-center text-[#D4AF37]">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white font-serif">Install Admin Hub on iPhone</h3>
+              <p className="text-xs text-gray-300 mt-2 leading-relaxed">
+                1. Tap the <strong className="text-[#D4AF37]">Share button ⎋</strong> at bottom of Safari.<br />
+                2. Scroll down and tap <strong className="text-[#D4AF37]">Add to Home Screen ⊞</strong>.<br />
+                3. Launch anytime from your phone's home screen!
+              </p>
+            </div>
+            <button
+              onClick={() => setShowAdminIosPrompt(false)}
+              className="w-full py-2.5 rounded-xl bg-[#D4AF37] text-black text-xs font-black uppercase tracking-wider"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* DASHBOARD STATS BAR */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6 w-full">

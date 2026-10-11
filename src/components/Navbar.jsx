@@ -284,7 +284,25 @@ export default function Navbar({ onOpenAdmin }) {
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  onOpenAdmin();
+                  if (typeof window !== 'undefined') {
+                    // Trigger install event or alert
+                    const event = new CustomEvent('valaroix:install-pwa');
+                    window.dispatchEvent(event);
+                  }
+                }}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B38728] text-black text-xs uppercase font-extrabold flex items-center justify-center gap-2 shadow-lg"
+              >
+                <Sparkles className="w-4 h-4 text-black" /> 📲 Install VALAROIX App
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (onOpenAdmin) {
+                    onOpenAdmin();
+                  } else {
+                    window.location.href = '/admin';
+                  }
                 }}
                 className="w-full py-3 rounded-xl bg-[#0D0D0D] text-[#D4AF37] text-xs uppercase font-bold flex items-center justify-center gap-2 border border-[#D4AF37]/30"
               >

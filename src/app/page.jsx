@@ -13,10 +13,11 @@ import FloatingWhatsApp from '@/components/FloatingWhatsApp';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
 import CustomerAccountModal from '@/components/CustomerAccountModal';
+import MobileBottomNav from '@/components/MobileBottomNav';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden">
+    <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden pb-16 md:pb-0">
       {/* 1. Header Navbar */}
       <Navbar />
 
@@ -43,6 +44,9 @@ export default function Home() {
       <CheckoutModal />
       <ProductDetailModal />
       <TrackOrderModal />
+
+      {/* Mobile-App Experience: Bottom Navigation Bar & 1-Tap Install */}
+      <MobileBottomNav />
     </main>
   );
 }
