@@ -208,7 +208,7 @@ export default function MobileBottomNav() {
 
           {/* 5. WhatsApp Concierge */}
           <a
-            href="https://wa.me/923141397378?text=Assalam-o-Alaikum%20VALAROIX%2C%20I%20want%20to%20order%20luxury%20perfumes."
+            href="https://wa.me/923029111856?text=Assalam-o-Alaikum%20VALAROIX%2C%20I%20want%20to%20order%20luxury%20perfumes."
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center justify-center py-1 text-emerald-400 hover:text-emerald-300 active:scale-95 transition-all group"

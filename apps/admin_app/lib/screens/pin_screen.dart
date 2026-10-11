@@ -20,6 +20,20 @@ class _PinScreenState extends State<PinScreen> {
   String _enteredPin = '';
   bool _hasError = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final provider = context.read<AdminProvider>();
+      if (provider.isAuthenticated) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        );
+      }
+    });
+  }
+
   void _handleNumberPress(String digit) {
     if (_enteredPin.length >= 4) return;
     HapticFeedback.lightImpact();

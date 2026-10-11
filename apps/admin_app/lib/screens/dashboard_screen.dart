@@ -70,6 +70,98 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
     }
   }
 
+  void _showNotificationHelper(BuildContext context, AdminProvider admin) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AdminConstants.secondaryBg,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: AdminConstants.gold, width: 1.5),
+        ),
+        title: const Row(
+          children: [
+            Icon(Icons.notifications_active, color: AdminConstants.gold, size: 22),
+            SizedBox(width: 10),
+            Text(
+              'Notification Alerts',
+              style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Agar phone par notifications greyed out ya Denied hain:',
+              style: TextStyle(color: AdminConstants.gold, fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.black45,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: const Text(
+                '1. Neeche "Open App Settings" par tap karein.\n'
+                '2. Upar daayein kone mein 3 dots (⋮) dabayein.\n'
+                '3. "Allow restricted settings" par tap karein.\n'
+                '4. Phir "Notifications" ko ALLOW kar dein!',
+                style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AdminConstants.gold,
+                foregroundColor: Colors.black,
+                minimumSize: const Size.fromHeight(42),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                admin.openNotificationSettings();
+              },
+              icon: const Icon(Icons.settings, size: 16),
+              label: const Text('Open App Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AdminConstants.success,
+                side: const BorderSide(color: AdminConstants.success),
+                minimumSize: const Size.fromHeight(42),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                admin.requestNotificationPermission();
+                admin.sendTestNotification();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Test drop-down alert sent! Check notification bar.'),
+                    backgroundColor: AdminConstants.success,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.bolt, size: 16),
+              label: const Text('Send Test Alert Now (Drop-down)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Close', style: TextStyle(color: AdminConstants.textMuted)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final admin = context.watch<AdminProvider>();
@@ -111,6 +203,11 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Notification Setup & Test',
+            icon: const Icon(Icons.notifications_active_outlined, color: AdminConstants.gold),
+            onPressed: () => _showNotificationHelper(context, admin),
+          ),
           IconButton(
             tooltip: admin.soundEnabled ? 'Order Sound: ON' : 'Order Sound: OFF',
             icon: Icon(

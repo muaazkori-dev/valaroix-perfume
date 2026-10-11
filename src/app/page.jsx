@@ -35,7 +35,7 @@ export default function Home() {
       <Footer />
 
       {/* Floating WhatsApp Direct Chat Support Button */}
-      <FloatingWhatsApp phoneNumber="923141397378" />
+      <FloatingWhatsApp phoneNumber="923029111856" />
 
       {/* Customer Modals */}
       <AuthModal />

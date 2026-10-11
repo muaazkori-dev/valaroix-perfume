@@ -653,7 +653,7 @@ export default function CheckoutPage() {
       <Footer />
 
       {/* Floating WhatsApp */}
-      <FloatingWhatsApp phoneNumber="923141397378" />
+      <FloatingWhatsApp phoneNumber="923029111856" />
     </main>
   );
 }

@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.thehrtraders.hr_traders_customer"
+    namespace = "com.valaroix.customer"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

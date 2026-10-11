@@ -31,11 +31,48 @@ class OrdersScreen extends StatelessWidget {
             letterSpacing: 3,
           ),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Check Status & Test Alert',
+            icon: const Icon(Icons.notifications_active_outlined, color: AppConstants.gold, size: 20),
+            onPressed: () {
+              cartProvider.sendTestNotification();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Test order update notification sent!'),
+                  backgroundColor: AppConstants.success,
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'Refresh Orders',
+            icon: const Icon(Icons.refresh_rounded, color: Colors.white70, size: 20),
+            onPressed: () {
+              cartProvider.syncOrdersWithServer();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Checking latest status from server...'),
+                  backgroundColor: AppConstants.secondaryBg,
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      body: orders.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
+      body: RefreshIndicator(
+        color: AppConstants.gold,
+        backgroundColor: AppConstants.secondaryBg,
+        onRefresh: () => cartProvider.syncOrdersWithServer(),
+        child: orders.isEmpty
+            ? ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -75,8 +112,10 @@ class OrdersScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            )
-          : ListView.separated(
+            ),
+          ],
+        )
+      : ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: orders.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),

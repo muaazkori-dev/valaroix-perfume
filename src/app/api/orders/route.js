@@ -195,6 +195,37 @@ export async function PATCH(req) {
       return o;
     });
 
+    // Update in Supabase
+    try {
+      if (targetId) {
+        const patchBody = {};
+        if (data.status) patchBody.status = data.status;
+
+        const sbRes = await fetch(`${SUPABASE_URL}/orders?notes=ilike.*${targetId}*&select=*`, {
+          headers: supabaseHeaders,
+        });
+        if (sbRes.ok) {
+          const rows = await sbRes.json();
+          if (rows.length > 0) {
+            const row = rows[0];
+            let meta = {};
+            try {
+              meta = JSON.parse(row.notes.replace('VALAROIX::', ''));
+            } catch (_) {}
+            if (data.tcsTrackingNumber) meta.tcsTrackingNumber = data.tcsTrackingNumber;
+            if (data.status) meta.status = data.status;
+            patchBody.notes = `VALAROIX::${JSON.stringify(meta)}`;
+
+            await fetch(`${SUPABASE_URL}/orders?id=eq.${row.id}`, {
+              method: 'PATCH',
+              headers: supabaseHeaders,
+              body: JSON.stringify(patchBody),
+            });
+          }
+        }
+      }
+    } catch (_) {}
+
     return NextResponse.json(
       { success: true, orders: memoryOrders },
       { headers: { 'Access-Control-Allow-Origin': '*' } }
