@@ -63,27 +63,11 @@ jobs:
             valaroix-admin.apk
 
       - name: Create GitHub Release with Direct APK Download Links
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: "VALAROIX Mobile Apps v1.0.${{ github.run_number }} (Customer & Admin APKs)"
-          body: |
-            ### 🌟 VALAROIX Haute Parfumerie — Official Mobile Ecosystem Release
-
-            Official Release APK builds for Android devices.
-
-            #### 📱 1. VALAROIX Customer App
-            - File: `valaroix-customer.apk`
-            - Luxury 3D boutique catalog (`NOIR X`, `VERTEX`, `SAUVAGE`), notes guide, 1-tap cart & checkout, live TCS tracking.
-            - Custom Royal French Gold Logo.
-
-            #### 👑 2. VALAROIX Admin Hub App
-            - File: `valaroix-admin.apk`
-            - Real-time audible order siren & screen alerts, executive revenue desk, 1-click TCS booking, official TCS slip generator, WhatsApp dispatch.
-            - Custom Imperial Gold Shield Logo.
-            - PIN: `9824`.
-          files: |
-            valaroix-customer.apk
-            valaroix-admin.apk
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" \
+            valaroix-customer.apk \
+            valaroix-admin.apk \
+            --title "VALAROIX Mobile Apps v1.0.${{ github.run_number }} (Customer & Admin APKs)" \
+            --notes "Official Release APK builds for VALAROIX Customer App and Admin Hub."
