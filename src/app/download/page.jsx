@@ -8,8 +8,8 @@ export const metadata = {
 };
 
 export default function DownloadAppsPage() {
-  const customerApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/download/v1.0.7/valaroix-customer.apk';
-  const adminApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/download/v1.0.7/valaroix-admin.apk';
+  const customerApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/download/v1.0.8/valaroix-customer.apk';
+  const adminApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/download/v1.0.8/valaroix-admin.apk';
 
   return (
     <div className="min-h-screen bg-[#0B0B0E] text-white py-12 px-4 sm:px-8 font-sans">
@@ -21,7 +21,7 @@ export default function DownloadAppsPage() {
             <ArrowLeft className="w-3.5 h-3.5" /> Back to VALAROIX Boutique
           </Link>
           <div className="inline-block px-3 py-1 rounded-full border border-[#D4AF37]/40 bg-[#141414] text-[11px] font-bold text-[#D4AF37] uppercase tracking-widest">
-            OFFICIAL ANDROID APKS (v1.0.7)
+            OFFICIAL ANDROID APKS (v1.0.8)
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-black text-white tracking-wide">
             Download VALAROIX Mobile Apps

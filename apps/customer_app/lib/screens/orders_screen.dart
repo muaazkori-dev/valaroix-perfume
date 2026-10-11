@@ -124,6 +124,7 @@ class OrdersScreen extends StatelessWidget {
                 return _OrderCard(order: o);
               },
             ),
+      ),
     );
   }
 }
