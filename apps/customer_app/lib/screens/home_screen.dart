@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_constants.dart';
 import '../providers/cart_provider.dart';
+import '../services/update_service.dart';
 import 'main_screen.dart';
 import 'product_detail_screen.dart';
 
@@ -28,6 +29,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(seconds: 8),
     )..repeat(reverse: true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          UpdateService.checkForUpdates(context);
+        }
+      });
+    });
   }
 
   @override
@@ -100,6 +109,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ],
             ),
             actions: [
+              IconButton(
+                onPressed: () => UpdateService.checkForUpdates(context, isManual: true),
+                icon: const Icon(Icons.system_update_alt_rounded,
+                    color: AppConstants.gold, size: 21),
+                tooltip: 'Check for Updates',
+              ),
               IconButton(
                 onPressed: _openWhatsApp,
                 icon: const Icon(Icons.chat_bubble_outline_rounded,

@@ -45,10 +45,72 @@ class MainActivity: FlutterActivity() {
                 "isPermissionGranted" -> {
                     result.success(isNotificationPermissionGranted())
                 }
+                "getUpdateStoragePath" -> {
+                    val dir = externalCacheDir ?: cacheDir
+                    val file = java.io.File(dir, "valaroix-admin-update.apk")
+                    result.success(file.absolutePath)
+                }
+                "canInstallUnknownApps" -> {
+                    result.success(canRequestPackageInstalls())
+                }
+                "openInstallPermissionSettings" -> {
+                    openInstallPermissionSettings()
+                    result.success(true)
+                }
+                "installApk" -> {
+                    val filePath = call.argument<String>("filePath") ?: ""
+                    val success = installApk(filePath)
+                    result.success(success)
+                }
                 else -> {
                     result.notImplemented()
                 }
             }
+        }
+    }
+
+    private fun canRequestPackageInstalls(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            packageManager.canRequestPackageInstalls()
+        } else {
+            true
+        }
+    }
+
+    private fun openInstallPermissionSettings() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                    data = Uri.parse("package:$packageName")
+                }
+                startActivity(intent)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun installApk(filePath: String): Boolean {
+        return try {
+            val file = java.io.File(filePath)
+            if (!file.exists()) return false
+
+            val uri: Uri = androidx.core.content.FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                file
+            )
+
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/vnd.android.package-archive")
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivity(intent)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
         }
     }
 

@@ -8,8 +8,8 @@ export const metadata = {
 };
 
 export default function DownloadAppsPage() {
-  const customerApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/download/v1.0.9/valaroix-customer.apk';
-  const adminApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/download/v1.0.9/valaroix-admin.apk';
+  const customerApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/latest/download/valaroix-customer.apk';
+  const adminApkUrl = 'https://github.com/muaazkori-dev/valaroix-perfume/releases/latest/download/valaroix-admin.apk';
 
   return (
     <div className="min-h-screen bg-[#0B0B0E] text-white py-12 px-4 sm:px-8 font-sans">

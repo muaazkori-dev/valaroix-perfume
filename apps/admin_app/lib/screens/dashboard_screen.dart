@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants/admin_constants.dart';
 import '../models/admin_models.dart';
 import '../providers/admin_provider.dart';
+import '../services/update_service.dart';
 import 'order_detail_screen.dart';
 import 'pin_screen.dart';
 
@@ -27,6 +28,14 @@ class _DashboardScreenState extends State<DashboardScreen>
   void initState() {
     super.initState();
     _tabCtrl = TabController(length: 4, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          UpdateService.checkForUpdates(context);
+        }
+      });
+    });
   }
 
   @override
@@ -208,6 +217,11 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'Check for Updates',
+            icon: const Icon(Icons.system_update_alt_rounded, color: AdminConstants.gold),
+            onPressed: () => UpdateService.checkForUpdates(context, isManual: true),
+          ),
           IconButton(
             tooltip: 'Notification Setup & Test',
             icon: const Icon(Icons.notifications_active_outlined, color: AdminConstants.gold),

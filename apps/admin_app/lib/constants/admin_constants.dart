@@ -13,6 +13,8 @@ class AdminConstants {
 
   // ── API ──────────────────────────────────────────────────────────────────────
   static const String baseUrl = 'https://valaroix.com/api';
+  static const String appVersion = '1.0.10';
+  static const int appVersionCode = 10;
 
   // ── Owner WhatsApp ───────────────────────────────────────────────────────────
   static const String ownerWhatsApp = '923029111856';
