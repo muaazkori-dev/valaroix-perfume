@@ -122,9 +122,9 @@ body.theme-sapphire {
   background-color: #050814 !important;
   color: #FFFFFF !important;
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.20) 0%, transparent 60%),
-    radial-gradient(circle at 10% 40%, rgba(30, 58, 138, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 50%);
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.22) 0%, transparent 60%),
+    radial-gradient(circle at 10% 40%, rgba(30, 58, 138, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
   background-attachment: fixed;
 }
 
@@ -134,18 +134,33 @@ body.theme-sapphire {
   background-color: #050814 !important;
 }
 
+/* Transform all black & dark cards into deep midnight obsidian */
 [data-theme="sapphire-blue"] .bg-\[\#0D0D0D\],
+[data-theme="sapphire-blue"] .bg-\[\#0A0A0D\],
 [data-theme="sapphire-blue"] .bg-\[\#070709\],
 [data-theme="sapphire-blue"] .bg-\[\#0B0B0E\],
-[data-theme="sapphire-blue"] .bg-valaroix-dark {
+[data-theme="sapphire-blue"] .bg-valaroix-dark,
+.theme-sapphire .bg-\[\#0D0D0D\],
+.theme-sapphire .bg-\[\#0A0A0D\],
+.theme-sapphire .bg-\[\#070709\],
+.theme-sapphire .bg-\[\#0B0B0E\],
+.theme-sapphire .bg-valaroix-dark {
   background-color: #050814 !important;
 }
 
+[data-theme="sapphire-blue"] .bg-\[\#111111\],
+[data-theme="sapphire-blue"] .bg-\[\#13110E\],
 [data-theme="sapphire-blue"] .bg-\[\#141414\],
 [data-theme="sapphire-blue"] .bg-\[\#1A1A1A\],
 [data-theme="sapphire-blue"] .bg-\[\#0e0e13\],
-[data-theme="sapphire-blue"] .glass-panel-dark {
-  background-color: #0B132B !important;
+[data-theme="sapphire-blue"] .glass-panel-dark,
+.theme-sapphire .bg-\[\#111111\],
+.theme-sapphire .bg-\[\#13110E\],
+.theme-sapphire .bg-\[\#141414\],
+.theme-sapphire .bg-\[\#1A1A1A\],
+.theme-sapphire .bg-\[\#0e0e13\],
+.theme-sapphire .glass-panel-dark {
+  background-color: #070D22 !important;
   border-color: rgba(59, 130, 246, 0.35) !important;
 }
 
@@ -154,35 +169,103 @@ body.theme-sapphire {
 .theme-sapphire header > div {
   background-color: rgba(5, 8, 20, 0.96) !important;
   border-bottom-color: rgba(59, 130, 246, 0.35) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(37, 99, 235, 0.15) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(37, 99, 235, 0.2) !important;
 }
 
-/* Text & Accent Colors */
-[data-theme="sapphire-blue"] .text-\[\#D4AF37\],
-[data-theme="sapphire-blue"] .text-valaroix-gold,
-.theme-sapphire .text-\[\#D4AF37\],
-.theme-sapphire .text-valaroix-gold {
-  color: #60A5FA !important;
+/* ── WILDCARD OVERRIDES: Transform ALL Gold / Olive shades to Electric Sapphire ── */
+
+/* 1. All Gold Backgrounds & Ambient Glow Shades become Vibrant Sapphire Blue */
+[data-theme="sapphire-blue"] [class*="bg-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="bg-[#d4af37]"],
+[data-theme="sapphire-blue"] [class*="bg-valaroix-gold"],
+.theme-sapphire [class*="bg-[#D4AF37]"],
+.theme-sapphire [class*="bg-[#d4af37]"],
+.theme-sapphire [class*="bg-valaroix-gold"] {
+  background-color: rgba(37, 99, 235, 0.35) !important;
 }
 
-[data-theme="sapphire-blue"] .text-\[\#f6e6b4\],
-[data-theme="sapphire-blue"] .text-valaroix-goldLight,
-.theme-sapphire .text-\[\#f6e6b4\],
-.theme-sapphire .text-valaroix-goldLight {
+/* Ambient glow blur circles turn into high-intensity sapphire aura */
+[data-theme="sapphire-blue"] [class*="blur-"][class*="bg-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="blur-"][class*="bg-[#d4af37]"],
+.theme-sapphire [class*="blur-"][class*="bg-[#D4AF37]"],
+.theme-sapphire [class*="blur-"][class*="bg-[#d4af37]"] {
+  background-color: rgba(37, 99, 235, 0.45) !important;
+  filter: drop-shadow(0 0 80px rgba(37, 99, 235, 0.6)) !important;
+}
+
+/* Solid gold buttons/pills become deep electric sapphire */
+[data-theme="sapphire-blue"] .bg-\[\#D4AF37\],
+[data-theme="sapphire-blue"] .bg-\[\#d4af37\],
+[data-theme="sapphire-blue"] .bg-valaroix-gold,
+.theme-sapphire .bg-\[\#D4AF37\],
+.theme-sapphire .bg-\[\#d4af37\],
+.theme-sapphire .bg-valaroix-gold {
+  background-color: #2563EB !important;
   color: #FFFFFF !important;
 }
 
-/* Borders & Dividers */
-[data-theme="sapphire-blue"] .border-\[\#D4AF37\],
-[data-theme="sapphire-blue"] .border-\[\#D4AF37\]\/20,
-[data-theme="sapphire-blue"] .border-\[\#D4AF37\]\/30,
-[data-theme="sapphire-blue"] .border-\[\#D4AF37\]\/40,
-[data-theme="sapphire-blue"] .border-valaroix-gold\/20,
-[data-theme="sapphire-blue"] .border-valaroix-gold\/30,
-[data-theme="sapphire-blue"] .border-valaroix-gold\/40,
-.theme-sapphire .border-\[\#D4AF37\],
-.theme-sapphire .border-\[\#D4AF37\]\/30 {
-  border-color: rgba(59, 130, 246, 0.40) !important;
+/* 2. All Gold Borders become Sapphire Blue */
+[data-theme="sapphire-blue"] [class*="border-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="border-[#d4af37]"],
+[data-theme="sapphire-blue"] [class*="border-valaroix-gold"],
+.theme-sapphire [class*="border-[#D4AF37]"],
+.theme-sapphire [class*="border-[#d4af37]"],
+.theme-sapphire [class*="border-valaroix-gold"] {
+  border-color: rgba(59, 130, 246, 0.45) !important;
+}
+
+/* 3. All Gold Text & Icons become Brilliant Sapphire Blue or Diamond White */
+[data-theme="sapphire-blue"] [class*="text-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="text-[#d4af37]"],
+[data-theme="sapphire-blue"] [class*="text-valaroix-gold"],
+.theme-sapphire [class*="text-[#D4AF37]"],
+.theme-sapphire [class*="text-[#d4af37]"],
+.theme-sapphire [class*="text-valaroix-gold"] {
+  color: #60A5FA !important;
+}
+
+[data-theme="sapphire-blue"] [class*="hover:text-[#D4AF37]"]:hover,
+[data-theme="sapphire-blue"] [class*="hover:text-[#d4af37]"]:hover,
+.theme-sapphire [class*="hover:text-[#D4AF37]"]:hover,
+.theme-sapphire [class*="hover:text-[#d4af37]"]:hover {
+  color: #93C5FD !important;
+}
+
+[data-theme="sapphire-blue"] [class*="text-[#f6e6b4]"],
+[data-theme="sapphire-blue"] [class*="text-valaroix-goldLight"],
+.theme-sapphire [class*="text-[#f6e6b4]"],
+.theme-sapphire [class*="text-valaroix-goldLight"] {
+  color: #FFFFFF !important;
+}
+
+/* 4. Gradients: Convert all gold gradient stops to Sapphire/Cyan */
+[data-theme="sapphire-blue"] [class*="to-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="to-[#d4af37]"],
+.theme-sapphire [class*="to-[#D4AF37]"],
+.theme-sapphire [class*="to-[#d4af37]"] {
+  --tw-gradient-to: rgba(59, 130, 246, 0.3) var(--tw-gradient-to-position) !important;
+}
+
+[data-theme="sapphire-blue"] [class*="from-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="from-[#d4af37]"],
+.theme-sapphire [class*="from-[#D4AF37]"],
+.theme-sapphire [class*="from-[#d4af37]"] {
+  --tw-gradient-from: rgba(37, 99, 235, 0.6) var(--tw-gradient-from-position) !important;
+}
+
+[data-theme="sapphire-blue"] [class*="via-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="via-[#d4af37]"],
+.theme-sapphire [class*="via-[#D4AF37]"],
+.theme-sapphire [class*="via-[#d4af37]"] {
+  --tw-gradient-via: rgba(59, 130, 246, 0.4) var(--tw-gradient-via-position) !important;
+}
+
+/* 5. Gold Shadows & Rings become Electric Sapphire */
+[data-theme="sapphire-blue"] [class*="shadow-[#D4AF37]"],
+[data-theme="sapphire-blue"] [class*="shadow-[#d4af37]"],
+.theme-sapphire [class*="shadow-[#D4AF37]"],
+.theme-sapphire [class*="shadow-[#d4af37]"] {
+  --tw-shadow-color: rgba(37, 99, 235, 0.5) !important;
 }
 
 /* Buttons in Sapphire Theme */
@@ -213,13 +296,6 @@ body.theme-sapphire {
   background-color: #2563EB !important;
   color: #FFFFFF !important;
   box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4) !important;
-}
-
-/* Badges & Pills */
-[data-theme="sapphire-blue"] .bg-\[\#D4AF37\],
-.theme-sapphire .bg-\[\#D4AF37\] {
-  background-color: #2563EB !important;
-  color: #FFFFFF !important;
 }
 
 /* Glass Panels */

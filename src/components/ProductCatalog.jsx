@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ShoppingBag, ShieldCheck, Award, Clock, Truck, RotateCcw } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useTheme } from '@/context/ThemeContext';
 
 export const products = [
   {
@@ -79,6 +80,7 @@ export const products = [
 export default function ProductCatalog() {
   const { addToCart, setIsCheckoutOpen } = useCart();
   const { formatPrice } = useCurrency();
+  const { isSapphire } = useTheme();
 
   const handleQuickAdd = (product) => {
     if (product.isSoldOut) return;
@@ -93,17 +95,34 @@ export default function ProductCatalog() {
   return (
     <div>
       {/* 1. LUXURY OBSIDIAN VELVET SECTION WITH DUAL GOLD & BLUE AURA */}
-      <section id="shop" className="py-16 sm:py-24 bg-[#0A0A0D] text-white relative overflow-hidden border-t border-[#D4AF37]/20">
-        
+      <section
+        id="shop"
+        className={`py-16 sm:py-24 text-white relative overflow-hidden border-t transition-colors duration-500 ${
+          isSapphire
+            ? 'bg-[#050814] border-blue-500/30'
+            : 'bg-[#0A0A0D] border-[#D4AF37]/20'
+        }`}
+      >
         {/* Atmospheric Ambient Lighting Gradients */}
-        <div className="absolute top-1/4 -right-32 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-1/4 -left-32 w-96 h-96 bg-blue-600/15 rounded-full blur-[140px] pointer-events-none" />
+        <div
+          className={`absolute top-1/4 -right-32 w-96 h-96 rounded-full blur-[140px] pointer-events-none transition-all duration-700 ${
+            isSapphire ? 'bg-blue-600/35' : 'bg-[#D4AF37]/10'
+          }`}
+        />
+        <div
+          className={`absolute bottom-1/4 -left-32 w-96 h-96 rounded-full blur-[140px] pointer-events-none transition-all duration-700 ${
+            isSapphire ? 'bg-cyan-500/25' : 'bg-blue-600/15'
+          }`}
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
-          
           {/* Section Header */}
           <div className="text-center space-y-3 max-w-2xl mx-auto mb-12 sm:mb-16">
-            <span className="block text-[11px] font-semibold uppercase tracking-[0.3em] text-[#D4AF37]">
+            <span
+              className={`block text-[11px] font-semibold uppercase tracking-[0.3em] transition-colors duration-500 ${
+                isSapphire ? 'text-blue-400' : 'text-[#D4AF37]'
+              }`}
+            >
               HAUTE PARFUMERIE COLLECTION
             </span>
             <h2 className="font-serif-mockup text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
@@ -127,14 +146,20 @@ export default function ProductCatalog() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                   className={`rounded-3xl p-5 border flex flex-col justify-between space-y-5 transition-all duration-500 group relative overflow-hidden backdrop-blur-md shadow-2xl hover:-translate-y-1.5 ${
-                    isBlueEdition
+                    isSapphire
+                      ? 'bg-[#070D22]/95 border-blue-500/35 hover:border-blue-400/80 hover:shadow-[0_0_50px_rgba(37,99,235,0.4)]'
+                      : isBlueEdition
                       ? 'bg-[#0E1118]/95 border-blue-500/25 hover:border-blue-400/60 hover:shadow-[0_0_40px_rgba(30,64,175,0.3)]'
                       : 'bg-[#13110E]/95 border-[#D4AF37]/30 hover:border-[#D4AF37]/70 hover:shadow-[0_0_40px_rgba(212,175,55,0.25)]'
                   } ${product.isSoldOut ? 'opacity-85' : ''}`}
                 >
                   {/* Subtle Top Collection Tag */}
                   <div className="flex items-center justify-between gap-2 z-20">
-                    {isBlueEdition ? (
+                    {isSapphire ? (
+                      <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-blue-300 bg-blue-950/80 border border-blue-500/50 px-2.5 py-1 rounded-full uppercase tracking-wider shadow-[0_0_15px_rgba(37,99,235,0.3)]">
+                        💎 Sapphire Reserve • {product.oilConcentration || 'Pure Oil'}
+                      </span>
+                    ) : isBlueEdition ? (
                       <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-sky-300 bg-sky-950/80 border border-sky-500/40 px-2.5 py-1 rounded-full uppercase tracking-wider">
                         🌊 Azure Edition • 40% Oil
                       </span>
@@ -152,16 +177,21 @@ export default function ProductCatalog() {
                   </div>
 
                   <div className="space-y-4 text-center">
-                    
                     {/* Bottle Image Showcase with Ambient Aura */}
                     <Link
                       href={`/product/${product.id}`}
-                      className="block relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden bg-black/85 border border-white/5 p-3 group-hover:border-white/15 transition-all flex items-center justify-center"
+                      className={`block relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden p-3 transition-all flex items-center justify-center border ${
+                        isSapphire
+                          ? 'bg-[#040714] border-blue-500/20 group-hover:border-blue-400/40'
+                          : 'bg-black/85 border-white/5 group-hover:border-white/15'
+                      }`}
                     >
                       {/* Dynamic Ambient Aura Behind Bottle */}
                       <div
                         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[65px] pointer-events-none transition-all duration-700 group-hover:scale-125 ${
-                          isBlueEdition
+                          isSapphire
+                            ? 'bg-blue-600/45 group-hover:bg-blue-500/60 shadow-[0_0_50px_rgba(37,99,235,0.5)]'
+                            : isBlueEdition
                             ? 'bg-blue-600/35 group-hover:bg-blue-500/50'
                             : 'bg-[#D4AF37]/30 group-hover:bg-[#D4AF37]/45'
                         }`}
@@ -186,15 +216,17 @@ export default function ProductCatalog() {
                     <div className="space-y-1.5">
                       <Link
                         href={`/product/${product.id}`}
-                        className="font-serif-mockup font-bold text-lg text-white tracking-wider hover:text-[#D4AF37] transition-colors block"
+                        className={`font-serif-mockup font-bold text-lg text-white tracking-wider transition-colors block ${
+                          isSapphire ? 'hover:text-blue-400' : 'hover:text-[#D4AF37]'
+                        }`}
                       >
                         {product.name}
                       </Link>
-                      
+
                       <p className="text-[11px] text-gray-400 font-sans leading-relaxed line-clamp-1">
                         {product.subtitle}
                       </p>
-                      
+
                       {/* Free Delivery Pill */}
                       <div className="flex items-center justify-center gap-1.5 pt-1">
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 px-2.5 py-0.5 rounded-full">
@@ -205,14 +237,17 @@ export default function ProductCatalog() {
 
                     {/* Price */}
                     <div className="pt-1">
-                      <span className="font-serif-mockup font-extrabold text-xl text-white tracking-wider">
+                      <span
+                        className={`font-serif-mockup font-extrabold text-xl tracking-wider ${
+                          isSapphire ? 'text-white drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'text-white'
+                        }`}
+                      >
                         {formatPrice(product.startingPrice)}
                       </span>
                       <span className="text-[10px] text-gray-400 block mt-0.5">
                         50ml Extrait • {product.oilConcentration || '30% Pure Oil'} • {product.lasting || '8-12h'} Lasting
                       </span>
                     </div>
-
                   </div>
 
                   {/* Direct Action Buttons */}
@@ -227,27 +262,40 @@ export default function ProductCatalog() {
                     ) : (
                       <button
                         onClick={() => handleQuickAdd(product)}
-                        className="w-full py-3.5 rounded-xl btn-mockup-gold text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer"
+                        className={`w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer ${
+                          isSapphire
+                            ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-blue-500/35 hover:brightness-110'
+                            : 'btn-mockup-gold'
+                        }`}
                       >
-                        <ShoppingBag className="w-4 h-4 text-[#0D0D0D]" /> Add to Cart
+                        <ShoppingBag className={`w-4 h-4 ${isSapphire ? 'text-white' : 'text-[#0D0D0D]'}`} /> Add to Cart
                       </button>
                     )}
                   </div>
-
                 </motion.div>
               );
             })}
           </div>
-
         </div>
       </section>
 
-      {/* 2. EXACT MOCKUP TRUST BADGES SECTION (#0D0D0D RICH BLACK) */}
-      <section className="py-16 bg-[#0D0D0D] border-t border-b border-[#D4AF37]/20 text-white">
+      {/* 2. EXACT MOCKUP TRUST BADGES SECTION */}
+      <section
+        className={`py-16 border-t border-b text-white transition-colors duration-500 ${
+          isSapphire
+            ? 'bg-[#050814] border-blue-500/30'
+            : 'bg-[#0D0D0D] border-[#D4AF37]/20'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          
           <div className="space-y-2 flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+            <div
+              className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
+                isSapphire
+                  ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
+                  : 'border-[#D4AF37] text-[#D4AF37]'
+              }`}
+            >
               <Award className="w-6 h-6" />
             </div>
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">PREMIUM QUALITY</h4>
@@ -255,7 +303,13 @@ export default function ProductCatalog() {
           </div>
 
           <div className="space-y-2 flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+            <div
+              className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
+                isSapphire
+                  ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
+                  : 'border-[#D4AF37] text-[#D4AF37]'
+              }`}
+            >
               <Clock className="w-6 h-6" />
             </div>
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">LONG LASTING</h4>
@@ -263,7 +317,13 @@ export default function ProductCatalog() {
           </div>
 
           <div className="space-y-2 flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+            <div
+              className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
+                isSapphire
+                  ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
+                  : 'border-[#D4AF37] text-[#D4AF37]'
+              }`}
+            >
               <Truck className="w-6 h-6" />
             </div>
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">FAST DELIVERY</h4>
@@ -271,13 +331,18 @@ export default function ProductCatalog() {
           </div>
 
           <div className="space-y-2 flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full border border-[#D4AF37] flex items-center justify-center text-[#D4AF37] mb-1">
+            <div
+              className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
+                isSapphire
+                  ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
+                  : 'border-[#D4AF37] text-[#D4AF37]'
+              }`}
+            >
               <ShieldCheck className="w-6 h-6" />
             </div>
             <h4 className="font-serif-mockup font-bold text-xs uppercase tracking-wider text-white">SECURE PACKAGING</h4>
             <p className="text-[11px] text-[#6B6B6B] max-w-[180px]">100% Leak-proof cushioned luxury parcel</p>
           </div>
-
         </div>
       </section>
     </div>
