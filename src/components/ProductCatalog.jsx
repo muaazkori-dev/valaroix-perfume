@@ -80,7 +80,7 @@ export const products = [
 export default function ProductCatalog() {
   const { addToCart, setIsCheckoutOpen } = useCart();
   const { formatPrice } = useCurrency();
-  const { isSapphire } = useTheme();
+  const { isSapphire, isEmerald } = useTheme();
 
   const handleQuickAdd = (product) => {
     if (product.isSoldOut) return;
@@ -94,11 +94,13 @@ export default function ProductCatalog() {
 
   return (
     <div>
-      {/* 1. LUXURY OBSIDIAN VELVET SECTION WITH DUAL GOLD & BLUE AURA */}
+      {/* 1. LUXURY OBSIDIAN VELVET SECTION WITH DUAL GOLD, BLUE & EMERALD AURA */}
       <section
         id="shop"
         className={`py-16 sm:py-24 text-white relative overflow-hidden border-t transition-colors duration-500 ${
-          isSapphire
+          isEmerald
+            ? 'bg-[#04120B] border-emerald-500/30'
+            : isSapphire
             ? 'bg-[#050814] border-blue-500/30'
             : 'bg-[#0A0A0D] border-[#D4AF37]/20'
         }`}
@@ -106,12 +108,12 @@ export default function ProductCatalog() {
         {/* Atmospheric Ambient Lighting Gradients */}
         <div
           className={`absolute top-1/4 -right-32 w-96 h-96 rounded-full blur-[140px] pointer-events-none transition-all duration-700 ${
-            isSapphire ? 'bg-blue-600/35' : 'bg-[#D4AF37]/10'
+            isEmerald ? 'bg-emerald-600/35' : isSapphire ? 'bg-blue-600/35' : 'bg-[#D4AF37]/10'
           }`}
         />
         <div
           className={`absolute bottom-1/4 -left-32 w-96 h-96 rounded-full blur-[140px] pointer-events-none transition-all duration-700 ${
-            isSapphire ? 'bg-cyan-500/25' : 'bg-blue-600/15'
+            isEmerald ? 'bg-teal-500/25' : isSapphire ? 'bg-cyan-500/25' : 'bg-blue-600/15'
           }`}
         />
 
@@ -120,7 +122,7 @@ export default function ProductCatalog() {
           <div className="text-center space-y-3 max-w-2xl mx-auto mb-12 sm:mb-16">
             <span
               className={`block text-[11px] font-semibold uppercase tracking-[0.3em] transition-colors duration-500 ${
-                isSapphire ? 'text-blue-400' : 'text-[#D4AF37]'
+                isEmerald ? 'text-emerald-400' : isSapphire ? 'text-blue-400' : 'text-[#D4AF37]'
               }`}
             >
               HAUTE PARFUMERIE COLLECTION
@@ -146,7 +148,9 @@ export default function ProductCatalog() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                   className={`rounded-3xl p-5 border flex flex-col justify-between space-y-5 transition-all duration-500 group relative overflow-hidden backdrop-blur-md shadow-2xl hover:-translate-y-1.5 ${
-                    isSapphire
+                    isEmerald
+                      ? 'bg-[#071F13]/95 border-emerald-500/35 hover:border-emerald-400/80 hover:shadow-[0_0_50px_rgba(16,185,129,0.4)]'
+                      : isSapphire
                       ? 'bg-[#070D22]/95 border-blue-500/35 hover:border-blue-400/80 hover:shadow-[0_0_50px_rgba(37,99,235,0.4)]'
                       : isBlueEdition
                       ? 'bg-[#0E1118]/95 border-blue-500/25 hover:border-blue-400/60 hover:shadow-[0_0_40px_rgba(30,64,175,0.3)]'
@@ -155,7 +159,11 @@ export default function ProductCatalog() {
                 >
                   {/* Subtle Top Collection Tag */}
                   <div className="flex items-center justify-between gap-2 z-20">
-                    {isSapphire ? (
+                    {isEmerald ? (
+                      <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full uppercase tracking-wider shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                        🌿 Imperial House • {product.oilConcentration || 'Pure Oil'}
+                      </span>
+                    ) : isSapphire ? (
                       <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-blue-300 bg-blue-950/80 border border-blue-500/50 px-2.5 py-1 rounded-full uppercase tracking-wider shadow-[0_0_15px_rgba(37,99,235,0.3)]">
                         💎 Sapphire Reserve • {product.oilConcentration || 'Pure Oil'}
                       </span>
@@ -181,7 +189,9 @@ export default function ProductCatalog() {
                     <Link
                       href={`/product/${product.id}`}
                       className={`block relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden p-3 transition-all flex items-center justify-center border ${
-                        isSapphire
+                        isEmerald
+                          ? 'bg-[#030D08] border-emerald-500/20 group-hover:border-emerald-400/40'
+                          : isSapphire
                           ? 'bg-[#040714] border-blue-500/20 group-hover:border-blue-400/40'
                           : 'bg-black/85 border-white/5 group-hover:border-white/15'
                       }`}
@@ -189,7 +199,9 @@ export default function ProductCatalog() {
                       {/* Dynamic Ambient Aura Behind Bottle */}
                       <div
                         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[65px] pointer-events-none transition-all duration-700 group-hover:scale-125 ${
-                          isSapphire
+                          isEmerald
+                            ? 'bg-emerald-600/45 group-hover:bg-emerald-500/60 shadow-[0_0_50px_rgba(16,185,129,0.5)]'
+                            : isSapphire
                             ? 'bg-blue-600/45 group-hover:bg-blue-500/60 shadow-[0_0_50px_rgba(37,99,235,0.5)]'
                             : isBlueEdition
                             ? 'bg-blue-600/35 group-hover:bg-blue-500/50'
@@ -217,7 +229,7 @@ export default function ProductCatalog() {
                       <Link
                         href={`/product/${product.id}`}
                         className={`font-serif-mockup font-bold text-lg text-white tracking-wider transition-colors block ${
-                          isSapphire ? 'hover:text-blue-400' : 'hover:text-[#D4AF37]'
+                          isEmerald ? 'hover:text-emerald-400' : isSapphire ? 'hover:text-blue-400' : 'hover:text-[#D4AF37]'
                         }`}
                       >
                         {product.name}
@@ -239,7 +251,11 @@ export default function ProductCatalog() {
                     <div className="pt-1">
                       <span
                         className={`font-serif-mockup font-extrabold text-xl tracking-wider ${
-                          isSapphire ? 'text-white drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'text-white'
+                          isEmerald
+                            ? 'text-white drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                            : isSapphire
+                            ? 'text-white drop-shadow-[0_0_15px_rgba(59,130,246,0.3)]'
+                            : 'text-white'
                         }`}
                       >
                         {formatPrice(product.startingPrice)}
@@ -263,12 +279,14 @@ export default function ProductCatalog() {
                       <button
                         onClick={() => handleQuickAdd(product)}
                         className={`w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer ${
-                          isSapphire
+                          isEmerald
+                            ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-700 text-white shadow-emerald-500/35 hover:brightness-110'
+                            : isSapphire
                             ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-blue-500/35 hover:brightness-110'
                             : 'btn-mockup-gold'
                         }`}
                       >
-                        <ShoppingBag className={`w-4 h-4 ${isSapphire ? 'text-white' : 'text-[#0D0D0D]'}`} /> Add to Cart
+                        <ShoppingBag className={`w-4 h-4 ${isEmerald || isSapphire ? 'text-white' : 'text-[#0D0D0D]'}`} /> Add to Cart
                       </button>
                     )}
                   </div>
@@ -282,7 +300,9 @@ export default function ProductCatalog() {
       {/* 2. EXACT MOCKUP TRUST BADGES SECTION */}
       <section
         className={`py-16 border-t border-b text-white transition-colors duration-500 ${
-          isSapphire
+          isEmerald
+            ? 'bg-[#04120B] border-emerald-500/30'
+            : isSapphire
             ? 'bg-[#050814] border-blue-500/30'
             : 'bg-[#0D0D0D] border-[#D4AF37]/20'
         }`}
@@ -291,7 +311,9 @@ export default function ProductCatalog() {
           <div className="space-y-2 flex flex-col items-center">
             <div
               className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
-                isSapphire
+                isEmerald
+                  ? 'border-emerald-400 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.35)] bg-emerald-950/30'
+                  : isSapphire
                   ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
                   : 'border-[#D4AF37] text-[#D4AF37]'
               }`}
@@ -305,7 +327,9 @@ export default function ProductCatalog() {
           <div className="space-y-2 flex flex-col items-center">
             <div
               className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
-                isSapphire
+                isEmerald
+                  ? 'border-emerald-400 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.35)] bg-emerald-950/30'
+                  : isSapphire
                   ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
                   : 'border-[#D4AF37] text-[#D4AF37]'
               }`}
@@ -319,7 +343,9 @@ export default function ProductCatalog() {
           <div className="space-y-2 flex flex-col items-center">
             <div
               className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
-                isSapphire
+                isEmerald
+                  ? 'border-emerald-400 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.35)] bg-emerald-950/30'
+                  : isSapphire
                   ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
                   : 'border-[#D4AF37] text-[#D4AF37]'
               }`}
@@ -333,7 +359,9 @@ export default function ProductCatalog() {
           <div className="space-y-2 flex flex-col items-center">
             <div
               className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${
-                isSapphire
+                isEmerald
+                  ? 'border-emerald-400 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.35)] bg-emerald-950/30'
+                  : isSapphire
                   ? 'border-blue-400 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.35)] bg-blue-950/30'
                   : 'border-[#D4AF37] text-[#D4AF37]'
               }`}

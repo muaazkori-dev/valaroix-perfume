@@ -7,6 +7,7 @@ const ThemeContext = createContext({
   setTheme: () => {},
   toggleTheme: () => {},
   isSapphire: false,
+  isEmerald: false,
   isGold: true,
   isLoading: false,
 });
@@ -19,16 +20,20 @@ export function ThemeProvider({ children }) {
   const applyThemeToDOM = (themeName) => {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', themeName);
-      if (themeName === 'sapphire-blue') {
+      
+      const allThemeClasses = ['theme-gold', 'theme-sapphire', 'theme-emerald'];
+      document.documentElement.classList.remove(...allThemeClasses);
+      document.body.classList.remove(...allThemeClasses);
+
+      if (themeName === 'imperial-emerald') {
+        document.documentElement.classList.add('theme-emerald');
+        document.body.classList.add('theme-emerald');
+      } else if (themeName === 'sapphire-blue') {
         document.documentElement.classList.add('theme-sapphire');
-        document.documentElement.classList.remove('theme-gold');
         document.body.classList.add('theme-sapphire');
-        document.body.classList.remove('theme-gold');
       } else {
         document.documentElement.classList.add('theme-gold');
-        document.documentElement.classList.remove('theme-sapphire');
         document.body.classList.add('theme-gold');
-        document.body.classList.remove('theme-sapphire');
       }
     }
   };
@@ -37,7 +42,7 @@ export function ThemeProvider({ children }) {
     // 1. Instant recovery from local cache
     try {
       const cached = localStorage.getItem('valaroix_theme');
-      if (cached && (cached === 'royal-gold' || cached === 'sapphire-blue')) {
+      if (cached && (cached === 'royal-gold' || cached === 'sapphire-blue' || cached === 'imperial-emerald')) {
         setThemeState(cached);
         applyThemeToDOM(cached);
       }
@@ -47,7 +52,7 @@ export function ThemeProvider({ children }) {
     fetch('/api/theme')
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.theme && (data.theme === 'royal-gold' || data.theme === 'sapphire-blue')) {
+        if (data && data.theme && (data.theme === 'royal-gold' || data.theme === 'sapphire-blue' || data.theme === 'imperial-emerald')) {
           setThemeState(data.theme);
           applyThemeToDOM(data.theme);
           try {
@@ -62,7 +67,7 @@ export function ThemeProvider({ children }) {
     if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
       const bc = new BroadcastChannel('valaroix_theme_channel');
       bc.onmessage = (event) => {
-        if (event.data && (event.data === 'royal-gold' || event.data === 'sapphire-blue')) {
+        if (event.data && (event.data === 'royal-gold' || event.data === 'sapphire-blue' || event.data === 'imperial-emerald')) {
           setThemeState(event.data);
           applyThemeToDOM(event.data);
           try {
@@ -75,7 +80,7 @@ export function ThemeProvider({ children }) {
   }, []);
 
   const setTheme = async (newTheme) => {
-    if (newTheme !== 'royal-gold' && newTheme !== 'sapphire-blue') return;
+    if (newTheme !== 'royal-gold' && newTheme !== 'sapphire-blue' && newTheme !== 'imperial-emerald') return;
 
     // Instant local update
     setThemeState(newTheme);
@@ -106,11 +111,15 @@ export function ThemeProvider({ children }) {
   };
 
   const toggleTheme = () => {
-    const next = theme === 'royal-gold' ? 'sapphire-blue' : 'royal-gold';
+    let next = 'royal-gold';
+    if (theme === 'royal-gold') next = 'sapphire-blue';
+    else if (theme === 'sapphire-blue') next = 'imperial-emerald';
+    else if (theme === 'imperial-emerald') next = 'royal-gold';
     setTheme(next);
   };
 
   const isSapphire = theme === 'sapphire-blue';
+  const isEmerald = theme === 'imperial-emerald';
   const isGold = theme === 'royal-gold';
 
   return (
@@ -120,6 +129,7 @@ export function ThemeProvider({ children }) {
         setTheme,
         toggleTheme,
         isSapphire,
+        isEmerald,
         isGold,
         isLoading,
       }}

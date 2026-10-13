@@ -852,25 +852,41 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
           {/* Quick Theme Switcher Pill */}
           <button
             onClick={async () => {
-              const next = theme === 'royal-gold' ? 'sapphire-blue' : 'royal-gold';
+              let next = 'royal-gold';
+              if (theme === 'royal-gold') next = 'sapphire-blue';
+              else if (theme === 'sapphire-blue') next = 'imperial-emerald';
+              else if (theme === 'imperial-emerald') next = 'royal-gold';
+
               await setTheme(next);
               playAlertSound();
-              setStatusToast(`✨ Website Design Switched to ${next === 'sapphire-blue' ? 'Midnight Sapphire (Blue, Black, White)' : 'Royal Noir & Gold'}!`);
+              const names = {
+                'royal-gold': 'Royal Noir & Gold (Sauvage Classic)',
+                'sapphire-blue': 'Midnight Sapphire (Noir X & Vertex)',
+                'imperial-emerald': 'Imperial Emerald & Platinum (VALAROIX Brand House)'
+              };
+              setStatusToast(`✨ Website Design Switched to ${names[next]}!`);
               setTimeout(() => setStatusToast(null), 3500);
             }}
             className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-black uppercase flex items-center gap-1.5 transition-all cursor-pointer ${
-              theme === 'sapphire-blue'
+              theme === 'imperial-emerald'
+                ? 'bg-emerald-600/25 text-emerald-300 border-emerald-400/60 shadow-[0_0_15px_rgba(16,185,129,0.35)]'
+                : theme === 'sapphire-blue'
                 ? 'bg-blue-600/25 text-blue-300 border-blue-400/60 shadow-[0_0_15px_rgba(59,130,246,0.35)]'
                 : 'bg-[#D4AF37]/25 text-[#D4AF37] border-[#D4AF37]/60 shadow-[0_0_15px_rgba(212,175,55,0.25)]'
             }`}
-            title="1-Click Switch Website Design Theme (Royal Gold vs. Midnight Sapphire)"
+            title="1-Click Switch Website Design Theme (Royal Gold / Sapphire Blue / Imperial Emerald)"
           >
             <Palette className="w-3.5 h-3.5" />
-            <span>{theme === 'sapphire-blue' ? '💎 Sapphire Edition' : '👑 Royal Gold'}</span>
+            <span>
+              {theme === 'imperial-emerald'
+                ? '🌿 Imperial Emerald'
+                : theme === 'sapphire-blue'
+                ? '💎 Sapphire Edition'
+                : '👑 Royal Gold'}
+            </span>
           </button>
 
           {/* TCS Test Mode / Live Mode Switch */}
@@ -1024,7 +1040,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* ── 1-CLICK WEBSITE DESIGN & UI/UX THEME CUSTOMIZER (2 LIVE EDITIONS) ── */}
+      {/* ── 1-CLICK WEBSITE DESIGN & UI/UX THEME CUSTOMIZER (3 LIVE EDITIONS) ── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6 w-full">
         <div className="p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-[#141414] to-[#0A0A0A] border border-white/10 shadow-2xl relative overflow-hidden space-y-5">
           
@@ -1038,7 +1054,7 @@ export default function AdminDashboardPage() {
                 <h3 className="font-serif text-base sm:text-lg font-bold text-white tracking-wide flex items-center gap-2">
                   Website Design Customizer (UI/UX Studio)
                   <span className="text-[10px] px-2 py-0.5 rounded-full font-mono uppercase tracking-wider bg-white/10 text-gray-300">
-                    2 Live Editions
+                    3 Live Editions
                   </span>
                 </h3>
                 <p className="text-xs text-gray-400">
@@ -1050,8 +1066,14 @@ export default function AdminDashboardPage() {
             <div className="flex items-center gap-2">
               <div className="px-3 py-1.5 rounded-xl border text-xs font-mono font-bold flex items-center gap-2 bg-black/50 border-white/10">
                 <span className="text-gray-400">Active Design:</span>
-                <span className={theme === 'sapphire-blue' ? 'text-blue-400 font-bold' : 'text-[#D4AF37] font-bold'}>
-                  {theme === 'sapphire-blue' ? '💎 Midnight Sapphire' : '👑 Royal Noir & Gold'}
+                <span className={
+                  theme === 'imperial-emerald' ? 'text-emerald-400 font-bold' :
+                  theme === 'sapphire-blue' ? 'text-blue-400 font-bold' :
+                  'text-[#D4AF37] font-bold'
+                }>
+                  {theme === 'imperial-emerald' ? '🌿 Imperial Emerald & Platinum' :
+                   theme === 'sapphire-blue' ? '💎 Midnight Sapphire' :
+                   '👑 Royal Noir & Gold'}
                 </span>
               </div>
               <Link
@@ -1066,8 +1088,8 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* 2 Design Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {/* 3 Design Cards Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
             
             {/* DESIGN OPTION 1: ROYAL NOIR & GOLD */}
             <div
@@ -1101,7 +1123,7 @@ export default function AdminDashboardPage() {
                       Design 1: Royal Noir & Gold
                     </h4>
                     <span className="text-[11px] text-[#D4AF37] font-mono block">
-                      Classic Imperial Haute Parfumerie
+                      Classic Imperial (Sauvage Edition)
                     </span>
                   </div>
                 </div>
@@ -1184,13 +1206,13 @@ export default function AdminDashboardPage() {
                       Design 2: Midnight Sapphire & Platinum
                     </h4>
                     <span className="text-[11px] text-blue-400 font-mono block">
-                      Blue, Obsidian Black & Crisp White
+                      Blue, Obsidian Black & White (Noir X & Vertex)
                     </span>
                   </div>
                 </div>
 
                 <p className="text-xs text-gray-300 leading-relaxed">
-                  High-voltage modern luxury. Deep midnight obsidian navy, electric sapphire neon blue halos, crisp diamond white typography, and vibrant sapphire buttons.
+                  High-voltage modern luxury. Deep midnight obsidian navy, electric sapphire neon halos, crisp diamond white typography, and vibrant sapphire buttons.
                 </p>
 
                 {/* Color Swatches */}
@@ -1229,6 +1251,89 @@ export default function AdminDashboardPage() {
                     <>
                       <Sparkles className="w-4 h-4 text-blue-300" />
                       <span>Activate Midnight Sapphire (1-Click)</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* DESIGN OPTION 3: IMPERIAL EMERALD & PLATINUM (VALAROIX MASTER BRAND HOUSE) */}
+            <div
+              onClick={async () => {
+                if (theme !== 'imperial-emerald') {
+                  await setTheme('imperial-emerald');
+                  playAlertSound();
+                  setStatusToast('🌿 Website Design Switched to Imperial Emerald & Platinum (VALAROIX Brand House)!');
+                  setTimeout(() => setStatusToast(null), 3500);
+                }
+              }}
+              className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
+                theme === 'imperial-emerald'
+                  ? 'bg-gradient-to-b from-[#061A10] to-[#0A2E1C] border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.35)] ring-2 ring-emerald-500/50'
+                  : 'bg-[#101010] border-white/10 hover:border-emerald-500/50 opacity-80 hover:opacity-100'
+              }`}
+            >
+              {theme === 'imperial-emerald' && (
+                <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-emerald-600 text-white font-black text-[10px] uppercase tracking-wider flex items-center gap-1 shadow">
+                  <Check className="w-3 h-3" /> Live Active
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#04120B] border border-emerald-400 flex items-center justify-center text-lg">
+                    🌿
+                  </div>
+                  <div>
+                    <h4 className="font-serif font-black text-white text-base tracking-wide">
+                      Design 3: Imperial Emerald & Platinum
+                    </h4>
+                    <span className="text-[11px] text-emerald-400 font-mono block">
+                      VALAROIX Master Brand House Edition
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  Ultra-exclusive niche perfumery aesthetic inspired by Clive Christian & Roja Parfums. Midnight emerald obsidian velvet, luminous jade glowing halo, and frosted platinum accents.
+                </p>
+
+                {/* Color Swatches */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Palette System:</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black border border-white/10 text-[10px] font-mono text-gray-300">
+                      <span className="w-3 h-3 rounded-full bg-[#04120B] border border-emerald-500" /> Obsidian #04120B
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black border border-white/10 text-[10px] font-mono text-gray-300">
+                      <span className="w-3 h-3 rounded-full bg-[#10B981]" /> Emerald #10B981
+                    </div>
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black border border-white/10 text-[10px] font-mono text-gray-300">
+                      <span className="w-3 h-3 rounded-full bg-[#F1F5F9]" /> Platinum #F1F5F9
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-5">
+                <button
+                  type="button"
+                  className={`w-full py-2.5 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
+                    theme === 'imperial-emerald'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg shadow-emerald-500/40 cursor-default'
+                      : 'bg-white/10 text-white hover:bg-emerald-600 hover:text-white border border-white/15'
+                  }`}
+                >
+                  {theme === 'imperial-emerald' ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-white" />
+                      <span>Currently Active On Website</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 text-emerald-300" />
+                      <span>Activate Imperial Emerald (1-Click)</span>
                     </>
                   )}
                 </button>

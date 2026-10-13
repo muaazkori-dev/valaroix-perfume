@@ -41,6 +41,24 @@
   --text-accent: #60A5FA;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME 3: IMPERIAL EMERALD & PLATINUM (VALAROIX Haute Parfumerie Brand Edition)
+───────────────────────────────────────────────────────────────────────────── */
+[data-theme="imperial-emerald"],
+.theme-emerald {
+  --bg-main: #04120B;
+  --bg-card: #071F13;
+  --color-accent: #10B981;
+  --color-accent-light: #F1F5F9;
+  --color-accent-hover: #34D399;
+  --border-accent: rgba(16, 185, 129, 0.45);
+  --glow-accent: rgba(16, 185, 129, 0.35);
+  --btn-bg: #059669;
+  --btn-text: #FFFFFF;
+  --text-primary: #FFFFFF;
+  --text-accent: #34D399;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
@@ -329,4 +347,219 @@ body.theme-sapphire {
 .theme-sapphire footer {
   background-color: #030611 !important;
   border-top-color: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   IMPERIAL EMERALD EDITION OVERRIDES (VALAROIX Haute Parfumerie Brand Edition)
+───────────────────────────────────────────────────────────────────────────── */
+[data-theme="imperial-emerald"] body,
+body.theme-emerald {
+  background-color: #04120B !important;
+  color: #FFFFFF !important;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.22) 0%, transparent 60%),
+    radial-gradient(circle at 10% 40%, rgba(6, 78, 59, 0.20) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(5, 150, 105, 0.15) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Main Layouts & Backdrops in Emerald */
+[data-theme="imperial-emerald"] main,
+.theme-emerald main {
+  background-color: #04120B !important;
+}
+
+/* Transform all black & dark cards into deep midnight emerald obsidian */
+[data-theme="imperial-emerald"] .bg-\[\#0D0D0D\],
+[data-theme="imperial-emerald"] .bg-\[\#0A0A0D\],
+[data-theme="imperial-emerald"] .bg-\[\#070709\],
+[data-theme="imperial-emerald"] .bg-\[\#0B0B0E\],
+[data-theme="imperial-emerald"] .bg-valaroix-dark,
+.theme-emerald .bg-\[\#0D0D0D\],
+.theme-emerald .bg-\[\#0A0A0D\],
+.theme-emerald .bg-\[\#070709\],
+.theme-emerald .bg-\[\#0B0B0E\],
+.theme-emerald .bg-valaroix-dark {
+  background-color: #04120B !important;
+}
+
+[data-theme="imperial-emerald"] .bg-\[\#111111\],
+[data-theme="imperial-emerald"] .bg-\[\#13110E\],
+[data-theme="imperial-emerald"] .bg-\[\#141414\],
+[data-theme="imperial-emerald"] .bg-\[\#1A1A1A\],
+[data-theme="imperial-emerald"] .bg-\[\#0e0e13\],
+[data-theme="imperial-emerald"] .glass-panel-dark,
+.theme-emerald .bg-\[\#111111\],
+.theme-emerald .bg-\[\#13110E\],
+.theme-emerald .bg-\[\#141414\],
+.theme-emerald .bg-\[\#1A1A1A\],
+.theme-emerald .bg-\[\#0e0e13\],
+.theme-emerald .glass-panel-dark {
+  background-color: #071F13 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Navbar & Sticky Headers in Emerald */
+[data-theme="imperial-emerald"] header > div,
+.theme-emerald header > div {
+  background-color: rgba(4, 18, 11, 0.96) !important;
+  border-bottom-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* 1. All Gold Backgrounds & Ambient Glow Shades become Luminous Emerald */
+[data-theme="imperial-emerald"] [class*="bg-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="bg-[#d4af37]"],
+[data-theme="imperial-emerald"] [class*="bg-valaroix-gold"],
+.theme-emerald [class*="bg-[#D4AF37]"],
+.theme-emerald [class*="bg-[#d4af37]"],
+.theme-emerald [class*="bg-valaroix-gold"] {
+  background-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Ambient glow blur circles turn into high-intensity emerald aura */
+[data-theme="imperial-emerald"] [class*="blur-"][class*="bg-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="blur-"][class*="bg-[#d4af37]"],
+.theme-emerald [class*="blur-"][class*="bg-[#D4AF37]"],
+.theme-emerald [class*="blur-"][class*="bg-[#d4af37]"] {
+  background-color: rgba(16, 185, 129, 0.45) !important;
+  filter: drop-shadow(0 0 80px rgba(16, 185, 129, 0.6)) !important;
+}
+
+/* Solid gold buttons/pills become deep imperial emerald */
+[data-theme="imperial-emerald"] .bg-\[\#D4AF37\],
+[data-theme="imperial-emerald"] .bg-\[\#d4af37\],
+[data-theme="imperial-emerald"] .bg-valaroix-gold,
+.theme-emerald .bg-\[\#D4AF37\],
+.theme-emerald .bg-\[\#d4af37\],
+.theme-emerald .bg-valaroix-gold {
+  background-color: #059669 !important;
+  color: #FFFFFF !important;
+}
+
+/* 2. All Gold Borders become Emerald */
+[data-theme="imperial-emerald"] [class*="border-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="border-[#d4af37]"],
+[data-theme="imperial-emerald"] [class*="border-valaroix-gold"],
+.theme-emerald [class*="border-[#D4AF37]"],
+.theme-emerald [class*="border-[#d4af37]"],
+.theme-emerald [class*="border-valaroix-gold"] {
+  border-color: rgba(16, 185, 129, 0.45) !important;
+}
+
+/* 3. All Gold Text & Icons become Brilliant Emerald or Frosted Platinum */
+[data-theme="imperial-emerald"] [class*="text-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="text-[#d4af37]"],
+[data-theme="imperial-emerald"] [class*="text-valaroix-gold"],
+.theme-emerald [class*="text-[#D4AF37]"],
+.theme-emerald [class*="text-[#d4af37]"],
+.theme-emerald [class*="text-valaroix-gold"] {
+  color: #34D399 !important;
+}
+
+[data-theme="imperial-emerald"] [class*="hover:text-[#D4AF37]"]:hover,
+[data-theme="imperial-emerald"] [class*="hover:text-[#d4af37]"]:hover,
+.theme-emerald [class*="hover:text-[#D4AF37]"]:hover,
+.theme-emerald [class*="hover:text-[#d4af37]"]:hover {
+  color: #6EE7B7 !important;
+}
+
+[data-theme="imperial-emerald"] [class*="text-[#f6e6b4]"],
+[data-theme="imperial-emerald"] [class*="text-valaroix-goldLight"],
+.theme-emerald [class*="text-[#f6e6b4]"],
+.theme-emerald [class*="text-valaroix-goldLight"] {
+  color: #F1F5F9 !important;
+}
+
+/* 4. Gradients: Convert gold gradient stops to Emerald */
+[data-theme="imperial-emerald"] [class*="to-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="to-[#d4af37]"],
+.theme-emerald [class*="to-[#D4AF37]"],
+.theme-emerald [class*="to-[#d4af37]"] {
+  --tw-gradient-to: rgba(16, 185, 129, 0.3) var(--tw-gradient-to-position) !important;
+}
+
+[data-theme="imperial-emerald"] [class*="from-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="from-[#d4af37]"],
+.theme-emerald [class*="from-[#D4AF37]"],
+.theme-emerald [class*="from-[#d4af37]"] {
+  --tw-gradient-from: rgba(5, 150, 105, 0.6) var(--tw-gradient-from-position) !important;
+}
+
+[data-theme="imperial-emerald"] [class*="via-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="via-[#d4af37]"],
+.theme-emerald [class*="via-[#D4AF37]"],
+.theme-emerald [class*="via-[#d4af37]"] {
+  --tw-gradient-via: rgba(16, 185, 129, 0.4) var(--tw-gradient-via-position) !important;
+}
+
+/* 5. Gold Shadows become Emerald */
+[data-theme="imperial-emerald"] [class*="shadow-[#D4AF37]"],
+[data-theme="imperial-emerald"] [class*="shadow-[#d4af37]"],
+.theme-emerald [class*="shadow-[#D4AF37]"],
+.theme-emerald [class*="shadow-[#d4af37]"] {
+  --tw-shadow-color: rgba(16, 185, 129, 0.5) !important;
+}
+
+/* Buttons in Emerald Theme */
+[data-theme="imperial-emerald"] .btn-mockup-gold,
+.theme-emerald .btn-mockup-gold {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(110, 231, 183, 0.35) !important;
+  box-shadow: 0 4px 22px rgba(16, 185, 129, 0.45) !important;
+}
+
+[data-theme="imperial-emerald"] .btn-mockup-gold:hover,
+.theme-emerald .btn-mockup-gold:hover {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%) !important;
+  box-shadow: 0 6px 30px rgba(16, 185, 129, 0.65) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="imperial-emerald"] .btn-mockup-outline,
+.theme-emerald .btn-mockup-outline {
+  border: 1px solid #10B981 !important;
+  color: #6EE7B7 !important;
+}
+
+[data-theme="imperial-emerald"] .btn-mockup-outline:hover,
+.theme-emerald .btn-mockup-outline:hover {
+  background-color: #059669 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* Glass Panels */
+[data-theme="imperial-emerald"] .glass-panel,
+.theme-emerald .glass-panel {
+  background-color: rgba(6, 26, 16, 0.8) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+[data-theme="imperial-emerald"] .glass-panel-gold,
+.theme-emerald .glass-panel-gold {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  border-color: rgba(16, 185, 129, 0.45) !important;
+  color: #6EE7B7 !important;
+}
+
+/* Selection and Scrollbar */
+[data-theme="imperial-emerald"] ::selection,
+.theme-emerald ::selection {
+  background-color: #059669 !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="imperial-emerald"] ::-webkit-scrollbar-thumb:hover,
+.theme-emerald ::-webkit-scrollbar-thumb:hover {
+  background: #10B981 !important;
+}
+
+/* Footer in Emerald */
+[data-theme="imperial-emerald"] footer,
+.theme-emerald footer {
+  background-color: #020805 !important;
+  border-top-color: rgba(16, 185, 129, 0.3) !important;
 }
