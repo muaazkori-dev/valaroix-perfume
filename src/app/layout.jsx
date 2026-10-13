@@ -1,4 +1,5 @@
 import './globals.css';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { AnimationProvider } from '@/context/AnimationContext';
 import { CartProvider } from '@/context/CartContext';
 import { CurrencyProvider } from '@/context/CurrencyContext';
@@ -77,18 +78,20 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-valaroix-dark text-gray-100 selection:bg-valaroix-gold selection:text-valaroix-dark">
-        <CurrencyProvider>
-          <AuthProvider>
-            <AnimationProvider>
-              <CartProvider>
-                {children}
-                <FloatingCartButton />
-                <AddToCartToast />
-              </CartProvider>
-            </AnimationProvider>
-          </AuthProvider>
-        </CurrencyProvider>
+      <body className="bg-valaroix-dark text-gray-100 selection:bg-valaroix-gold selection:text-valaroix-dark transition-colors duration-500">
+        <ThemeProvider>
+          <CurrencyProvider>
+            <AuthProvider>
+              <AnimationProvider>
+                <CartProvider>
+                  {children}
+                  <FloatingCartButton />
+                  <AddToCartToast />
+                </CartProvider>
+              </AnimationProvider>
+            </AuthProvider>
+          </CurrencyProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

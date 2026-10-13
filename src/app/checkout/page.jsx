@@ -31,7 +31,7 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    city: 'Karachi',
+    city: '',
     address: '',
     notes: ''
   });
@@ -351,32 +351,21 @@ export default function CheckoutPage() {
                       </div>
                     </div>
 
-                    {/* City */}
+                    {/* City (Customer Types Manually) */}
                     <div className="space-y-1">
                       <label className="text-[11px] font-semibold text-gray-300 uppercase">
-                        City *
+                        City / Shehr *
                       </label>
                       <div className="relative">
                         <Building className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <select
+                        <input
+                          type="text"
+                          required
                           value={formData.city}
                           onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                          className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs text-white focus:outline-none focus:border-[#D4AF37] cursor-pointer"
-                        >
-                          <option value="Karachi">Karachi</option>
-                          <option value="Lahore">Lahore</option>
-                          <option value="Islamabad">Islamabad</option>
-                          <option value="Rawalpindi">Rawalpindi</option>
-                          <option value="Faisalabad">Faisalabad</option>
-                          <option value="Multan">Multan</option>
-                          <option value="Peshawar">Peshawar</option>
-                          <option value="Quetta">Quetta</option>
-                          <option value="Sialkot">Sialkot</option>
-                          <option value="Gujranwala">Gujranwala</option>
-                          <option value="Hyderabad">Hyderabad</option>
-                          <option value="Bahawalpur">Bahawalpur</option>
-                          <option value="Other City">Other City (All Pakistan)</option>
-                        </select>
+                          placeholder="Type your City (e.g. Karachi, Lahore, Islamabad...)"
+                          className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder:text-gray-600 focus:outline-none focus:border-[#D4AF37]"
+                        />
                       </div>
                     </div>
 

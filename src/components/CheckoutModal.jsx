@@ -22,7 +22,7 @@ export default function CheckoutModal() {
     name: user?.user_metadata?.full_name || '',
     whatsapp: '',
     address: '',
-    city: 'Karachi'
+    city: ''
   });
 
   if (!isCheckoutOpen) return null;

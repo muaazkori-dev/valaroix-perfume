@@ -9,12 +9,36 @@
   --font-playfair: 'Playfair Display', serif;
   --font-inter: 'Inter', sans-serif;
   
-  /* Mockup Palette System */
-  --bg-rich-black: #0D0D0D;
-  --bg-dark-charcoal: #1A1A1A;
-  --color-luxury-gold: #D4AF37;
-  --bg-soft-cream: #F7F4EE;
-  --text-gray-subtext: #6B6B6B;
+  /* Theme 1: Royal Noir & Gold (Default) */
+  --bg-main: #0D0D0D;
+  --bg-card: #1A1A1A;
+  --color-accent: #D4AF37;
+  --color-accent-light: #F6E6B4;
+  --color-accent-hover: #e5c14e;
+  --border-accent: rgba(212, 175, 55, 0.25);
+  --glow-accent: rgba(212, 175, 55, 0.25);
+  --btn-bg: #D4AF37;
+  --btn-text: #0D0D0D;
+  --text-primary: #F3F3F5;
+  --text-accent: #D4AF37;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME 2: MIDNIGHT SAPPHIRE & PLATINUM (Blue, Obsidian Black & Crisp White)
+───────────────────────────────────────────────────────────────────────────── */
+[data-theme="sapphire-blue"],
+.theme-sapphire {
+  --bg-main: #050814;
+  --bg-card: #0B132B;
+  --color-accent: #3B82F6;
+  --color-accent-light: #FFFFFF;
+  --color-accent-hover: #60A5FA;
+  --border-accent: rgba(59, 130, 246, 0.45);
+  --glow-accent: rgba(59, 130, 246, 0.35);
+  --btn-bg: #2563EB;
+  --btn-text: #FFFFFF;
+  --text-primary: #FFFFFF;
+  --text-accent: #60A5FA;
 }
 
 html {
@@ -28,6 +52,7 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 /* Fast Scrollbar */
@@ -50,7 +75,7 @@ body {
   font-family: 'Cinzel', 'Playfair Display', serif;
 }
 
-/* Mockup Metallic Gold Button */
+/* Metallic Gold Button (Default) */
 .btn-mockup-gold {
   background-color: #D4AF37;
   color: #0D0D0D;
@@ -87,4 +112,145 @@ body {
   background-color: #FFFFFF;
   border: 1px solid rgba(13, 13, 13, 0.08);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SAPPHIRE EDITION OVERRIDES (When Admin activates Blue / Black / White theme)
+───────────────────────────────────────────────────────────────────────────── */
+[data-theme="sapphire-blue"] body,
+body.theme-sapphire {
+  background-color: #050814 !important;
+  color: #FFFFFF !important;
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.20) 0%, transparent 60%),
+    radial-gradient(circle at 10% 40%, rgba(30, 58, 138, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.12) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Main Layouts & Backdrops */
+[data-theme="sapphire-blue"] main,
+.theme-sapphire main {
+  background-color: #050814 !important;
+}
+
+[data-theme="sapphire-blue"] .bg-\[\#0D0D0D\],
+[data-theme="sapphire-blue"] .bg-\[\#070709\],
+[data-theme="sapphire-blue"] .bg-\[\#0B0B0E\],
+[data-theme="sapphire-blue"] .bg-valaroix-dark {
+  background-color: #050814 !important;
+}
+
+[data-theme="sapphire-blue"] .bg-\[\#141414\],
+[data-theme="sapphire-blue"] .bg-\[\#1A1A1A\],
+[data-theme="sapphire-blue"] .bg-\[\#0e0e13\],
+[data-theme="sapphire-blue"] .glass-panel-dark {
+  background-color: #0B132B !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+
+/* Navbar & Sticky Headers */
+[data-theme="sapphire-blue"] header > div,
+.theme-sapphire header > div {
+  background-color: rgba(5, 8, 20, 0.96) !important;
+  border-bottom-color: rgba(59, 130, 246, 0.35) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* Text & Accent Colors */
+[data-theme="sapphire-blue"] .text-\[\#D4AF37\],
+[data-theme="sapphire-blue"] .text-valaroix-gold,
+.theme-sapphire .text-\[\#D4AF37\],
+.theme-sapphire .text-valaroix-gold {
+  color: #60A5FA !important;
+}
+
+[data-theme="sapphire-blue"] .text-\[\#f6e6b4\],
+[data-theme="sapphire-blue"] .text-valaroix-goldLight,
+.theme-sapphire .text-\[\#f6e6b4\],
+.theme-sapphire .text-valaroix-goldLight {
+  color: #FFFFFF !important;
+}
+
+/* Borders & Dividers */
+[data-theme="sapphire-blue"] .border-\[\#D4AF37\],
+[data-theme="sapphire-blue"] .border-\[\#D4AF37\]\/20,
+[data-theme="sapphire-blue"] .border-\[\#D4AF37\]\/30,
+[data-theme="sapphire-blue"] .border-\[\#D4AF37\]\/40,
+[data-theme="sapphire-blue"] .border-valaroix-gold\/20,
+[data-theme="sapphire-blue"] .border-valaroix-gold\/30,
+[data-theme="sapphire-blue"] .border-valaroix-gold\/40,
+.theme-sapphire .border-\[\#D4AF37\],
+.theme-sapphire .border-\[\#D4AF37\]\/30 {
+  border-color: rgba(59, 130, 246, 0.40) !important;
+}
+
+/* Buttons in Sapphire Theme */
+[data-theme="sapphire-blue"] .btn-mockup-gold,
+.theme-sapphire .btn-mockup-gold {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(147, 197, 253, 0.35) !important;
+  box-shadow: 0 4px 22px rgba(37, 99, 235, 0.45) !important;
+}
+
+[data-theme="sapphire-blue"] .btn-mockup-gold:hover,
+.theme-sapphire .btn-mockup-gold:hover {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
+  box-shadow: 0 6px 30px rgba(59, 130, 246, 0.65) !important;
+  transform: translateY(-1px);
+}
+
+[data-theme="sapphire-blue"] .btn-mockup-outline,
+.theme-sapphire .btn-mockup-outline {
+  border: 1px solid #3B82F6 !important;
+  color: #93C5FD !important;
+}
+
+[data-theme="sapphire-blue"] .btn-mockup-outline:hover,
+.theme-sapphire .btn-mockup-outline:hover {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4) !important;
+}
+
+/* Badges & Pills */
+[data-theme="sapphire-blue"] .bg-\[\#D4AF37\],
+.theme-sapphire .bg-\[\#D4AF37\] {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+/* Glass Panels */
+[data-theme="sapphire-blue"] .glass-panel,
+.theme-sapphire .glass-panel {
+  background-color: rgba(11, 19, 43, 0.8) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+}
+
+[data-theme="sapphire-blue"] .glass-panel-gold,
+.theme-sapphire .glass-panel-gold {
+  background-color: rgba(37, 99, 235, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.45) !important;
+  color: #93C5FD !important;
+}
+
+/* Selection and Scrollbar in Sapphire */
+[data-theme="sapphire-blue"] ::selection,
+.theme-sapphire ::selection {
+  background-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="sapphire-blue"] ::-webkit-scrollbar-thumb:hover,
+.theme-sapphire ::-webkit-scrollbar-thumb:hover {
+  background: #3B82F6 !important;
+}
+
+/* Footer & Bottom Navigation */
+[data-theme="sapphire-blue"] footer,
+.theme-sapphire footer {
+  background-color: #030611 !important;
+  border-top-color: rgba(59, 130, 246, 0.3) !important;
 }

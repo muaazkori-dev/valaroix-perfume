@@ -23,7 +23,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _nameCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
   final _addressCtrl = TextEditingController();
-  final _cityCtrl = TextEditingController(text: 'Karachi');
+  final _cityCtrl = TextEditingController();
 
   bool _isSubmitting = false;
 
