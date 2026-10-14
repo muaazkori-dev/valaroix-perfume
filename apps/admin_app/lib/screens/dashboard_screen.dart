@@ -182,7 +182,9 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
         backgroundColor: AdminConstants.secondaryBg,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        titleSpacing: 12,
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 34,
@@ -203,14 +205,20 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
             const SizedBox(width: 10),
             const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'VALAROIX ADMIN',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 2),
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 1.2,
+                  ),
                 ),
                 Text(
                   'Owner Hub: Muaaz & Fahad',
-                  style: TextStyle(fontSize: 10, color: AdminConstants.gold),
+                  style: TextStyle(fontSize: 9.5, color: AdminConstants.gold),
                 ),
               ],
             ),
@@ -218,36 +226,71 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
         ),
         actions: [
           IconButton(
-            tooltip: 'Check for Updates',
-            icon: const Icon(Icons.system_update_alt_rounded, color: AdminConstants.gold),
-            onPressed: () => UpdateService.checkForUpdates(context, isManual: true),
-          ),
-          IconButton(
-            tooltip: 'Notification Setup & Test',
-            icon: const Icon(Icons.notifications_active_outlined, color: AdminConstants.gold),
-            onPressed: () => _showNotificationHelper(context, admin),
-          ),
-          IconButton(
             tooltip: admin.soundEnabled ? 'Order Sound: ON' : 'Order Sound: OFF',
             icon: Icon(
               admin.soundEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
               color: admin.soundEnabled ? AdminConstants.success : AdminConstants.textMuted,
+              size: 22,
             ),
             onPressed: () {
               admin.toggleSound();
               HapticFeedback.lightImpact();
             },
           ),
-          IconButton(
-            tooltip: 'Lock Panel',
-            icon: const Icon(Icons.lock_outline_rounded, color: Colors.redAccent),
-            onPressed: () {
-              admin.logout();
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const PinScreen()),
-              );
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded, color: AdminConstants.gold, size: 22),
+            color: AdminConstants.secondaryBg,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0x44D4AF37)),
+            ),
+            onSelected: (value) {
+              if (value == 'update') {
+                UpdateService.checkForUpdates(context, isManual: true);
+              } else if (value == 'notifications') {
+                _showNotificationHelper(context, admin);
+              } else if (value == 'logout') {
+                admin.logout();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const PinScreen()),
+                );
+              }
             },
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(
+                value: 'update',
+                child: Row(
+                  children: [
+                    Icon(Icons.system_update_alt_rounded, color: AdminConstants.gold, size: 18),
+                    SizedBox(width: 10),
+                    Text('Check for Updates', style: TextStyle(color: Colors.white, fontSize: 13)),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'notifications',
+                child: Row(
+                  children: [
+                    Icon(Icons.notifications_active_outlined, color: AdminConstants.gold, size: 18),
+                    SizedBox(width: 10),
+                    Text('Notification Setup', style: TextStyle(color: Colors.white, fontSize: 13)),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(height: 1),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.lock_outline_rounded, color: Colors.redAccent, size: 18),
+                    SizedBox(width: 10),
+                    Text('Lock Panel', style: TextStyle(color: Colors.redAccent, fontSize: 13)),
+                  ],
+                ),
+              ),
+            ],
           ),
+          const SizedBox(width: 6),
         ],
       ),
       body: Column(

@@ -12,8 +12,8 @@ class AppConstants {
 
   // ── Backend API (Valaroix Next.js on Vercel) ─────────────────────────────────
   static const String baseUrl = 'https://valaroix.com/api';
-  static const String appVersion = '1.0.10';
-  static const int appVersionCode = 10;
+  static const String appVersion = '1.0.21';
+  static const int appVersionCode = 21;
 
   // ── Support & Social ────────────────────────────────────────────────────────
   static const String whatsappNumber = '923029111856';

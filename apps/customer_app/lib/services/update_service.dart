@@ -36,7 +36,16 @@ class UpdateService {
             'Performance improvements and luxury refinements.';
         final forceUpdate = data['forceUpdate'] == true;
 
-        if (remoteCode > AppConstants.appVersionCode && apkUrl.isNotEmpty) {
+        // Query actual installed version code from device package manager
+        int currentCode = AppConstants.appVersionCode;
+        try {
+          final nativeCode = await _channel.invokeMethod<int>('getAppVersionCode');
+          if (nativeCode != null && nativeCode > 0) {
+            currentCode = nativeCode;
+          }
+        } catch (_) {}
+
+        if (remoteCode > currentCode && apkUrl.isNotEmpty) {
           if (context.mounted) {
             _showUpdateDialog(
               context,

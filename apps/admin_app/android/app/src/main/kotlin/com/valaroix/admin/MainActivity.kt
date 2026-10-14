@@ -62,6 +62,25 @@ class MainActivity: FlutterActivity() {
                     val success = installApk(filePath)
                     result.success(success)
                 }
+                "getAppVersionCode" -> {
+                    try {
+                        val pInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+                        } else {
+                            @Suppress("DEPRECATION")
+                            packageManager.getPackageInfo(packageName, 0)
+                        }
+                        val vCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            pInfo.longVersionCode.toInt()
+                        } else {
+                            @Suppress("DEPRECATION")
+                            pInfo.versionCode
+                        }
+                        result.success(vCode)
+                    } catch (e: Exception) {
+                        result.success(0)
+                    }
+                }
                 else -> {
                     result.notImplemented()
                 }
