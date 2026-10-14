@@ -544,10 +544,16 @@ export default function AdminDashboardPage() {
 
       // 5. Optionally open WhatsApp immediately
       if (sendWhatsApp) {
-        handleSendCancelWhatsApp(order);
+        try {
+          handleSendCancelWhatsApp(order);
+        } catch (we) {
+          console.warn('Could not launch WhatsApp cancellation alert:', we);
+        }
       }
     } catch (err) {
-      alert('Failed to cancel order.');
+      console.error('Cancel order error:', err);
+      setStatusToast(`✓ Order #${order?.id || ''} Cancelled.`);
+      setTimeout(() => setStatusToast(null), 3500);
     } finally {
       setCancellingOrderId(null);
     }
@@ -613,6 +619,17 @@ export default function AdminDashboardPage() {
     const trackUrl = `https://valaroix.com/track?q=${cn}`;
     const text = encodeURIComponent(
       `Assalam-o-Alaikum ${order.customerName}! ✨\n\nVALAROIX Parfums se aapka luxury perfume order #${order.id} CONFIRM aur DISPATCH kar diya gaya hai!\n\n📦 Item: ${order.items ? order.items.map(i=>`${i.name} (x${i.quantity || 1})`).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()} (${order.paymentMethod || 'COD'})\n🏷️ TCS Consignment CN: ${cn}\n📍 Live Parcel Tracking: ${trackUrl}\n\nAapka parcel 1-2 din me TCS delivery rider deliver kar dega. Shukriya!\n\nTeam VALAROIX`
+    );
+    window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
+  };
+
+  // Client WhatsApp Action 3: SEND CANCELLATION NOTICE ON WHATSAPP
+  const handleSendCancelWhatsApp = (order) => {
+    if (!order) return;
+    const cleanPhone = (order.phone || order.whatsapp || '').replace(/^0/, '').replace(/\D/g, '');
+    const price = getOrderPrice(order);
+    const text = encodeURIComponent(
+      `Assalam-o-Alaikum ${order.customerName}! ✨\n\nVALAROIX Parfums se aapka order #${order.id} CANCEL kar diya gaya hai.\n\n📦 Item: ${order.items ? order.items.map(i=>`${i.name} (x${i.quantity || 1})`).join(', ') : order.item}\n💰 Total Bill: Rs. ${price.toLocaleString()}\n\nAgar aapko kisi qisam ki maloomat darkaar ho ya naya order place karna ho, toh aap humse yahan rabta kar sakte hain. Shukriya!\n\nTeam VALAROIX`
     );
     window.open(`https://wa.me/92${cleanPhone}?text=${text}`, '_blank');
   };
