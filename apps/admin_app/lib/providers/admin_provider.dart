@@ -92,6 +92,9 @@ class AdminProvider extends ChangeNotifier {
   Future<void> _initAuth() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      final savedIds = prefs.getStringList('admin_known_order_ids') ?? [];
+      _knownIds = savedIds.toSet();
+
       final savedLogin = prefs.getBool('admin_logged_in') ?? false;
       if (savedLogin) {
         _isAuthenticated = true;
@@ -147,21 +150,31 @@ class AdminProvider extends ChangeNotifier {
         final fetched = rawList.map((o) => AdminOrder.fromJson(o)).toList();
 
         // Detect new orders
+        List<AdminOrder> newOnes = [];
         if (_knownIds.isNotEmpty) {
-          final newOnes = fetched.where((o) => !_knownIds.contains(o.id)).toList();
-          if (newOnes.isNotEmpty) {
-            _newOrderAlert = newOnes.first;
-            for (final o in newOnes) {
-              _triggerStatusBarNotification(o);
-            }
-            if (_soundEnabled) {
-              HapticFeedback.heavyImpact();
-              SystemSound.play(SystemSoundType.alert);
-            }
+          newOnes = fetched.where((o) => !_knownIds.contains(o.id)).toList();
+        } else {
+          // If fresh launch or knownIds was empty, alert for any pending order created in the last 30 minutes!
+          final thirtyMinsAgo = DateTime.now().subtract(const Duration(minutes: 30));
+          newOnes = fetched.where((o) => o.isPending && o.createdAt.isAfter(thirtyMinsAgo)).toList();
+        }
+
+        if (newOnes.isNotEmpty) {
+          _newOrderAlert = newOnes.first;
+          for (final o in newOnes) {
+            _triggerStatusBarNotification(o);
+          }
+          if (_soundEnabled) {
+            HapticFeedback.heavyImpact();
+            SystemSound.play(SystemSoundType.alert);
           }
         }
 
         _knownIds = fetched.map((o) => o.id).toSet();
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setStringList('admin_known_order_ids', _knownIds.toList());
+        } catch (_) {}
 
         // Update list
         _orders = fetched;
