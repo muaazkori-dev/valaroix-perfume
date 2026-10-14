@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ShoppingBag, ShieldCheck, Award, Clock, Truck, RotateCcw } from 'lucide-react';
+import { ShoppingBag, ShieldCheck, Award, Clock, Truck, RotateCcw, Zap } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useTheme } from '@/context/ThemeContext';
@@ -78,6 +79,7 @@ export const products = [
 ];
 
 export default function ProductCatalog() {
+  const router = useRouter();
   const { addToCart, setIsCheckoutOpen } = useCart();
   const { formatPrice } = useCurrency();
   const { isSapphire, isEmerald } = useTheme();
@@ -90,6 +92,7 @@ export default function ProductCatalog() {
   const handleBuyNow = (product) => {
     if (product.isSoldOut) return;
     addToCart(product, '50ml', 'None', '10h');
+    router.push('/checkout');
   };
 
   return (
@@ -266,7 +269,7 @@ export default function ProductCatalog() {
                     </div>
                   </div>
 
-                  {/* Direct Action Buttons */}
+                  {/* Direct Action Buttons: Dual Add to Cart & Buy Now */}
                   <div className="pt-2 border-t border-white/10">
                     {product.isSoldOut ? (
                       <button
@@ -276,18 +279,41 @@ export default function ProductCatalog() {
                         Currently Sold Out
                       </button>
                     ) : (
-                      <button
-                        onClick={() => handleQuickAdd(product)}
-                        className={`w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all active:scale-95 cursor-pointer ${
-                          isEmerald
-                            ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-700 text-white shadow-emerald-500/35 hover:brightness-110'
-                            : isSapphire
-                            ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-blue-500/35 hover:brightness-110'
-                            : 'btn-mockup-gold'
-                        }`}
-                      >
-                        <ShoppingBag className={`w-4 h-4 ${isEmerald || isSapphire ? 'text-white' : 'text-[#0D0D0D]'}`} /> Add to Cart
-                      </button>
+                      <div className="grid grid-cols-2 gap-2">
+                        {/* 1. Add to Cart */}
+                        <button
+                          type="button"
+                          onClick={() => handleQuickAdd(product)}
+                          className={`py-3 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer border ${
+                            isEmerald
+                              ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/60'
+                              : isSapphire
+                              ? 'bg-blue-950/60 border-blue-500/50 text-blue-300 hover:bg-blue-900/60'
+                              : 'bg-black/60 border-[#D4AF37]/50 text-[#D4AF37] hover:bg-[#D4AF37]/15'
+                          }`}
+                          title="Add to Cart"
+                        >
+                          <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                          <span>Add to Cart</span>
+                        </button>
+
+                        {/* 2. Buy Now (Instant 1-Click Fast Checkout) */}
+                        <button
+                          type="button"
+                          onClick={() => handleBuyNow(product)}
+                          className={`py-3 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg transition-all active:scale-95 cursor-pointer ${
+                            isEmerald
+                              ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-700 text-white shadow-emerald-500/40 hover:brightness-110'
+                              : isSapphire
+                              ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-blue-500/40 hover:brightness-110'
+                              : 'btn-mockup-gold'
+                          }`}
+                          title="Buy Now with Fast 1-Click Checkout"
+                        >
+                          <Zap className="w-3.5 h-3.5 shrink-0 fill-current" />
+                          <span>Buy Now</span>
+                        </button>
+                      </div>
                     )}
                   </div>
                 </motion.div>
@@ -299,7 +325,7 @@ export default function ProductCatalog() {
 
       {/* 2. EXACT MOCKUP TRUST BADGES SECTION */}
       <section
-        className={`py-16 border-t border-b text-white transition-colors duration-500 ${
+        className={`py-12 sm:py-16 border-t border-b text-white transition-colors duration-500 ${
           isEmerald
             ? 'bg-[#04120B] border-emerald-500/30'
             : isSapphire
@@ -307,7 +333,7 @@ export default function ProductCatalog() {
             : 'bg-[#0D0D0D] border-[#D4AF37]/20'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center">
           <div className="space-y-2 flex flex-col items-center">
             <div
               className={`w-12 h-12 rounded-full border flex items-center justify-center mb-1 transition-all ${

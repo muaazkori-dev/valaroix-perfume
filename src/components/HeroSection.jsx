@@ -105,11 +105,11 @@ export default function HeroSection() {
             />
 
             {/* High-Res Master Perfume Image (Full Bottle Uncropped) */}
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pb-12">
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center pb-14 sm:pb-12 p-2">
               <img
                 src="/products/valaroix-noir-vertex-duo.jpg"
                 alt="Valaroix Noir X & Vertex"
-                className="w-full h-full object-cover sm:object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 max-h-[420px]"
+                className="w-full h-full object-contain rounded-2xl group-hover:scale-105 transition-transform duration-700 max-h-[420px] drop-shadow-2xl"
               />
             </div>
 

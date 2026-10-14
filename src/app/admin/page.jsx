@@ -118,16 +118,19 @@ export default function AdminDashboardPage() {
 
   // Helper calculation for Price & Profit
   const getOrderPrice = (o) => {
-    if (o.pricePkr && o.pricePkr > 0) return o.pricePkr;
-    if (o.total && o.total > 0) return o.total;
-    if (o.items && o.items.length > 0) {
-      return o.items.reduce((sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1), 0);
+    let price = 3000;
+    if (o.pricePkr && o.pricePkr > 0) price = o.pricePkr;
+    else if (o.total && o.total > 0) price = o.total;
+    else if (o.items && o.items.length > 0) {
+      price = o.items.reduce((sum, item) => sum + (item.price || item.exactPkr || 3000) * (item.quantity || 1), 0);
+    } else {
+      const itemStr = (o.item || o.items?.[0]?.name || '').toLowerCase();
+      if (itemStr.includes('vertex')) price = 3500;
+      else if (itemStr.includes('noir')) price = 3000;
+      else if (itemStr.includes('sauvage') || itemStr.includes('classic')) price = 2500;
+      else price = 3000;
     }
-    const itemStr = (o.item || o.items?.[0]?.name || '').toLowerCase();
-    if (itemStr.includes('vertex')) return 3499;
-    if (itemStr.includes('noir')) return 2999;
-    if (itemStr.includes('sauvage') || itemStr.includes('classic')) return 2499;
-    return 2999;
+    return Math.ceil(price / 100) * 100;
   };
 
   const getOrderProfit = (o) => {

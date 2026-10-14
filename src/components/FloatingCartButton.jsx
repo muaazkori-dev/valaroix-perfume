@@ -25,7 +25,7 @@ export default function FloatingCartButton() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsCartOpen(true)}
-        className="fixed top-20 right-4 sm:top-24 sm:right-6 z-40 flex items-center gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 bg-black/95 text-white rounded-full border border-[#D4AF37] shadow-[0_8px_25px_rgba(212,175,55,0.4)] backdrop-blur-lg group hover:border-[#D4AF37] transition-all cursor-pointer"
+        className="hidden md:flex fixed top-24 right-6 z-40 items-center gap-2.5 px-4 py-2.5 bg-black/95 text-white rounded-full border border-[#D4AF37] shadow-[0_8px_25px_rgba(212,175,55,0.4)] backdrop-blur-lg group hover:border-[#D4AF37] transition-all cursor-pointer"
         aria-label="View Shopping Cart"
       >
         {/* Glowing Pulse Ring */}

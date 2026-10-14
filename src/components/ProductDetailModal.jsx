@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, ShoppingBag, Check, ShieldCheck, Truck } from 'lucide-react';
+import { X, Star, ShoppingBag, Check, ShieldCheck, Truck, Zap } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
 export default function ProductDetailModal() {
@@ -104,16 +104,25 @@ export default function ProductDetailModal() {
                 </div>
               </div>
 
-              {/* Purchase Action CTAs */}
-              <div className="pt-2">
+              {/* Purchase Action CTAs: Add to Cart + Buy Now */}
+              <div className="grid grid-cols-2 gap-2.5 pt-2">
                 <button
+                  type="button"
                   onClick={() => {
                     addToCart(product, selectedSize, '');
                     setSelectedProductModal(null);
                   }}
-                  className="w-full btn-gold py-3.5 rounded-full flex items-center justify-center gap-2 text-xs uppercase font-bold tracking-wider shadow-lg"
+                  className="w-full py-3.5 rounded-xl border border-valaroix-gold/50 bg-black/60 text-valaroix-gold hover:bg-valaroix-gold/15 flex items-center justify-center gap-1.5 text-xs uppercase font-bold tracking-wider transition-all cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4" /> Add To Bag
+                  <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleBuyNow}
+                  className="w-full btn-gold py-3.5 rounded-xl flex items-center justify-center gap-1.5 text-xs uppercase font-black tracking-wider shadow-lg transition-all cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5 fill-current" /> Buy Now
                 </button>
               </div>
 

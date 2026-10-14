@@ -109,18 +109,22 @@ export default function CheckoutPage() {
 
     const effectiveItems = cart.length > 0 ? cart : [
       {
-        id: 'valaroix-sauvage-imperial',
-        name: 'VALAROIX DIOR SAUVAGE',
+        id: 'valaroix-noir-x',
+        name: 'VALAROIX NOIR X',
         quantity: 1,
-        price: 2699,
-        image: '/products/sauvage.jpg?v=2'
+        price: 3000,
+        exactPkr: 3000,
+        displayPrice: 2999,
+        image: '/products/noir-x.jpg'
       }
     ];
 
-    const finalAmount = effectiveItems.reduce(
-      (sum, item) => sum + (item.price || item.exactPkr || 2699) * (item.quantity || 1),
-      0
-    );
+    const finalAmount = Math.ceil(
+      effectiveItems.reduce(
+        (sum, item) => sum + (item.price || item.exactPkr || 3000) * (item.quantity || 1),
+        0
+      ) / 100
+    ) * 100;
 
     const newOrder = {
       id: orderId,
@@ -193,14 +197,16 @@ export default function CheckoutPage() {
   const effectiveCart = cart.length > 0 ? cart : [
     {
       cartItemId: 'demo-1',
-      name: 'VALAROIX DIOR SAUVAGE',
+      name: 'VALAROIX NOIR X',
       quantity: 1,
-      price: 2699,
-      image: '/products/sauvage.jpg?v=2'
+      price: 3000,
+      exactPkr: 3000,
+      displayPrice: 2999,
+      image: '/products/noir-x.jpg'
     }
   ];
 
-  const effectiveTotal = total > 0 ? total : 2699;
+  const effectiveTotal = total > 0 ? Math.ceil(total / 100) * 100 : 3000;
 
   return (
     <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden selection:bg-[#D4AF37] selection:text-black">
@@ -594,7 +600,7 @@ export default function CheckoutPage() {
                         </span>
                       </div>
                       <span className="text-xs font-bold text-[#D4AF37] font-mono shrink-0">
-                        {formatPrice((item.price || 2699) * (item.quantity || 1))}
+                        {formatPrice(Math.ceil((item.price || item.exactPkr || 3000) / 100) * 100 * (item.quantity || 1))}
                       </span>
                     </div>
                   ))}

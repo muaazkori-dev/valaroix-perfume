@@ -17,7 +17,7 @@ import MobileBottomNav from '@/components/MobileBottomNav';
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden pb-16 md:pb-0">
+    <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden pb-24 md:pb-0">
       {/* 1. Header Navbar */}
       <Navbar />
 

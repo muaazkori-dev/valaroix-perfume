@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { 
   Star, ShoppingBag, ShieldCheck, 
-  Truck, CheckCircle2, RotateCcw, Clock, ChevronRight, Award
+  Truck, CheckCircle2, RotateCcw, Clock, ChevronRight, Award, Zap
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import CartDrawer from '@/components/CartDrawer';
@@ -18,6 +18,7 @@ import { products } from '@/components/ProductCatalog';
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const { addToCart } = useCart();
   const { formatPrice } = useCurrency();
   const [quantity, setQuantity] = useState(1);
@@ -30,10 +31,17 @@ export default function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (product.isSoldOut) return;
-    
     for (let i = 0; i < quantity; i++) {
       addToCart(product, '50ml', 'None', '10h');
     }
+  };
+
+  const handleBuyNow = () => {
+    if (product.isSoldOut) return;
+    for (let i = 0; i < quantity; i++) {
+      addToCart(product, '50ml', 'None', '10h');
+    }
+    router.push('/checkout');
   };
 
   const whatsappOrderUrl = `https://wa.me/923029111856?text=${encodeURIComponent(
@@ -200,7 +208,7 @@ export default function ProductDetailPage() {
                 </div>
               )}
 
-              {/* Main Button */}
+              {/* Action Buttons: Add to Cart + Buy Now */}
               {product.isSoldOut ? (
                 <button
                   disabled
@@ -209,12 +217,23 @@ export default function ProductDetailPage() {
                   CURRENTLY SOLD OUT
                 </button>
               ) : (
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full py-4 rounded-2xl btn-mockup-gold text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:scale-[1.02] transition-transform cursor-pointer"
-                >
-                  <ShoppingBag className="w-4 h-4" /> ADD TO CART ({formatPrice(pricePkr * quantity)})
-                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={handleAddToCart}
+                    className="w-full py-4 rounded-2xl border border-[#D4AF37]/50 bg-black/60 text-[#D4AF37] hover:bg-[#D4AF37]/15 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <ShoppingBag className="w-4 h-4" /> ADD TO CART
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleBuyNow}
+                    className="w-full py-4 rounded-2xl btn-mockup-gold text-xs font-extrabold uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:scale-[1.02] transition-transform cursor-pointer"
+                  >
+                    <Zap className="w-4 h-4 fill-current" /> BUY NOW
+                  </button>
+                </div>
               )}
 
               {/* Direct WhatsApp Order CTA */}

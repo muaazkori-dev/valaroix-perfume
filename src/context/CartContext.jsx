@@ -21,7 +21,21 @@ export function CartProvider({ children }) {
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem('valaroix_cart');
-      if (savedCart) setCart(JSON.parse(savedCart));
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        // Normalize prices to full round hundreds (e.g. 2999 -> 3000, 3299 -> 3300, 3499 -> 3500)
+        const normalized = (Array.isArray(parsed) ? parsed : []).map((item) => {
+          const raw = item.price || item.exactPkr || 3000;
+          const rounded = Math.ceil(raw / 100) * 100;
+          return {
+            ...item,
+            price: rounded,
+            exactPkr: rounded,
+            displayPrice: item.displayPrice || raw
+          };
+        });
+        setCart(normalized);
+      }
 
       const savedWishlist = localStorage.getItem('valaroix_wishlist');
       if (savedWishlist) setWishlist(JSON.parse(savedWishlist));
@@ -49,21 +63,25 @@ export function CartProvider({ children }) {
     const cartItemId = `${product.id}-${size}`;
     const existingIndex = cart.findIndex((item) => (item.cartItemId === cartItemId || item.id === product.id));
 
-    let price = 2699;
+    let rawPrice = 2999;
     if (product.exactPkr && product.exactPkr > 0) {
-      price = product.exactPkr;
+      rawPrice = product.exactPkr;
     } else if (product.startingPrice?.pkr && product.startingPrice.pkr > 0) {
-      price = product.startingPrice.pkr;
+      rawPrice = product.startingPrice.pkr;
     } else if (typeof product.price === 'number' && product.price > 100) {
-      price = product.price;
+      rawPrice = product.price;
     }
+
+    // Psychological charm display price (e.g. 2999, 3299, 3499, 2499) vs Pure Count Money (3000, 3300, 3500, 2500)
+    // Requirement: "dikhaye itne lekin count pure ho paise"
+    const roundedPrice = Math.ceil(rawPrice / 100) * 100;
 
     if (existingIndex > -1) {
       const updated = [...cart];
       updated[existingIndex].quantity = (updated[existingIndex].quantity || 1) + 1;
-      if (!updated[existingIndex].price || updated[existingIndex].price <= 0) {
-        updated[existingIndex].price = price;
-      }
+      updated[existingIndex].price = roundedPrice;
+      updated[existingIndex].exactPkr = roundedPrice;
+      updated[existingIndex].displayPrice = rawPrice;
       saveCart(updated);
     } else {
       const newItem = {
@@ -72,8 +90,9 @@ export function CartProvider({ children }) {
         name: product.name,
         subtitle: product.subtitle || '',
         image: product.image || '/products/sauvage.jpg',
-        price,
-        exactPkr: price,
+        price: roundedPrice, // Full round count for calculations (3000, 3300, 3500, 2500)
+        displayPrice: rawPrice, // Psychological display tag (2999, 3299, 3499, 2499)
+        exactPkr: roundedPrice,
         size,
         engraving,
         quantity: 1,
@@ -87,7 +106,8 @@ export function CartProvider({ children }) {
       id: Date.now(),
       name: product.name,
       image: product.image || '/products/sauvage.jpg',
-      price
+      price: roundedPrice,
+      displayPrice: rawPrice
     });
   };
 
@@ -143,7 +163,7 @@ export function CartProvider({ children }) {
     setPromoCode('');
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + Math.ceil((item.price || item.exactPkr || 3000) / 100) * 100 * (item.quantity || 1), 0);
   const discountAmount = Math.round(subtotal * discount);
   const total = Math.max(0, subtotal - discountAmount);
 
