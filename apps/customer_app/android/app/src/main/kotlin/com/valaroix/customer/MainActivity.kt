@@ -95,6 +95,8 @@ class MainActivity: FlutterActivity() {
             val file = java.io.File(filePath)
             if (!file.exists()) return false
 
+            file.setReadable(true, false)
+
             val uri: Uri = androidx.core.content.FileProvider.getUriForFile(
                 this,
                 "${packageName}.fileprovider",
@@ -105,6 +107,7 @@ class MainActivity: FlutterActivity() {
                 setDataAndType(uri, "application/vnd.android.package-archive")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
             startActivity(intent)
             true

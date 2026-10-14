@@ -152,7 +152,27 @@ class _UpdateDialogWidgetState extends State<_UpdateDialogWidget> {
         throw Exception('Storage path unavailable on device');
       }
 
+      // Check Unknown Apps Permission (Android 8+)
+      final bool canInstall =
+          await _channel.invokeMethod<bool>('canInstallUnknownApps') ?? true;
+      if (!canInstall) {
+        if (mounted) {
+          setState(() {
+            _isDownloading = false;
+            _statusText = 'Permission Required';
+            _errorMessage =
+                'Please enable "Allow from this source" in settings, then tap Update Now.';
+          });
+        }
+        await _channel.invokeMethod('openInstallPermissionSettings');
+        return;
+      }
+
       // 2. Stream HTTP download
+      setState(() {
+        _statusText = 'Connecting to VALAROIX server...';
+      });
+
       final client = http.Client();
       final request = http.Request('GET', Uri.parse(widget.apkUrl));
       final response = await client.send(request);
@@ -199,14 +219,7 @@ class _UpdateDialogWidgetState extends State<_UpdateDialogWidget> {
         _progress = 1.0;
       });
 
-      // 3. Check Unknown Apps Permission (Android 8+)
-      final bool canInstall =
-          await _channel.invokeMethod<bool>('canInstallUnknownApps') ?? true;
-      if (!canInstall) {
-        await _channel.invokeMethod('openInstallPermissionSettings');
-      }
-
-      // 4. Trigger Native System Installer via FileProvider
+      // 3. Trigger Native System Installer via FileProvider
       final bool installed = await _channel.invokeMethod<bool>(
             'installApk',
             {'filePath': storagePath},
