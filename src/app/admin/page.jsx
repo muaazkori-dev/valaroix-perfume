@@ -1897,6 +1897,9 @@ export default function AdminDashboardPage() {
                 Close Window
               </button>
             </div>
+          </div>
+        </div>
+      )}
 
       {/* ── WEBSITE THEME & APPEARANCE STUDIO MODAL ── */}
       {isThemeModalOpen && (
