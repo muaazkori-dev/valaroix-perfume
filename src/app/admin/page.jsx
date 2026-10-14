@@ -852,6 +852,7 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
+        <div className="flex items-center gap-2">
           {/* Quick Theme Switcher Pill */}
           <button
             onClick={async () => {
