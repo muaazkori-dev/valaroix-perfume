@@ -55,6 +55,28 @@ export const products = [
     }
   },
   {
+    id: 'valaroix-zayvor',
+    name: 'VALAROIX ZAYVOR',
+    subtitle: 'Inspired by Louis Vuitton • 40% Pure Oil • Free Delivery',
+    description: 'An enchanting, aristocratic elixir housed in our bespoke heavy-weighted emerald crystal bottle with a signature gold orb cap. Crisp marine zest and exotic spices melt into rare woods and warm golden amber. Crafted with 40% pure fragrance oil.',
+    startingPrice: { pkr: 2999, usd: 11 },
+    image: '/products/zayvor.jpg',
+    color: '#0d9488',
+    isSoldOut: false,
+    freeDelivery: true,
+    oilConcentration: '40% Pure Oil',
+    lasting: '8 to 12 Hours',
+    topNotes: 'Sea Salt Breeze, Calabrian Bergamot, Pink Peppercorn',
+    heartNotes: 'Aquatic Sage, Mineral Ambergris, Cardamom',
+    baseNotes: 'Precious Driftwood, White Amber, Vetiver, Cashmere Musk',
+    pricing: {
+      '50ml': {
+        '10h': { pkr: 2999, usd: 11, soldOut: false },
+        '24h': { pkr: 3999, usd: 15, soldOut: true }
+      }
+    }
+  },
+  {
     id: 'valaroix-classic-noir',
     name: 'VALAROIX SAUVAGE (CLASSIC)',
     subtitle: 'Royal Black & Gold Edition • 30% Pure Oil • Free Delivery',
@@ -138,10 +160,11 @@ export default function ProductCatalog() {
             </p>
           </div>
 
-          {/* Product Cards Grid (3 Columns) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
+          {/* Product Cards Grid (4 Columns) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 max-w-7xl mx-auto">
             {products.map((product) => {
               const isBlueEdition = product.id.includes('noir-x') || product.id.includes('vertex');
+              const isEmeraldEdition = product.id.includes('zayvor');
 
               return (
                 <motion.div
@@ -151,7 +174,7 @@ export default function ProductCatalog() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
                   className={`rounded-3xl p-5 border flex flex-col justify-between space-y-5 transition-all duration-500 group relative overflow-hidden backdrop-blur-md shadow-2xl hover:-translate-y-1.5 ${
-                    isEmerald
+                    isEmerald || isEmeraldEdition
                       ? 'bg-[#071F13]/95 border-emerald-500/35 hover:border-emerald-400/80 hover:shadow-[0_0_50px_rgba(16,185,129,0.4)]'
                       : isSapphire
                       ? 'bg-[#070D22]/95 border-blue-500/35 hover:border-blue-400/80 hover:shadow-[0_0_50px_rgba(37,99,235,0.4)]'
@@ -162,9 +185,9 @@ export default function ProductCatalog() {
                 >
                   {/* Subtle Top Collection Tag */}
                   <div className="flex items-center justify-between gap-2 z-20">
-                    {isEmerald ? (
+                    {isEmerald || isEmeraldEdition ? (
                       <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/50 px-2.5 py-1 rounded-full uppercase tracking-wider shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                        🌿 Imperial House • {product.oilConcentration || 'Pure Oil'}
+                        🌿 Emerald Reserve • {product.oilConcentration || 'Pure Oil'}
                       </span>
                     ) : isSapphire ? (
                       <span className="inline-flex items-center gap-1.5 text-[9px] font-bold text-blue-300 bg-blue-950/80 border border-blue-500/50 px-2.5 py-1 rounded-full uppercase tracking-wider shadow-[0_0_15px_rgba(37,99,235,0.3)]">
@@ -192,7 +215,7 @@ export default function ProductCatalog() {
                     <Link
                       href={`/product/${product.id}`}
                       className={`block relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden p-3 transition-all flex items-center justify-center border ${
-                        isEmerald
+                        isEmerald || isEmeraldEdition
                           ? 'bg-[#030D08] border-emerald-500/20 group-hover:border-emerald-400/40'
                           : isSapphire
                           ? 'bg-[#040714] border-blue-500/20 group-hover:border-blue-400/40'
@@ -202,7 +225,7 @@ export default function ProductCatalog() {
                       {/* Dynamic Ambient Aura Behind Bottle */}
                       <div
                         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full blur-[65px] pointer-events-none transition-all duration-700 group-hover:scale-125 ${
-                          isEmerald
+                          isEmerald || isEmeraldEdition
                             ? 'bg-emerald-600/45 group-hover:bg-emerald-500/60 shadow-[0_0_50px_rgba(16,185,129,0.5)]'
                             : isSapphire
                             ? 'bg-blue-600/45 group-hover:bg-blue-500/60 shadow-[0_0_50px_rgba(37,99,235,0.5)]'
@@ -285,7 +308,7 @@ export default function ProductCatalog() {
                           type="button"
                           onClick={() => handleQuickAdd(product)}
                           className={`py-3 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer border ${
-                            isEmerald
+                            isEmerald || isEmeraldEdition
                               ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/60'
                               : isSapphire
                               ? 'bg-blue-950/60 border-blue-500/50 text-blue-300 hover:bg-blue-900/60'
@@ -302,7 +325,7 @@ export default function ProductCatalog() {
                           type="button"
                           onClick={() => handleBuyNow(product)}
                           className={`py-3 px-2 sm:px-3 rounded-xl text-[11px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-lg transition-all active:scale-95 cursor-pointer ${
-                            isEmerald
+                            isEmerald || isEmeraldEdition
                               ? 'bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-700 text-white shadow-emerald-500/40 hover:brightness-110'
                               : isSapphire
                               ? 'bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white shadow-blue-500/40 hover:brightness-110'

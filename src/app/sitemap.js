@@ -21,6 +21,12 @@ export default async function sitemap() {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/product/zayvor`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/product/classic`,
       lastModified: new Date().toISOString(),
       changeFrequency: 'weekly',

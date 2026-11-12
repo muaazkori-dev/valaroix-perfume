@@ -42,6 +42,7 @@ class AdminOrder {
       final itemStr = (json['item'] ?? '').toString().toLowerCase();
       if (itemStr.contains('vertex')) total = 3499;
       else if (itemStr.contains('sauvage') || itemStr.contains('classic')) total = 2499;
+      else if (itemStr.contains('zayvor')) total = 2999;
       else total = 2999;
     }
 
