@@ -10,6 +10,7 @@ class UpdateService {
       MethodChannel('com.valaroix.admin/notifications');
 
   static bool _isChecking = false;
+  static bool _hasPromptedThisSession = false;
 
   /// Check for updates from central backend
   static Future<void> checkForUpdates(
@@ -17,6 +18,7 @@ class UpdateService {
     bool isManual = false,
   }) async {
     if (_isChecking) return;
+    if (!isManual && _hasPromptedThisSession) return;
     _isChecking = true;
 
     try {
@@ -104,6 +106,7 @@ class UpdateService {
     required String changelog,
     required bool forceUpdate,
   }) {
+    _hasPromptedThisSession = true;
     showDialog(
       context: context,
       barrierDismissible: !forceUpdate,

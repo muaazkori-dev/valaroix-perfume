@@ -80,6 +80,27 @@ class AdminProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
+  Future<void> startOrderRadar() async {
+    try {
+      await _notifChannel.invokeMethod('startOrderRadarService');
+    } catch (_) {}
+  }
+
+  Future<void> requestBatteryExemption() async {
+    try {
+      await _notifChannel.invokeMethod('requestIgnoreBatteryOptimizations');
+    } catch (_) {}
+  }
+
+  Future<bool> isBatteryExempt() async {
+    try {
+      final res = await _notifChannel.invokeMethod<bool>('isIgnoringBatteryOptimizations');
+      return res ?? true;
+    } catch (_) {
+      return true;
+    }
+  }
+
   // ── Internal ─────────────────────────────────────────────────────────────────
   Timer? _pollTimer;
   Set<String> _knownIds = {};
@@ -99,6 +120,7 @@ class AdminProvider extends ChangeNotifier {
       if (savedLogin) {
         _isAuthenticated = true;
         _startPolling();
+        startOrderRadar();
         notifyListeners();
       }
     } catch (_) {}
@@ -110,6 +132,7 @@ class AdminProvider extends ChangeNotifier {
       _isAuthenticated = true;
       _persistLogin(true);
       _startPolling();
+      startOrderRadar();
       notifyListeners();
       return true;
     }

@@ -115,10 +115,11 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
                 border: Border.all(color: Colors.white10),
               ),
               child: const Text(
-                '1. Neeche "Open App Settings" par tap karein.\n'
-                '2. Upar daayein kone mein 3 dots (⋮) dabayein.\n'
-                '3. "Allow restricted settings" par tap karein.\n'
-                '4. Phir "Notifications" ko ALLOW kar dein!',
+                'WhatsApp ki tarah band phone par siren bajane ke liye:\n'
+                '1. Neeche "Allow 24/7 Background Radar" dabayein.\n'
+                '2. Battery Optimization ko "Unrestricted / Don’t Optimize" karein.\n'
+                '3. Agar Xiaomi/Vivo hai toh "Autostart" ON karein.\n'
+                'Ab phone band ho ya table par para ho, naye order par direct siren bajega!',
                 style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
               ),
             ),
@@ -131,11 +132,32 @@ VALAROIX se aapka perfume order #${order.id} DISPATCH kar diya gaya hai!
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () {
+                admin.startOrderRadar();
+                admin.requestBatteryExemption();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('👑 24/7 Background Radar Started! Battery unconstrained.'),
+                    backgroundColor: AdminConstants.success,
+                  ),
+                );
+              },
+              icon: const Icon(Icons.radar_rounded, size: 18),
+              label: const Text('Allow 24/7 Background Radar (No Sleep)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AdminConstants.gold,
+                side: const BorderSide(color: AdminConstants.gold),
+                minimumSize: const Size.fromHeight(42),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () {
                 Navigator.pop(ctx);
                 admin.openNotificationSettings();
               },
               icon: const Icon(Icons.settings, size: 16),
-              label: const Text('Open App Settings', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              label: const Text('Open App Settings (Permissions)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
