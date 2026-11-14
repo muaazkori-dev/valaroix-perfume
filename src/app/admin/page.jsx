@@ -481,12 +481,11 @@ export default function AdminDashboardPage() {
     setCancelConfirmOrder(order);
   };
 
-  // Unified Execute Cancel Handler (for both Pending and TCS Dispatched orders)
+  // Unified Execute Cancel Handler
   const executeCancelOrder = async (order, sendWhatsApp = false) => {
-    const isBookedWithTCS = !!order.tcsTrackingNumber;
     setCancellingOrderId(order.id);
     setCancelConfirmOrder(null);
-    const updatedStatus = isBookedWithTCS ? 'Cancelled (TCS Booking Deleted)' : 'Cancelled';
+    const updatedStatus = 'Cancelled';
 
     try {
       // 1. Immediately update local state
@@ -524,20 +523,6 @@ export default function AdminDashboardPage() {
           })
         });
       } catch (e) {}
-
-      // 4. If booked with TCS, call TCS cancellation endpoint to delete from TCS Envio portal
-      if (isBookedWithTCS) {
-        try {
-          await fetch('/api/tcs/cancel', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              orderId: order.id,
-              tcsTrackingNumber: order.tcsTrackingNumber
-            })
-          });
-        } catch (e) {}
-      }
 
       setStatusToast(`✓ Order #${order.id} Cancelled successfully.`);
       setTimeout(() => setStatusToast(null), 3500);
@@ -1351,7 +1336,7 @@ export default function AdminDashboardPage() {
                             ) : (
                               <>
                                 <X className="w-3.5 h-3.5" />
-                                <span>Cancel TCS Booking</span>
+                                <span>Cancel Order</span>
                               </>
                             )}
                           </button>
@@ -1375,46 +1360,36 @@ export default function AdminDashboardPage() {
                       </button>
                     )}
 
-                    {/* PENDING STAGE 2: 1-CLICK AUTO-BOOK & DISPATCH VIA TCS API */}
+                    {/* PENDING STAGE 2: 1-CLICK CONFIRM & DISPATCH */}
                     {isPending && (
                       <button
-                        onClick={() => handleAutoBookTCS(order)}
-                        disabled={isBookingThis}
+                        onClick={() => updateOrderStatus(order.id, 'Confirmed & Dispatched', `🚚 Order #${order.id} Confirmed & Dispatched!`)}
                         className="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-black text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[190px]"
-                        title="Auto-book with TCS API and generate tracking CN"
+                        title="Confirm order and mark as dispatched"
                       >
-                        {isBookingThis ? (
-                          <>
-                            <RefreshCw className="w-4 h-4 animate-spin" />
-                            <span>Booking TCS...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Zap className="w-4 h-4 fill-black" />
-                            <span>2. Auto-Book TCS (Dispatch)</span>
-                          </>
-                        )}
+                        <Truck className="w-4 h-4" />
+                        <span>2. Confirm & Dispatch</span>
                       </button>
                     )}
 
-                    {/* STAGE 2: CONFIRMED -> HANDOVER IN-TRANSIT & PRINT LABEL */}
+                    {/* STAGE 2: CONFIRMED -> HANDOVER / MARK DELIVERED & PRINT LABEL */}
                     {isConfirmed && !isInTransit && !isDelivered && (
                       <>
                         <button
                           onClick={() => setSelectedLabelOrder(order)}
                           className="py-3 px-3.5 rounded-xl bg-white/10 hover:bg-[#D4AF37]/20 text-gray-200 hover:text-[#D4AF37] border border-white/20 text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer"
-                          title="Print official TCS Shipping Label Sticker"
+                          title="Print Shipping Label Sticker"
                         >
                           <Printer className="w-4 h-4 text-[#D4AF37]" />
-                          <span>Print TCS Label</span>
+                          <span>Print Label</span>
                         </button>
 
                         <button
-                          onClick={() => updateOrderStatus(order.id, 'In Transit with TCS Express', `🚚 Order #${order.id} Handed Over to TCS!`)}
-                          className="flex-1 py-3 px-4 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
+                          onClick={() => updateOrderStatus(order.id, 'Delivered & Payment Collected', `🎁 Order #${order.id} Delivered Successfully!`)}
+                          className="flex-1 py-3 px-4 rounded-xl bg-blue-500 text-white hover:bg-blue-400 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all cursor-pointer min-w-[160px]"
                         >
-                          <Truck className="w-4 h-4" />
-                          <span>Handover to TCS (In Transit)</span>
+                          <PackageCheck className="w-4 h-4" />
+                          <span>Mark Order as Delivered</span>
                         </button>
                       </>
                     )}

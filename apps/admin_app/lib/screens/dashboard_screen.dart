@@ -625,17 +625,16 @@ class _OrderAdminCard extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                     onPressed: () {
-                      final cn = '77${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
-                      admin.updateOrderStatus(order.id, 'Confirmed & Dispatched via TCS', tcsNumber: cn);
+                      admin.updateOrderStatus(order.id, 'Confirmed & Dispatched');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Order #${order.id} booked with TCS (CN #$cn)'),
+                          content: Text('Order #${order.id} marked as Dispatched!'),
                           backgroundColor: AdminConstants.gold,
                         ),
                       );
                     },
                     icon: const Icon(Icons.local_shipping, size: 14),
-                    label: const Text('1-Tap TCS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                    label: const Text('Dispatch', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

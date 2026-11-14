@@ -204,20 +204,20 @@ Team VALAROIX''';
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     onPressed: () {
-                      final cn = _tcsCtrl.text.trim().isNotEmpty
-                          ? _tcsCtrl.text.trim()
-                          : '77${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
-                      admin.updateOrderStatus(_order.id, 'Confirmed & Dispatched via TCS', tcsNumber: cn);
+                      final cn = _tcsCtrl.text.trim().isNotEmpty ? _tcsCtrl.text.trim() : null;
+                      admin.updateOrderStatus(_order.id, 'Confirmed & Dispatched', tcsNumber: cn);
                       setState(() {
-                        _order = _order.copyWith(status: 'Confirmed & Dispatched via TCS', tcsTrackingNumber: cn);
-                        _tcsCtrl.text = cn;
+                        _order = _order.copyWith(status: 'Confirmed & Dispatched', tcsTrackingNumber: cn);
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Dispatched via TCS CN #$cn'), backgroundColor: AdminConstants.gold),
+                        SnackBar(
+                          content: Text('Order #${_order.id} marked as Dispatched!'),
+                          backgroundColor: AdminConstants.gold,
+                        ),
                       );
                     },
                     icon: const Icon(Icons.local_shipping, size: 18),
-                    label: const Text('Book TCS Dispatch', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: const Text('Confirm & Dispatch', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

@@ -105,7 +105,7 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     const orderId = `VLX-${Math.floor(10000 + Math.random() * 90000)}`;
-    const tcsTrackingNumber = `77${Math.floor(10000000 + Math.random() * 90000000)}`;
+    const tcsTrackingNumber = null;
 
     const effectiveItems = cart.length > 0 ? cart : [
       {
@@ -243,7 +243,7 @@ export default function CheckoutPage() {
                 Thank You, {placedOrder.customerName}!
               </h2>
               <p className="text-xs sm:text-sm text-gray-300">
-                Your order has been received and is being prepared for dispatch via <strong className="text-white font-bold">TCS Express Courier</strong>.
+                Your order has been received and is being prepared for dispatch. Our team will contact you shortly to confirm.
               </p>
             </div>
 
@@ -253,10 +253,12 @@ export default function CheckoutPage() {
                 <span className="text-gray-400">Order Number:</span>
                 <span className="font-mono text-sm font-bold text-[#D4AF37]">{placedOrder.id}</span>
               </div>
-              <div className="flex justify-between items-center pb-2 border-b border-white/10">
-                <span className="text-gray-400">TCS Consignment CN:</span>
-                <span className="font-mono text-xs font-bold text-emerald-400">{placedOrder.tcsTrackingNumber}</span>
-              </div>
+              {placedOrder.tcsTrackingNumber && (
+                <div className="flex justify-between items-center pb-2 border-b border-white/10">
+                  <span className="text-gray-400">Tracking CN:</span>
+                  <span className="font-mono text-xs font-bold text-emerald-400">{placedOrder.tcsTrackingNumber}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center pb-2 border-b border-white/10">
                 <span className="text-gray-400">Delivery Address:</span>
                 <span className="font-semibold text-white truncate max-w-[220px] sm:max-w-xs">{placedOrder.address}, {placedOrder.city}</span>
