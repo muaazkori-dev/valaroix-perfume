@@ -1242,6 +1242,25 @@ export default function AdminDashboardPage() {
                           <Copy className="w-2.5 h-2.5" /> Copy Item
                         </button>
                       </div>
+
+                      {order.isCustom && (
+                        <div className="mb-2.5 p-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37]/20 via-amber-500/15 to-transparent border border-[#D4AF37]/60 text-xs shadow-md">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-[#D4AF37] flex items-center gap-1.5">
+                            <Sparkles className="w-3 h-3 text-[#D4AF37]" /> BESPOKE CUSTOM PERFUME (MIN 2 BOTTLES)
+                          </span>
+                          <div className="text-[11px] text-gray-300 space-y-0.5 mt-1">
+                            <div>• Scent Flavour: <strong className="text-white">{order.customFlavour}</strong></div>
+                            <div>• Bottle Label: <strong className="text-[#D4AF37]">{order.customLabel}</strong></div>
+                            <div>• Bottle: <strong className="text-white">{order.customBottle}</strong></div>
+                            {order.advancePaidPkr && (
+                              <div className="text-emerald-400 font-bold mt-1">
+                                💳 30% Advance: Rs. {order.advancePaidPkr.toLocaleString()} | 70% COD: Rs. {order.codRemainingPkr?.toLocaleString()}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
                       <span className="font-bold text-white block">
                         {order.items && order.items.length > 0 ? (
                           order.items.map((i, idx) => (

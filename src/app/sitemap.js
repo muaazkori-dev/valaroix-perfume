@@ -32,5 +32,11 @@ export default async function sitemap() {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/custom`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: 'daily',
+      priority: 0.95,
+    },
   ];
 }

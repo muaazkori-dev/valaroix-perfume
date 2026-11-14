@@ -73,11 +73,13 @@ export default function Navbar({ onOpenAdmin }) {
           </Link>
 
           {/* CENTER: DESKTOP NAVIGATION LINKS (MATCHING MOCKUP) */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs uppercase font-semibold tracking-widest text-gray-300">
+          <nav className="hidden lg:flex items-center gap-6 text-xs uppercase font-semibold tracking-widest text-gray-300">
             <a href="/#hero" className="hover:text-[#D4AF37] transition-colors py-1">HOME</a>
             <a href="/#shop" className="hover:text-[#D4AF37] transition-colors py-1">SHOP</a>
-            <a href="/#shop" className="hover:text-[#D4AF37] transition-colors py-1">COLLECTIONS</a>
-            <Link href="/track" className="hover:text-[#D4AF37] transition-colors py-1 flex items-center gap-1 text-[#D4AF37]">
+            <Link href="/custom" className="hover:text-[#D4AF37] transition-colors py-1 flex items-center gap-1 text-[#D4AF37]">
+              <Sparkles className="w-3.5 h-3.5" /> BESPOKE (CUSTOM)
+            </Link>
+            <Link href="/track" className="hover:text-[#D4AF37] transition-colors py-1 flex items-center gap-1 text-gray-300">
               <Truck className="w-3.5 h-3.5" /> TRACK
             </Link>
             <a href="mailto:support@valaroix.com" className="hover:text-[#D4AF37] transition-colors py-1">CONTACT</a>
@@ -243,22 +245,24 @@ export default function Navbar({ onOpenAdmin }) {
                 </a>
 
                 <a
-                  href="#shop"
+                  href="/#shop"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3 rounded-xl hover:bg-[#D4AF37]/15 hover:text-[#D4AF37] transition-all"
                 >
-                  <span>SHOP</span>
+                  <span>SHOP COLLECTIONS</span>
                   <ChevronRight className="w-4 h-4 text-[#D4AF37]" />
                 </a>
 
-                <a
-                  href="#shop"
+                <Link
+                  href="/custom"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3 rounded-xl hover:bg-[#D4AF37]/15 hover:text-[#D4AF37] transition-all"
+                  className="flex items-center justify-between p-3 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] font-bold transition-all"
                 >
-                  <span>COLLECTIONS</span>
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#D4AF37]" /> APNI PASAND KA PERFUME (CUSTOM)
+                  </span>
                   <ChevronRight className="w-4 h-4 text-[#D4AF37]" />
-                </a>
+                </Link>
 
                 <a
                   href="#notes"

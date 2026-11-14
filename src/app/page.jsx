@@ -4,6 +4,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import ProductCatalog from '@/components/ProductCatalog';
+import CustomPerfumeSection from '@/components/CustomPerfumeSection';
 import ReviewsSection from '@/components/ReviewsSection';
 import TrackOrderModal from '@/components/TrackOrderModal';
 import CartDrawer from '@/components/CartDrawer';
@@ -27,7 +28,10 @@ export default function Home() {
       {/* 3. Our Collection Best Sellers Shelf (#F7F4EE Soft Cream) & Trust Badges */}
       <ProductCatalog />
 
-      {/* 4. Customer Reviews & 5-Star Trust Section */}
+      {/* 4. Bespoke Custom Perfume Atelier (Minimum 2 Bottles, 30% Advance) */}
+      <CustomPerfumeSection />
+
+      {/* 5. Customer Reviews & 5-Star Trust Section */}
       <ReviewsSection />
 
 
