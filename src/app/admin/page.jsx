@@ -796,11 +796,11 @@ export default function AdminDashboardPage() {
               </button>
             )}
             <a
-              href="/VALAROIX-Executive-Owner-App.apk"
+              href="https://github.com/muaazkori-dev/valaroix-perfume/releases/latest/download/valaroix-admin.apk"
               download
               className="inline-flex items-center gap-1.5 text-[11px] text-gray-400 hover:text-[#D4AF37] transition-colors"
             >
-              <span>📱 Download Android APK</span>
+              <span>📱 Download Latest Admin APK</span>
             </a>
           </div>
 
@@ -928,10 +928,10 @@ export default function AdminDashboardPage() {
           )}
 
           <a
-            href="/VALAROIX-Executive-Owner-App.apk"
+            href="https://github.com/muaazkori-dev/valaroix-perfume/releases/latest/download/valaroix-admin.apk"
             download
             className="hidden sm:flex px-3 py-2 rounded-xl bg-[#1A1A1A] border border-[#D4AF37]/50 text-[#D4AF37] text-xs font-bold items-center gap-1.5 shadow-md hover:bg-[#D4AF37]/20 transition-all"
-            title="Download Updated Android APK with Gold Logo"
+            title="Download Latest Android Admin APK"
           >
             <span>📱 Download APK</span>
           </a>

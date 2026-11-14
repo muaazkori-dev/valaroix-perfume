@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_constants.dart';
 import '../providers/cart_provider.dart';
 import '../services/update_service.dart';
-import 'main_screen.dart';
 import 'product_detail_screen.dart';
 import 'bespoke_screen.dart';
 
@@ -450,6 +449,7 @@ class _ProductCard extends StatelessWidget {
               width: double.infinity,
               height: 230,
               decoration: BoxDecoration(
+                color: baseColor,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 border: Border(
                   bottom: BorderSide(

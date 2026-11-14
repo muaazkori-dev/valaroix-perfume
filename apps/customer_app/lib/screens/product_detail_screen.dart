@@ -66,7 +66,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
   }
 
   Future<void> _orderViaWhatsApp() async {
-    final cart = context.read<CartProvider>();
     final orderId =
         'VLX-${DateTime.now().millisecondsSinceEpoch.toString().substring(5)}';
     final url = ApiService.buildWhatsAppOrderUrl(

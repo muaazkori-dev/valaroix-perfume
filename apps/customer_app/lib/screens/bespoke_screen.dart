@@ -37,7 +37,7 @@ class _BespokeScreenState extends State<BespokeScreen> {
     {
       'id': 'noir-x-matte',
       'name': 'Matte Noir (Noir X)',
-      'image': 'assets/images/noir-x.jpg',
+      'image': 'assets/images/noir_x.jpg',
       'cap': 'Jet-Black Crown Cap',
       'desc': 'Velvety obsidian finish with radiant typography',
     },
@@ -229,18 +229,18 @@ class _BespokeScreenState extends State<BespokeScreen> {
               decoration: BoxDecoration(
                 color: Colors.black54,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.emerald.withOpacity(0.5)),
+                border: Border.all(color: const Color(0xFF10B981).withOpacity(0.5)),
               ),
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.phone_in_talk, color: Colors.emeraldAccent, size: 16),
+                      Icon(Icons.phone_in_talk, color: Color(0xFF10B981), size: 16),
                       SizedBox(width: 6),
                       Text(
                         'We Will Contact You Shortly',
-                        style: TextStyle(color: Colors.emeraldAccent, fontWeight: FontWeight.bold, fontSize: 12),
+                        style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                     ],
                   ),
