@@ -15,7 +15,7 @@ export const products = [
     name: 'VALAROIX NOIR X',
     subtitle: 'Inspired by Dior Sauvage • 40% Pure Oil • Free Delivery',
     description: 'An intoxicating and magnetic blend of Calabrian Bergamot, spicy Sichuan Pepper, and French Lavender settling into rich Ambroxan and woody amber. Crafted with 40% pure fragrance oil.',
-    startingPrice: { pkr: 2999, usd: 11 },
+    startingPrice: { pkr: 2799, usd: 10 },
     image: '/products/noir-x.jpg',
     color: '#1e3a8a',
     isSoldOut: false,
@@ -27,8 +27,8 @@ export const products = [
     baseNotes: 'Ambroxan, Warm Vanilla, Cedarwood, Amber',
     pricing: {
       '50ml': {
-        '10h': { pkr: 2999, usd: 11, soldOut: false },
-        '24h': { pkr: 3999, usd: 15, soldOut: true }
+        '10h': { pkr: 2799, usd: 10, soldOut: false },
+        '24h': { pkr: 3799, usd: 14, soldOut: true }
       }
     }
   },
@@ -37,7 +37,7 @@ export const products = [
     name: 'VALAROIX VERTEX',
     subtitle: 'Inspired by YSL Y EDP • 40% Pure Oil • Free Delivery',
     description: 'An electrifying and aristocratic signature blend of crisp green apple, zesty ginger, and aromatic sage resting upon dark tonka bean and smoky amberwood. Crafted with 40% pure fragrance oil.',
-    startingPrice: { pkr: 3499, usd: 13 },
+    startingPrice: { pkr: 3299, usd: 12 },
     image: '/products/vertex.jpg',
     color: '#1e3a8a',
     isSoldOut: false,
@@ -49,8 +49,8 @@ export const products = [
     baseNotes: 'Amber Wood, Tonka Bean, Cedarwood, Olibanum, Vetiver',
     pricing: {
       '50ml': {
-        '10h': { pkr: 3499, usd: 13, soldOut: false },
-        '24h': { pkr: 4499, usd: 16, soldOut: true }
+        '10h': { pkr: 3299, usd: 12, soldOut: false },
+        '24h': { pkr: 4299, usd: 15, soldOut: true }
       }
     }
   },

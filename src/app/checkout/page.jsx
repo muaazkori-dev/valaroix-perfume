@@ -112,16 +112,16 @@ export default function CheckoutPage() {
         id: 'valaroix-noir-x',
         name: 'VALAROIX NOIR X',
         quantity: 1,
-        price: 3000,
-        exactPkr: 3000,
-        displayPrice: 2999,
+        price: 2800,
+        exactPkr: 2800,
+        displayPrice: 2799,
         image: '/products/noir-x.jpg'
       }
     ];
 
     const finalAmount = Math.ceil(
       effectiveItems.reduce(
-        (sum, item) => sum + (item.price || item.exactPkr || 3000) * (item.quantity || 1),
+        (sum, item) => sum + (item.price || item.exactPkr || 2800) * (item.quantity || 1),
         0
       ) / 100
     ) * 100;
@@ -199,14 +199,14 @@ export default function CheckoutPage() {
       cartItemId: 'demo-1',
       name: 'VALAROIX NOIR X',
       quantity: 1,
-      price: 3000,
-      exactPkr: 3000,
-      displayPrice: 2999,
+      price: 2800,
+      exactPkr: 2800,
+      displayPrice: 2799,
       image: '/products/noir-x.jpg'
     }
   ];
 
-  const effectiveTotal = total > 0 ? Math.ceil(total / 100) * 100 : 3000;
+  const effectiveTotal = total > 0 ? Math.ceil(total / 100) * 100 : 2800;
 
   return (
     <main className="min-h-screen bg-[#0D0D0D] text-gray-100 font-sans relative overflow-x-hidden selection:bg-[#D4AF37] selection:text-black">

@@ -190,6 +190,10 @@ class CartProvider extends ChangeNotifier {
 
   void addToCart(Map<String, dynamic> product) {
     final id = product['id']?.toString() ?? '';
+    final rawPrice = (product['price'] as num?)?.toInt() ?? 0;
+    // Pure hundreds counting: 2799 -> 2800, 3299 -> 3300, 2999 -> 3000
+    final roundedPrice = (rawPrice % 100 == 0) ? rawPrice : (((rawPrice ~/ 100) + 1) * 100);
+
     final existing = _cart.indexWhere((c) => c.id == id);
     if (existing >= 0) {
       _cart[existing].quantity++;
@@ -198,7 +202,7 @@ class CartProvider extends ChangeNotifier {
         id: id,
         name: product['name'] ?? '',
         subtitle: product['subtitle'] ?? '',
-        price: (product['price'] as num?)?.toInt() ?? 0,
+        price: roundedPrice,
         quantity: 1,
         image: product['image'] ?? '',
       ));

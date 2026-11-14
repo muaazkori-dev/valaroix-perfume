@@ -40,10 +40,14 @@ class AdminOrder {
     }
     if (total == 0) {
       final itemStr = (json['item'] ?? '').toString().toLowerCase();
-      if (itemStr.contains('vertex')) total = 3499;
-      else if (itemStr.contains('sauvage') || itemStr.contains('classic')) total = 2499;
-      else if (itemStr.contains('zayvor')) total = 2999;
-      else total = 2999;
+      if (itemStr.contains('vertex')) total = 3300;
+      else if (itemStr.contains('noir')) total = 2800;
+      else if (itemStr.contains('zayvor')) total = 3000;
+      else if (itemStr.contains('sauvage') || itemStr.contains('classic')) total = 2500;
+      else total = 2800;
+    } else {
+      // Ensure pure hundreds count
+      total = (total % 100 == 0) ? total : (((total ~/ 100) + 1) * 100);
     }
 
     final itemsList = <AdminOrderItem>[];
