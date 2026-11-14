@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, Package, Lock, ArrowRight, ShieldCheck, Award } from 'lucide-react';
+import { Sparkles, Package, ArrowRight, MessageCircle, PhoneCall } from 'lucide-react';
 
 export default function CustomPerfumeSection() {
   return (
@@ -27,12 +27,12 @@ export default function CustomPerfumeSection() {
               </h2>
 
               <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-                Koi bhi designer scent profile (Aventus, Baccarat, Oud Wood, Khamrah ya aapka apna manpasand clone) muntakhib karein, apni pasand ki bottle chunein, aur bottle par <strong>apna naam engrave</strong> karwayen!
+                Koi bhi designer scent profile (Aventus, Baccarat, Oud Wood, Khamrah ya aapka apna manpasand clone) muntakhib karein aur luxury bottle mein banwayen. Humari team aap se khud contact karegi!
               </p>
 
-              {/* 2 Rules Highlights */}
+              {/* 2 Core Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
+                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
                   <Package className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
                   <div>
                     <strong className="text-xs text-white block">Minimum 2 Bottles</strong>
@@ -40,11 +40,11 @@ export default function CustomPerfumeSection() {
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
-                  <Lock className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
+                <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-start gap-2.5">
+                  <PhoneCall className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
                   <div>
-                    <strong className="text-xs text-white block">30% Advance Payment</strong>
-                    <span className="text-[11px] text-gray-400">Baqi 70% Cash on Delivery (COD)</span>
+                    <strong className="text-xs text-white block">We Contact You Directly</strong>
+                    <span className="text-[11px] text-gray-400">Team will reach out to confirm</span>
                   </div>
                 </div>
               </div>
@@ -55,17 +55,18 @@ export default function CustomPerfumeSection() {
                   href="/custom"
                   className="w-full sm:w-auto py-3.5 px-7 rounded-2xl bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#B38728] text-black font-extrabold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all"
                 >
-                  <span>Build Your Custom Perfume</span>
+                  <span>Order Custom Perfume</span>
                   <ArrowRight className="w-4 h-4 text-black" />
                 </Link>
 
                 <a
-                  href="https://wa.me/923029111856?text=Assalam-o-Alaikum%20VALAROIX!%20Mujhe%20apna%20custom%20perfume%20banwana%20hai%20(Min%202%20bottles%2C%2030%25%20advance)."
+                  href="https://wa.me/923029111856?text=Assalam-o-Alaikum%20VALAROIX!%20Mujhe%20apna%20custom%20perfume%20banwana%20hai%20(Min%202%20bottles)."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto py-3 px-5 rounded-2xl border border-[#25D366]/50 bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all"
                 >
-                  <span>WhatsApp Inquiry</span>
+                  <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp Concierge</span>
                 </a>
               </div>
             </div>
@@ -84,12 +85,12 @@ export default function CustomPerfumeSection() {
                   </div>
                 </div>
 
-                <div className="mt-3 p-3 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-center">
-                  <span className="text-[10px] text-gray-400 block font-mono">YOUR CUSTOM LABEL ENGRAVED</span>
-                  <strong className="text-sm text-white font-serif tracking-wider block mt-0.5">
-                    "YOUR NAME EXCLUSIF"
+                <div className="mt-3 p-3.5 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-center space-y-1">
+                  <span className="text-[10px] text-gray-400 block font-mono">VALAROIX BESPOKE ATELIER</span>
+                  <strong className="text-sm text-white font-serif tracking-wider block">
+                    Hand-Crafted Pure Extrait Formula
                   </strong>
-                  <span className="text-[10px] text-[#D4AF37] block mt-1">40% Pure Extrait de Parfum</span>
+                  <span className="text-[11px] text-[#D4AF37] block font-semibold">Minimum 2 Bottles • 40% Pure Oil</span>
                 </div>
               </div>
             </div>

@@ -1250,13 +1250,13 @@ export default function AdminDashboardPage() {
                           </span>
                           <div className="text-[11px] text-gray-300 space-y-0.5 mt-1">
                             <div>• Scent Flavour: <strong className="text-white">{order.customFlavour}</strong></div>
-                            <div>• Bottle Label: <strong className="text-[#D4AF37]">{order.customLabel}</strong></div>
-                            <div>• Bottle: <strong className="text-white">{order.customBottle}</strong></div>
-                            {order.advancePaidPkr && (
-                              <div className="text-emerald-400 font-bold mt-1">
-                                💳 30% Advance: Rs. {order.advancePaidPkr.toLocaleString()} | 70% COD: Rs. {order.codRemainingPkr?.toLocaleString()}
-                              </div>
+                            <div>• Bottle Style: <strong className="text-white">{order.customBottle}</strong></div>
+                            {order.customLabel && (
+                              <div>• Bottle Label: <strong className="text-[#D4AF37]">{order.customLabel}</strong></div>
                             )}
+                            <div className="text-amber-300 font-bold mt-1">
+                              📞 Contact customer to finalize pricing quotation & 30% advance deposit.
+                            </div>
                           </div>
                         </div>
                       )}
