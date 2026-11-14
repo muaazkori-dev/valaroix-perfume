@@ -179,8 +179,12 @@ class _CartItemTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(11),
               child: Image.asset(
-                'assets/images/logo.png',
+                item.image.isNotEmpty ? item.image : 'assets/images/app_logo.jpg',
                 fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

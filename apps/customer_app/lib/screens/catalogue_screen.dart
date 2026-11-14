@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_constants.dart';
 import '../providers/cart_provider.dart';
+import 'bespoke_screen.dart';
 import 'product_detail_screen.dart';
 
 /// ─────────────────────────────────────────────────────────────────────────────
@@ -54,6 +55,17 @@ class CatalogueScreen extends StatelessWidget {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Apni Pasand Ka Perfume',
+            icon: const Icon(Icons.auto_awesome, color: AppConstants.gold, size: 20),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const BespokeScreen()),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
@@ -99,6 +111,69 @@ class CatalogueScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+          // Bespoke Fragrance Banner
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BespokeScreen()),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF1E1705), Color(0xFF0F0F12)],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppConstants.gold.withOpacity(0.5)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppConstants.gold.withOpacity(0.08),
+                        blurRadius: 16,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppConstants.gold.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.auto_awesome, color: AppConstants.gold, size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'APNI PASAND KA PERFUME',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                color: AppConstants.gold,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Custom clone of any designer fragrance (Min. 2 bottles)',
+                              style: TextStyle(fontSize: 11, color: AppConstants.textSecondary),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios_rounded, color: AppConstants.gold, size: 14),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -156,123 +231,124 @@ class _CatalogueCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Product Visual Banner ────────────────────────────────────────
+            // ── Product Visual Banner (Full-Width Large Image) ──────────────
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               child: Container(
                 width: double.infinity,
-                height: 160,
+                height: 230,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      baseColor,
-                      Color.lerp(baseColor, accentColor, 0.25)!,
-                    ],
+                  color: baseColor,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: accentColor.withOpacity(0.3),
+                      width: 1.0,
+                    ),
                   ),
                 ),
                 child: Stack(
                   children: [
-                    // Ambient glow
-                    Positioned(
-                      right: -30,
-                      top: -30,
-                      child: Container(
-                        width: 180,
-                        height: 180,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: RadialGradient(
-                            colors: [
-                              accentColor.withOpacity(0.12),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Emblem
-                    Center(
-                      child: Container(
-                        width: 110,
-                        height: 110,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: accentColor,
-                            width: 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: accentColor.withOpacity(0.3),
-                              blurRadius: 24,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            product['image'] ?? 'assets/images/app_logo.jpg',
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(
-                                'V',
-                                style: TextStyle(
-                                  fontSize: 52,
-                                  fontWeight: FontWeight.w900,
-                                  color: accentColor.withOpacity(0.8),
-                                ),
+                    // Full bottle luxury image
+                    Positioned.fill(
+                      child: Image.asset(
+                        product['image'] ?? 'assets/images/app_logo.jpg',
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.black,
+                          child: Center(
+                            child: Text(
+                              'V',
+                              style: TextStyle(
+                                fontSize: 52,
+                                fontWeight: FontWeight.w900,
+                                color: accentColor.withOpacity(0.8),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    // Tag
-                    Positioned(
-                      top: 12,
-                      left: 12,
+                    // Ambient gradient overlay
+                    Positioned.fill(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: tagColor.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(20),
-                          border:
-                              Border.all(color: tagColor.withOpacity(0.5)),
-                        ),
-                        child: Text(
-                          product['tag'] ?? '',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                            color: tagColor == const Color(0xFF0D0D0D)
-                                ? AppConstants.gold
-                                : tagColor,
-                            letterSpacing: 1.5,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.2),
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.55),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    // View detail arrow
+                    // Tag Badge
+                    Positioned(
+                      top: 12,
+                      left: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.black87,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: tagColor.withOpacity(0.6)),
+                        ),
+                        child: Text(
+                          product['tag'] ?? '',
+                          style: TextStyle(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.bold,
+                            color: tagColor == const Color(0xFF0D0D0D)
+                                ? AppConstants.gold
+                                : tagColor,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Lasting & Forward icon
                     Positioned(
                       top: 12,
                       right: 12,
-                      child: Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.35),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: accentColor.withOpacity(0.3)),
-                        ),
-                        child: const Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 13,
-                          color: Colors.white70,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (product['lasting'] != null)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black87,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppConstants.gold.withOpacity(0.4)),
+                              ),
+                              child: Text(
+                                product['lasting'] ?? '',
+                                style: const TextStyle(
+                                  fontSize: 9.5,
+                                  color: AppConstants.gold,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Colors.black87,
+                              shape: BoxShape.circle,
+                              border: Border.all(color: accentColor.withOpacity(0.4)),
+                            ),
+                            child: const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 12,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],

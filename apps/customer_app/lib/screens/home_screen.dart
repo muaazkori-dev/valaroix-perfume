@@ -7,6 +7,7 @@ import '../providers/cart_provider.dart';
 import '../services/update_service.dart';
 import 'main_screen.dart';
 import 'product_detail_screen.dart';
+import 'bespoke_screen.dart';
 
 /// ─────────────────────────────────────────────────────────────────────────────
 ///  VALAROIX Home Screen
@@ -131,7 +132,82 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 // ── Hero Section ───────────────────────────────────────────────
                 _HeroSection(ctrl: _heroCtrl, screenWidth: size.width),
 
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
+
+                // ── Bespoke Custom Perfume Banner ──────────────────────────────
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BespokeScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF181824), Color(0xFF261D05)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppConstants.gold, width: 1.2),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppConstants.gold.withOpacity(0.18),
+                            blurRadius: 15,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppConstants.gold.withOpacity(0.15),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppConstants.gold),
+                            ),
+                            child: const Icon(Icons.auto_awesome, color: AppConstants.gold, size: 24),
+                          ),
+                          const SizedBox(width: 14),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'APNI PASAND KA PERFUME',
+                                      style: TextStyle(
+                                        color: AppConstants.gold,
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 13,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 3),
+                                Text(
+                                  'Koi bhi designer scent flavour aur luxury bottle khud banwayen (Min 2 bottles).',
+                                  style: TextStyle(color: Colors.white70, fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded, color: AppConstants.gold, size: 14),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
 
                 // ── Section Title ──────────────────────────────────────────────
                 Padding(
@@ -366,152 +442,168 @@ class _ProductCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              // Product Visual - Real Perfume Bottle Photo
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: accentColor.withOpacity(0.4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Full Width Large Image Container
+            Container(
+              width: double.infinity,
+              height: 230,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                border: Border(
+                  bottom: BorderSide(
+                    color: accentColor.withOpacity(0.3),
                     width: 1.0,
                   ),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.asset(
-                    product['image'] ?? 'assets/images/app_logo.jpg',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Center(
-                      child: Text(
-                        'V',
-                        style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w900,
-                          color: accentColor.withOpacity(0.7),
+              ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(19)),
+                      child: Image.asset(
+                        product['image'] ?? 'assets/images/app_logo.jpg',
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.black,
+                          child: Center(
+                            child: Text(
+                              'V',
+                              style: TextStyle(
+                                fontSize: 54,
+                                fontWeight: FontWeight.w900,
+                                color: accentColor.withOpacity(0.7),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: tagColor.withOpacity(0.6)),
+                      ),
+                      child: Text(
+                        product['tag'] ?? '',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: tagColor == const Color(0xFF0D0D0D)
+                              ? AppConstants.gold
+                              : tagColor,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black87,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: AppConstants.gold.withOpacity(0.4)),
+                      ),
+                      child: Text(
+                        product['lasting'] ?? '',
+                        style: const TextStyle(
+                          fontSize: 9.5,
+                          color: AppConstants.gold,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              // Product Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            ),
+
+            // Product Details Below Image
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product['name'] ?? '',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: AppConstants.textPrimary,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    product['subtitle'] ?? '',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppConstants.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Rs. ${product['price']}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: AppConstants.gold,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          context.read<CartProvider>().addToCart(product);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${product['name']} added to cart!',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: AppConstants.gold,
+                              duration: const Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                           decoration: BoxDecoration(
-                            color: tagColor.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: tagColor.withOpacity(0.4)),
+                            gradient: const LinearGradient(
+                              colors: [AppConstants.gold, AppConstants.goldDark],
+                            ),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          child: Text(
-                            product['tag'] ?? '',
+                          child: const Text(
+                            'Add to Cart',
                             style: TextStyle(
-                              fontSize: 9,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: tagColor == const Color(0xFF0D0D0D)
-                                  ? AppConstants.gold
-                                  : Color(product['tagColor'] as int),
-                              letterSpacing: 1,
+                              color: Colors.black,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      product['name'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                        color: AppConstants.textPrimary,
-                        letterSpacing: 0.5,
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      product['subtitle'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppConstants.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      product['lasting'] ?? '',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: accentColor.withOpacity(0.8),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          'Rs. ${product['price']}',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: accentColor == AppConstants.gold
-                                ? AppConstants.gold
-                                : AppConstants.gold,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              context.read<CartProvider>().addToCart(product);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '${product['name']} added to cart!',
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: AppConstants.gold,
-                                  duration: const Duration(seconds: 2),
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(vertical: 7),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [AppConstants.gold, AppConstants.goldDark],
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Text(
-                                'Add to Cart',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

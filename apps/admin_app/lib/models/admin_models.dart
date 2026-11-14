@@ -15,6 +15,9 @@ class AdminOrder {
   final String? tcsTrackingNumber;
   final DateTime createdAt;
   final List<AdminOrderItem> items;
+  final bool isCustom;
+  final String? customFlavour;
+  final String? customBottle;
 
   AdminOrder({
     required this.id,
@@ -29,6 +32,9 @@ class AdminOrder {
     this.tcsTrackingNumber,
     required this.createdAt,
     this.items = const [],
+    this.isCustom = false,
+    this.customFlavour,
+    this.customBottle,
   });
 
   factory AdminOrder.fromJson(Map<String, dynamic> json) {
@@ -43,6 +49,7 @@ class AdminOrder {
       if (itemStr.contains('vertex')) total = 3300;
       else if (itemStr.contains('noir')) total = 2800;
       else if (itemStr.contains('zayvor')) total = 3000;
+      else if (itemStr.contains('bespoke') || itemStr.contains('custom')) total = 6000;
       else if (itemStr.contains('sauvage') || itemStr.contains('classic')) total = 2500;
       else total = 2800;
     } else {
@@ -56,6 +63,11 @@ class AdminOrder {
         itemsList.add(AdminOrderItem.fromJson(i));
       }
     }
+
+    final itemStr = (json['item'] ?? '').toString().toLowerCase();
+    final bool customFlag = json['isCustom'] == true ||
+        itemStr.contains('bespoke') ||
+        itemStr.contains('custom');
 
     return AdminOrder(
       id: json['id']?.toString() ?? '',
@@ -72,6 +84,9 @@ class AdminOrder {
           ? DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now()
           : DateTime.now(),
       items: itemsList,
+      isCustom: customFlag,
+      customFlavour: json['customFlavour']?.toString(),
+      customBottle: json['customBottle']?.toString(),
     );
   }
 
@@ -85,13 +100,17 @@ class AdminOrder {
     paymentMethod: paymentMethod,
     tcsTrackingNumber: tcsTrackingNumber ?? this.tcsTrackingNumber,
     createdAt: createdAt, items: items,
+    isCustom: isCustom, customFlavour: customFlavour, customBottle: customBottle,
   );
 
   int get profit => total - (total * 0.35).round();
 
-  bool get isPending    => status.toLowerCase().contains('pending');
-  bool get isDispatched => status.toLowerCase().contains('dispatch') ||
-      status.toLowerCase().contains('transit') || status.toLowerCase().contains('confirm');
+  bool get isPending    => status.toLowerCase().contains('pending') ||
+                           status.toLowerCase().contains('custom');
+  bool get isDispatched => (status.toLowerCase().contains('dispatch') ||
+                           status.toLowerCase().contains('transit') ||
+                           (status.toLowerCase().contains('confirm') && !status.toLowerCase().contains('custom'))) &&
+                           !isPending;
   bool get isDelivered  => status.toLowerCase().contains('deliver');
   bool get isCancelled  => status.toLowerCase().contains('cancel');
 }

@@ -144,25 +144,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Hero Emblem ─────────────────────────────────────────────────
+            // ── Hero Luxury Bottle Showcase ──────────────────────────────────
             AnimatedBuilder(
               animation: _glowCtrl,
               builder: (_, __) => Container(
                 width: double.infinity,
-                height: 320,
+                height: 380,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [base, Color.lerp(base, AppConstants.primaryBg, 0.4)!],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [base, AppConstants.primaryBg],
                   ),
                 ),
                 child: Stack(
                   children: [
                     // Ambient glow
                     Positioned(
-                      right: -60,
-                      top: -60,
+                      right: -50,
+                      top: 10,
                       child: Container(
                         width: 280,
                         height: 280,
@@ -170,7 +170,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              accent.withOpacity(0.15 + _glowCtrl.value * 0.10),
+                              accent.withOpacity(0.20 + _glowCtrl.value * 0.10),
                               Colors.transparent,
                             ],
                           ),
@@ -179,7 +179,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     ),
                     Positioned(
                       left: -40,
-                      bottom: -40,
+                      bottom: 0,
                       child: Container(
                         width: 200,
                         height: 200,
@@ -187,70 +187,125 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           shape: BoxShape.circle,
                           gradient: RadialGradient(
                             colors: [
-                              AppConstants.gold.withOpacity(0.06 + _glowCtrl.value * 0.04),
+                              AppConstants.gold.withOpacity(0.08 + _glowCtrl.value * 0.04),
                               Colors.transparent,
                             ],
                           ),
                         ),
                       ),
                     ),
-                    // Central emblem
+                    // Large Rectangular Luxury Showcase Card
                     Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(height: 40),
-                          Container(
-                            width: 170,
-                            height: 170,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: accent,
-                                width: 2.0,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: accent.withOpacity(0.35 + _glowCtrl.value * 0.15),
-                                  blurRadius: 40,
-                                  spreadRadius: 5,
-                                ),
-                              ],
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        width: double.infinity,
+                        height: 340,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: accent.withOpacity(0.6),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: accent.withOpacity(0.28 + _glowCtrl.value * 0.15),
+                              blurRadius: 36,
+                              spreadRadius: 2,
+                              offset: const Offset(0, 6),
                             ),
-                            child: ClipOval(
-                              child: Image.asset(
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(22),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              // Full vertical bottle render
+                              Image.asset(
                                 p['image'] ?? 'assets/images/app_logo.jpg',
                                 fit: BoxFit.cover,
+                                alignment: Alignment.center,
                                 errorBuilder: (_, __, ___) => Image.asset(
                                   'assets/images/logo.png',
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          // Tag badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: tagColor.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: tagColor.withOpacity(0.5)),
-                            ),
-                            child: Text(
-                              p['tag'] ?? '',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: tagColor == const Color(0xFF0D0D0D)
-                                    ? AppConstants.gold
-                                    : tagColor,
-                                letterSpacing: 2,
+                              // Bottom subtle vignette
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 80,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Colors.black.withOpacity(0.65),
+                                        Colors.transparent,
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              // Tag badge inside showcase
+                              Positioned(
+                                top: 16,
+                                left: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black87,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: tagColor.withOpacity(0.7)),
+                                  ),
+                                  child: Text(
+                                    p['tag'] ?? '',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: tagColor == const Color(0xFF0D0D0D)
+                                          ? AppConstants.gold
+                                          : tagColor,
+                                      letterSpacing: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Concentration badge bottom-left
+                              Positioned(
+                                bottom: 16,
+                                left: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black87,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: AppConstants.gold.withOpacity(0.5)),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.verified, color: AppConstants.gold, size: 12),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        p['oil'] ?? 'Extrait de Parfum',
+                                        style: const TextStyle(
+                                          fontSize: 10.5,
+                                          color: AppConstants.gold,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ],

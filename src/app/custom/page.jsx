@@ -141,9 +141,10 @@ export default function CustomPerfumePage() {
           customBottle: selectedBottleObj.name,
         }
       ],
-      total: 0, // Quotation handled by concierge
+      total: quantity * 3000,
+      pricePkr: quantity * 3000,
       paymentMethod: '30% Advance Deposit + 70% COD',
-      status: 'Custom Order Confirmed (Contact Customer)',
+      status: 'Pending Verification (Custom Request)',
       isCustom: true,
       customFlavour: effectiveFlavourName,
       customBottle: selectedBottleObj.name,

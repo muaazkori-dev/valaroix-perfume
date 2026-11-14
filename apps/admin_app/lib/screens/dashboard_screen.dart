@@ -584,6 +584,48 @@ class _OrderAdminCard extends StatelessWidget {
               order.item,
               style: const TextStyle(color: AdminConstants.gold, fontWeight: FontWeight.w600, fontSize: 12),
             ),
+            if (order.isCustom) ...[
+              const SizedBox(height: 6),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AdminConstants.gold.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AdminConstants.gold.withOpacity(0.4)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.auto_awesome, color: AdminConstants.gold, size: 14),
+                        SizedBox(width: 6),
+                        Text(
+                          'BESPOKE CUSTOM PERFUME ORDER',
+                          style: TextStyle(color: AdminConstants.gold, fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 0.5),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '• Flavour: ${order.customFlavour ?? order.item}',
+                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
+                    ),
+                    if (order.customBottle != null && order.customBottle!.isNotEmpty)
+                      Text(
+                        '• Bottle: ${order.customBottle}',
+                        style: const TextStyle(color: AdminConstants.textSecondary, fontSize: 10),
+                      ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      '📞 Contact customer on WhatsApp to finalize formula & delivery',
+                      style: TextStyle(color: Colors.amberAccent, fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
